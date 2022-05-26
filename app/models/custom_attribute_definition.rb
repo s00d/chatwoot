@@ -35,10 +35,15 @@ class CustomAttributeDefinition < ApplicationRecord
 
   belongs_to :account
   after_destroy :sync_widget_pre_chat_custom_fields
+  after_update :update_widget_pre_chat_custom_fields
 
   private
 
   def sync_widget_pre_chat_custom_fields
     ::Inboxes::SyncWidgetPreChatCustomFieldsJob.perform_now(account, attribute_key)
+  end
+
+  def update_widget_pre_chat_custom_fields
+    ::Inboxes::UpdateWidgetPreChatCustomFieldsJob.perform_now(account, self)
   end
 end
