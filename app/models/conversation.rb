@@ -168,8 +168,16 @@ class Conversation < ApplicationRecord
     inbox.inbox_type == 'Twitter' && additional_attributes['type'] == 'tweet'
   end
 
+  def last_message
+    messages.chat.where(message_type: 'outgoing').last(1)[0]['content']
+  end
+
   def recent_messages
     messages.chat.last(5)
+  end
+
+  def all_messages
+    messages.chat.last(100)
   end
 
   private

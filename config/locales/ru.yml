@@ -35,10 +35,13 @@ ru:
   reports:
     period: Отчётный период с %{since} по %{until}
     agent_csv:
+      agent_id: id оператора
       agent_name: Имя оператора
       conversations_count: Количество бесед
       avg_first_response_time: Среднее время первого ответа (в минутах)
       avg_resolution_time: Среднее время решения (в минутах)
+      time_work: время работы (в минутах)
+      time_work_hours: время работы (HH:MM:SS)
     team_csv:
       team_name: Название команды
       conversations_count: Количество бесед

@@ -11,6 +11,7 @@
             )
           }}
         </p>
+        {{ ' ' + timeout }}...
         <woot-button variant="clear" size="small" @click="refreshPage">
           {{ $t('NETWORK.BUTTON.REFRESH') }}
         </woot-button>
@@ -38,13 +39,32 @@ export default {
   data() {
     return {
       showNotification: !navigator.onLine,
+      timeout: 0,
+      timer: null,
     };
   },
 
   computed: {
     ...mapGetters({ globalConfig: 'globalConfig/get' }),
   },
-
+  watch: {
+    showNotification(val) {
+      if (!val) {
+        if (this.timer) clearInterval(this.timer);
+        this.timer = null;
+        return;
+      }
+      this.timeout = 10;
+      this.timer = setInterval(() => {
+        this.timeout -= 1;
+        if (this.timeout <= 0) {
+          if (this.timer) clearInterval(this.timer);
+          this.timer = null;
+          window.location.reload();
+        }
+      }, 1000);
+    },
+  },
   mounted() {
     window.addEventListener('offline', this.updateOnlineStatus);
     window.bus.$on(BUS_EVENTS.WEBSOCKET_DISCONNECT, () => {

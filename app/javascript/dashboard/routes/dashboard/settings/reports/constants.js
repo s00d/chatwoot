@@ -57,6 +57,7 @@ export const METRIC_CHART = {
   conversations_count: DEFAULT_CHART,
   incoming_messages_count: DEFAULT_CHART,
   outgoing_messages_count: DEFAULT_CHART,
+  resolutions_work_time: DEFAULT_CHART,
   avg_first_response_time: {
     datasets: [DEFAULT_BAR_CHART],
     scales: {

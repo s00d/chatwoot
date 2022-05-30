@@ -161,6 +161,7 @@ class Message < ApplicationRecord
     send_reply
     execute_message_template_hooks
     update_contact_activity
+    tracker_run
   end
 
   def update_contact_activity
@@ -232,6 +233,22 @@ class Message < ApplicationRecord
 
   def conversation_mail_key
     format(::Redis::Alfred::CONVERSATION_MAILER_KEY, conversation_id: conversation.id)
+  end
+
+  def tracker_run
+    if outgoing?
+      now = Time.zone.now.to_i
+      time = Redis::Alfred.hget(::Redis::Alfred::OPERATORS_TRACKER_TIMER, sender_id)
+
+      if time.present?
+        diff = now - time.to_i
+        if diff < 600
+          key = format(::Redis::Alfred::OPERATORS_TRACKER_DATA, date: Time.zone.now.strftime('%Y-%m-%d').to_s)
+          Redis::Alfred.hincrby(key, sender_id, diff)
+        end
+      end
+      Redis::Alfred.hset(::Redis::Alfred::OPERATORS_TRACKER_TIMER, sender_id, Time.zone.now.to_i)
+    end
   end
 
   def validate_attachments_limit(_attachment)

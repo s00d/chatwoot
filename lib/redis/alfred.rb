@@ -30,6 +30,14 @@ module Redis::Alfred
       $alfred.incr(key)
     end
 
+    def hincrby(key, value, count = 1)
+      $alfred.hincrby(key, value, count)
+    end
+
+    def hdercby(key, value, count = 1)
+      $alfred.hincrby(key, value, -count)
+    end
+
     # list operations
 
     def llen(key)
@@ -64,8 +72,20 @@ module Redis::Alfred
     end
 
     # get value from redis hash
+    def hincr(key, field)
+      $alfred.hincrby(key, field, 1)
+    end
+
+    def hdecr(key, field)
+      $alfred.hincrby(key, field, -1)
+    end
+
     def hget(key, field)
       $alfred.hget(key, field)
+    end
+
+    def hdel(key, field)
+      $alfred.hdel(key, field)
     end
 
     # get values of multiple keys from redis hash

@@ -65,4 +65,17 @@ module ReportHelper
 
     avg_frt
   end
+
+  def resolutions_work_time(user)
+    result_work_time = {}
+    range.each do |date|
+      work_date = date.next_day.strftime('%Y-%m-%d').to_s
+      key = format(::Redis::Alfred::OPERATORS_TRACKER_DATA, date: work_date)
+      s_work_time = Redis::Alfred.hget(key, user.id)
+      s_work_time = 0 if s_work_time.blank?
+      result_work_time[work_date] = s_work_time.to_i / 3600
+    end
+
+    result_work_time
+  end
 end

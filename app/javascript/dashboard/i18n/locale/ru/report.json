@@ -32,6 +32,10 @@
       "RESOLUTION_COUNT": {
         "NAME": "Количество завершенных",
         "DESC": "( Всего )"
+      },
+      "RESOLUTION_WORK_TIME": {
+        "NAME": "Время работы",
+        "DESC": "( Минуты )"
       }
     },
     "DATE_RANGE": [

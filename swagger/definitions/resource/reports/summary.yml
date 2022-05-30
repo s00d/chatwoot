@@ -2,6 +2,8 @@ type: object
 properties:
   avg_first_response_time:
     type: string
+  resolution_work_time:
+    type: string
   avg_resolution_time:
     type: string
   conversations_count:

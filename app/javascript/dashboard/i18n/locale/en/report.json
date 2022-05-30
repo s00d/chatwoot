@@ -32,6 +32,10 @@
       "RESOLUTION_COUNT": {
         "NAME": "Resolution Count",
         "DESC": "( Total )"
+      },
+      "RESOLUTION_WORK_TIME": {
+        "NAME": "Work time",
+        "DESC": "( Minutes )"
       }
     },
     "DATE_RANGE": [

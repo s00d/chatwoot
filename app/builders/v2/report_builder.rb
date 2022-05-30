@@ -9,6 +9,7 @@ class V2::ReportBuilder
   def initialize(account, params)
     @account = account
     @params = params
+    @user = user
 
     timezone_offset = (params[:timezone_offset] || 0).to_f
     @timezone = ActiveSupport::TimeZone[timezone_offset]&.name
@@ -37,6 +38,7 @@ class V2::ReportBuilder
       incoming_messages_count: incoming_messages_count.values.sum,
       outgoing_messages_count: outgoing_messages_count.values.sum,
       avg_first_response_time: avg_first_response_time_summary,
+      resolutions_work_time: resolutions_work_time(@user).values.sum,
       avg_resolution_time: avg_resolution_time_summary,
       resolutions_count: resolutions_count.values.sum
     }
