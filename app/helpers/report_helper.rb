@@ -66,7 +66,7 @@ module ReportHelper
     avg_frt
   end
 
-  def resolutions_work_time(user)
+  def resolutions_work_time
     result_work_time = {}
     range.each do |date|
       work_date = date.next_day.strftime('%Y-%m-%d').to_s
