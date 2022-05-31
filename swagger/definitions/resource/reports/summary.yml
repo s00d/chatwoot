@@ -3,7 +3,7 @@ properties:
   avg_first_response_time:
     type: string
   resolution_work_time:
-    type: string
+    type: number
   avg_resolution_time:
     type: string
   conversations_count:
@@ -28,4 +28,6 @@ properties:
       outgoing_messages_count:
         type: number
       resolutions_count:
+        type: number
+      resolution_work_time:
         type: number
