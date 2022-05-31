@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_06_163839) do
+ActiveRecord::Schema.define(version: 2022_05_31_051150) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -727,6 +727,19 @@ ActiveRecord::Schema.define(version: 2022_05_06_163839) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "time_trackings", force: :cascade do |t|
+    t.bigint "account_id"
+    t.bigint "user_id"
+    t.bigint "workime", default: 0, null: false
+    t.datetime "active_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.date "date_at", default: -> { "date(now())" }, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_id", "user_id"], name: "index_time_tracking_on_account_id_and_user_id", unique: true
+    t.index ["account_id"], name: "index_time_tracking_users_on_account_id"
+    t.index ["user_id"], name: "index_time_tracking_users_on_user_id"
+  end
+
   create_table "users", id: :serial, force: :cascade do |t|
     t.string "provider", default: "email", null: false
     t.string "uid", default: "", null: false
@@ -814,6 +827,8 @@ ActiveRecord::Schema.define(version: 2022_05_06_163839) do
   add_foreign_key "team_members", "teams", on_delete: :cascade
   add_foreign_key "team_members", "users", on_delete: :cascade
   add_foreign_key "teams", "accounts", on_delete: :cascade
+  add_foreign_key "time_trackings", "accounts"
+  add_foreign_key "time_trackings", "users"
   create_trigger("accounts_after_insert_row_tr", :generated => true, :compatibility => 1).
       on("accounts").
       after(:insert).

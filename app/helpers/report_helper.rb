@@ -69,13 +69,21 @@ module ReportHelper
   def resolutions_work_time
     result_work_time = {}
     range.each do |date|
-      work_date = date.next_day.strftime('%Y-%m-%d').to_s
-      key = format(::Redis::Alfred::OPERATORS_TRACKER_DATA, date: work_date)
-      s_work_time = Redis::Alfred.hget(key, user.id)
-      s_work_time = 0 if s_work_time.blank?
-      result_work_time[work_date] = s_work_time.to_i / 3600
+      result_work_time[date] = 0
     end
-
+    TimeTracking.where(account_id: account.id, user_id: user.id, created_at: range).find_each do |item|
+      result_work_time[item.date_at] = item.workime.to_i / 60
+    end
     result_work_time
+  end
+
+  def time_to_date(time)
+    hh = time / 3600
+    hh = "0#{hh}" if hh < 10
+    mm = time / 60 % 60
+    mm = "0#{mm}" if mm < 10
+    ss = time % 60
+    ss = "0#{ss}" if ss < 10
+    format('%<hh>s:%<mm>s:%<ss>s', hh: hh.to_s, mm: mm.to_s, ss: ss.to_s)
   end
 end

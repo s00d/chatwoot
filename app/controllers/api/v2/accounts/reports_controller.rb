@@ -12,32 +12,6 @@ class Api::V2::Accounts::ReportsController < Api::V1::Accounts::BaseController
   end
 
   def agents
-    @work_time = {}
-    @work_hours = {}
-
-    Current.account.users.map do |agent|
-      result_work_time = 0
-      start = Time.zone.at(params[:since].to_i)
-      stop = Time.zone.at(params[:until].to_i)
-      diff = (stop.to_date - start.to_date).to_i + 1
-
-      (0...diff).each do
-        work_date = start.strftime('%Y-%m-%d').to_s
-        key = format(::Redis::Alfred::OPERATORS_TRACKER_DATA, date: work_date)
-        s_work_time = Redis::Alfred.hget(key, agent.id)
-        result_work_time += s_work_time.to_i if s_work_time.present?
-        start = start.next_day
-      end
-      hh = result_work_time / 3600
-      hh = "0#{hh}" if hh < 10
-      mm = result_work_time / 60 % 60
-      mm = "0#{mm}" if mm < 10
-      ss = result_work_time % 60
-      ss = "0#{ss}" if ss < 10
-      @work_hours[agent.id] = format('%<hh>s:%<mm>s:%<ss>s', hh: hh.to_s, mm: mm.to_s, ss: ss.to_s)
-      @work_time[agent.id] = result_work_time / 60
-    end
-
     response.headers['Content-Type'] = 'text/csv'
     response.headers['Content-Disposition'] = 'attachment; filename=agents_report.csv'
     render layout: false, template: 'api/v2/accounts/reports/agents.csv.erb', format: 'csv'

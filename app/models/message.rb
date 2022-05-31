@@ -238,16 +238,22 @@ class Message < ApplicationRecord
   def tracker_run
     if outgoing?
       now = Time.zone.now.to_i
-      time = Redis::Alfred.hget(::Redis::Alfred::OPERATORS_TRACKER_TIMER, sender_id)
 
-      if time.present?
-        diff = now - time.to_i
-        if diff < 600
-          key = format(::Redis::Alfred::OPERATORS_TRACKER_DATA, date: Time.zone.now.strftime('%Y-%m-%d').to_s)
-          Redis::Alfred.hincrby(key, sender_id, diff)
-        end
+      tracker = TimeTracking.find_or_create_by!(
+        account_id: account_id,
+        user_id: sender_id,
+        date_at: Time.zone.now.strftime('%Y-%m-%d').to_s
+      )
+
+      time = 0
+      if tracker.active_at.present?
+        time = tracker.active_at.time.to_i
       end
-      Redis::Alfred.hset(::Redis::Alfred::OPERATORS_TRACKER_TIMER, sender_id, Time.zone.now.to_i)
+
+      diff = now - time
+      tracker.workime += diff if diff < 600
+      tracker.active_at = Time.zone.now
+      tracker.save!
     end
   end
 

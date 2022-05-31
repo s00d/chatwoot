@@ -17,7 +17,7 @@
         since: params[:since],
         until: params[:until]
       }).summary %>
-  <% row = [ agent.id, agent.name, agent_report[:conversations_count], (agent_report[:avg_first_response_time]/60).to_i, (agent_report[:avg_resolution_time]/60).to_i, @work_time[agent.id].to_i, @work_hours[agent.id].to_s ] %>
+  <% row = [ agent.id, agent.name, agent_report[:conversations_count], (agent_report[:avg_first_response_time]/60).to_i, (agent_report[:avg_resolution_time]/60).to_i, (agent_report[:resolutions_work_time]/60).to_i, time_to_date(agent_report[:resolutions_work_time]).to_s ] %>
   <% if agent.present? %>
     <%= CSV.generate_line row %>
   <% end %>

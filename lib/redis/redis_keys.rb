@@ -21,9 +21,6 @@ module Redis::RedisKeys
   # sorted set storing online presense of account users
   ONLINE_PRESENCE_USERS = 'ONLINE_PRESENCE::%<account_id>d::USERS'.freeze
 
-  OPERATORS_TRACKER_TIMER = 'OPERATORS_TRACKER_TIMER'.freeze
-  OPERATORS_TRACKER_DATA = 'OPERATORS_TRACKER_DATA::%<date>s'.freeze
-
   ## Authorization Status Keys
   # Used to track token expiry and such issues for facebook slack integrations etc
   AUTHORIZATION_ERROR_COUNT = 'AUTHORIZATION_ERROR_COUNT:%<obj_type>s:%<obj_id>d'.freeze
