@@ -13,7 +13,6 @@
 #
 # Indexes
 #
-#  index_time_tracking_on_account_id_and_user_id  (account_id,user_id) UNIQUE
 #  index_time_tracking_users_on_account_id        (account_id)
 #  index_time_tracking_users_on_user_id           (user_id)
 #
@@ -24,7 +23,6 @@
 #
 
 class TimeTracking < ApplicationRecord
-
   belongs_to :account
   belongs_to :user
   belongs_to :inviter, class_name: 'User', optional: true

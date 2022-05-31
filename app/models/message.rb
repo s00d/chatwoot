@@ -246,9 +246,7 @@ class Message < ApplicationRecord
       )
 
       time = 0
-      if tracker.active_at.present?
-        time = tracker.active_at.time.to_i
-      end
+      time = tracker.active_at.time.to_i if tracker.active_at.present?
 
       diff = now - time
       tracker.workime += diff if diff < 600
