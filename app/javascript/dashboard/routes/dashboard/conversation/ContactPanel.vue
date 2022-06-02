@@ -41,7 +41,7 @@
           <div v-else-if="element.name === 'conversation_info'">
             <accordion-item
               :title="$t('CONVERSATION_SIDEBAR.ACCORDION.CONVERSATION_INFO')"
-              :showTitle="false"
+              :show-title="false"
               :is-open="isContactSidebarItemOpen('is_conv_details_open')"
               compact
               @click="
