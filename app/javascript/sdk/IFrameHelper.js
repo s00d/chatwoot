@@ -23,7 +23,15 @@ import {
   removeUnreadClass,
 } from './bubbleHelpers';
 import { dispatchWindowEvent } from 'shared/helpers/CustomEventHelper';
-import { CHATWOOT_ERROR, CHATWOOT_READY } from '../widget/constants/sdkEvents';
+import {
+  CHATWOOT_CLOSE,
+  CHATWOOT_CLOSE_2,
+  CHATWOOT_ERROR,
+  CHATWOOT_OPEN,
+  CHATWOOT_OPEN_2,
+  CHATWOOT_READY,
+  CHATWOOT_READY_2,
+} from '../widget/constants/sdkEvents';
 import { SET_USER_ERROR } from '../widget/constants/errorTypes';
 import { getUserCookieName } from './cookieHelpers';
 import {
@@ -164,6 +172,7 @@ export const IFrameHelper = {
 
       if (!window.$chatwoot.resetTriggered) {
         dispatchWindowEvent({ eventName: CHATWOOT_READY });
+        dispatchWindowEvent({ eventName: CHATWOOT_READY_2 });
       }
     },
     error: ({ errorType, data }) => {
@@ -204,6 +213,11 @@ export const IFrameHelper = {
       IFrameHelper.sendMessage('toggle-open', { isOpen });
       if (isOpen) {
         IFrameHelper.pushEvent('webwidget.triggered');
+        dispatchWindowEvent({ eventName: CHATWOOT_OPEN });
+        dispatchWindowEvent({ eventName: CHATWOOT_OPEN_2 });
+      } else {
+        dispatchWindowEvent({ eventName: CHATWOOT_CLOSE });
+        dispatchWindowEvent({ eventName: CHATWOOT_CLOSE_2 });
       }
     },
     onLocationChange: ({ referrerURL, referrerHost }) => {
