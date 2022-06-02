@@ -1,6 +1,10 @@
 <template>
   <div class="cw-accordion">
-    <button class="cw-accordion--title drag-handle" @click="$emit('click')">
+    <button
+      v-if="showTitle"
+      class="cw-accordion--title drag-handle"
+      @click="$emit('click')"
+    >
       <div class="cw-accordion--title-wrap">
         <emoji-or-icon class="icon-or-emoji" :icon="icon" :emoji="emoji" />
         <h5>
@@ -16,7 +20,7 @@
       </div>
     </button>
     <div
-      v-if="isOpen"
+      v-if="!show_title || isOpen"
       class="cw-accordion--content"
       :class="{ compact: compact }"
     >
@@ -40,6 +44,10 @@ export default {
     compact: {
       type: Boolean,
       default: false,
+    },
+    showTitle: {
+      type: Boolean,
+      default: true,
     },
     icon: {
       type: String,

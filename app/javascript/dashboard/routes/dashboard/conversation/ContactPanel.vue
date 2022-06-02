@@ -41,6 +41,7 @@
           <div v-else-if="element.name === 'conversation_info'">
             <accordion-item
               :title="$t('CONVERSATION_SIDEBAR.ACCORDION.CONVERSATION_INFO')"
+              :showTitle="false"
               :is-open="isContactSidebarItemOpen('is_conv_details_open')"
               compact
               @click="
@@ -52,30 +53,20 @@
                 :contact-attributes="contactAdditionalAttributes"
               >
               </conversation-info>
-            </accordion-item>
-          </div>
-          <div v-else-if="element.name === 'contact_attributes'">
-            <accordion-item
-              :title="$t('CONVERSATION_SIDEBAR.ACCORDION.CONTACT_ATTRIBUTES')"
-              :is-open="isContactSidebarItemOpen('is_contact_attributes_open')"
-              compact
-              @click="
-                value =>
-                  toggleSidebarUIState('is_contact_attributes_open', value)
-              "
-            >
+
               <custom-attributes
                 attribute-type="contact_attribute"
                 attribute-class="conversation--attribute"
                 class="even"
                 :contact-id="contact.id"
               />
-              <custom-attribute-selector
-                attribute-type="contact_attribute"
-                :contact-id="contact.id"
-              />
+              <!--              <custom-attribute-selector-->
+              <!--                attribute-type="contact_attribute"-->
+              <!--                :contact-id="contact.id"-->
+              <!--              />-->
             </accordion-item>
           </div>
+
           <div v-else-if="element.name === 'previous_conversation'">
             <accordion-item
               v-if="contact.id"
@@ -109,7 +100,7 @@ import ConversationAction from './ConversationAction.vue';
 import ContactInfo from './contact/ContactInfo';
 import ConversationInfo from './ConversationInfo';
 import CustomAttributes from './customAttributes/CustomAttributes.vue';
-import CustomAttributeSelector from './customAttributes/CustomAttributeSelector.vue';
+// import CustomAttributeSelector from './customAttributes/CustomAttributeSelector.vue';
 import draggable from 'vuedraggable';
 import uiSettingsMixin from 'dashboard/mixins/uiSettings';
 
@@ -120,7 +111,7 @@ export default {
     ContactInfo,
     ConversationInfo,
     CustomAttributes,
-    CustomAttributeSelector,
+    // CustomAttributeSelector,
     ConversationAction,
     draggable,
   },

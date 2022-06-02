@@ -39,20 +39,20 @@
       attribute-class="conversation--attribute"
       :class="customAttributeRowClass"
     />
-    <custom-attribute-selector attribute-type="conversation_attribute" />
+    <!--    <custom-attribute-selector attribute-type="conversation_attribute" />-->
   </div>
 </template>
 
 <script>
 import ContactDetailsItem from './ContactDetailsItem.vue';
 import CustomAttributes from './customAttributes/CustomAttributes.vue';
-import CustomAttributeSelector from './customAttributes/CustomAttributeSelector.vue';
+// import CustomAttributeSelector from './customAttributes/CustomAttributeSelector.vue';
 
 export default {
   components: {
     ContactDetailsItem,
     CustomAttributes,
-    CustomAttributeSelector,
+    // CustomAttributeSelector,
   },
   props: {
     conversationAttributes: {
