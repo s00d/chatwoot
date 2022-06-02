@@ -48,8 +48,6 @@
                 value => toggleSidebarUIState('is_conv_details_open', value)
               "
             >
-              1111
-
               <conversation-info
                 :conversation-attributes="conversationAdditionalAttributes"
                 :contact-attributes="contactAdditionalAttributes"
@@ -181,15 +179,15 @@ export default {
     },
   },
   mounted() {
-    this.bbbbbb();
+    this.ccccc();
     this.conversationSidebarItems = this.conversationSidebarItemsOrder;
     this.getContactDetails();
     this.$store.dispatch('attributes/get', 0);
   },
   methods: {
-    bbbbbb() {
+    cccc() {
       // eslint-disable-next-line no-console
-      console.log('asssaaaffa');
+      console.log('cccccc');
     },
     onPanelToggle() {
       this.onToggle();
