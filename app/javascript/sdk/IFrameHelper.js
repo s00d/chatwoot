@@ -27,6 +27,7 @@ import {
   CHATWOOT_CLOSE,
   CHATWOOT_CLOSE_2,
   CHATWOOT_ERROR,
+  CHATWOOT_LOADED,
   CHATWOOT_OPEN,
   CHATWOOT_OPEN_2,
   CHATWOOT_READY,
@@ -76,6 +77,7 @@ export const IFrameHelper = {
     IFrameHelper.initPostMessageCommunication();
     IFrameHelper.initWindowSizeListener();
     IFrameHelper.preventDefaultScroll();
+    dispatchWindowEvent({ eventName: CHATWOOT_LOADED });
   },
   getAppFrame: () => document.getElementById('chatwoot_live_chat_widget'),
   getBubbleHolder: () => document.getElementsByClassName('woot--bubble-holder'),

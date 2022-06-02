@@ -1,4 +1,5 @@
 export const CHATWOOT_ERROR = 'chatwoot:error';
+export const CHATWOOT_LOADED = 'chatwoot:loaded';
 export const CHATWOOT_OPEN = 'chatwoot:open';
 export const CHATWOOT_OPEN_2 = 'chatwoot:open2';
 export const CHATWOOT_CLOSE_2 = 'chatwoot:close2';

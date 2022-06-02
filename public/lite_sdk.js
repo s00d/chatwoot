@@ -92,8 +92,9 @@
           // storage_del('chatwoot_opened_date');
         });
         window.addEventListener('chatwoot:ready2', function on_ready() {
+          console.log('on_ready')
           if (isOpen) {
-            window.$chatwoot.toggle();
+            window.$chatwoot.toggle('open');
           }
           document.body.removeChild(newDiv);
         });
