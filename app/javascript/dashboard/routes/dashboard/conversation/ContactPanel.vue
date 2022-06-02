@@ -179,11 +179,16 @@ export default {
     },
   },
   mounted() {
+    this.asssaaaffa();
     this.conversationSidebarItems = this.conversationSidebarItemsOrder;
     this.getContactDetails();
     this.$store.dispatch('attributes/get', 0);
   },
   methods: {
+    asssaaaffa() {
+      // eslint-disable-next-line no-console
+      console.log('asssaaaffa');
+    },
     onPanelToggle() {
       this.onToggle();
     },

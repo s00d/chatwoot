@@ -13,8 +13,8 @@
 #
 # Indexes
 #
-#  index_time_tracking_users_on_account_id        (account_id)
-#  index_time_tracking_users_on_user_id           (user_id)
+#  index_time_tracking_users_on_account_id  (account_id)
+#  index_time_tracking_users_on_user_id     (user_id)
 #
 # Foreign Keys
 #

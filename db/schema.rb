@@ -735,7 +735,6 @@ ActiveRecord::Schema.define(version: 2022_05_31_051150) do
     t.date "date_at", default: -> { "date(now())" }, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["account_id", "user_id"], name: "index_time_tracking_on_account_id_and_user_id", unique: true
     t.index ["account_id"], name: "index_time_tracking_users_on_account_id"
     t.index ["user_id"], name: "index_time_tracking_users_on_user_id"
   end
