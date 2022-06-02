@@ -34,6 +34,7 @@
         <social-icons :social-profiles="socialProfiles" />
         <div class="contact--metadata">
           <contact-info-row
+            class="email-row"
             :href="contact.email ? `mailto:${contact.email}` : ''"
             :value="contact.email"
             icon="mail"
@@ -297,12 +298,33 @@ export default {
   display: flex;
   align-items: center;
   margin-bottom: var(--space-small);
+  position: absolute;
+  top: 16px;
+  left: 78px;
+  width: 200px;
+  overflow-x: auto;
+}
+
+.email-row {
+  position: absolute;
+  top: 46px;
+  left: 78px;
+  width: 200px;
+  overflow-x: auto;
+
+  a {
+    span {
+      white-space: nowrap;
+      overflow-x: scroll;
+    }
+  }
 }
 
 .contact--name {
   text-transform: capitalize;
-  white-space: normal;
   margin: 0 var(--space-smaller) 0 0;
+  white-space: nowrap;
+  overflow-x: scroll;
 
   a {
     color: var(--color-body);

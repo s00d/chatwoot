@@ -41,13 +41,15 @@
           <div v-else-if="element.name === 'conversation_info'">
             <accordion-item
               :title="$t('CONVERSATION_SIDEBAR.ACCORDION.CONVERSATION_INFO')"
-              :show-title="false"
-              :is-open="isContactSidebarItemOpen('is_conv_details_open')"
+              :is-open="true"
+              :show-closer="false"
               compact
               @click="
                 value => toggleSidebarUIState('is_conv_details_open', value)
               "
             >
+              1111
+
               <conversation-info
                 :conversation-attributes="conversationAdditionalAttributes"
                 :contact-attributes="contactAdditionalAttributes"
@@ -179,13 +181,13 @@ export default {
     },
   },
   mounted() {
-    this.asssaaaffa();
+    this.bbbbbb();
     this.conversationSidebarItems = this.conversationSidebarItemsOrder;
     this.getContactDetails();
     this.$store.dispatch('attributes/get', 0);
   },
   methods: {
-    asssaaaffa() {
+    bbbbbb() {
       // eslint-disable-next-line no-console
       console.log('asssaaaffa');
     },

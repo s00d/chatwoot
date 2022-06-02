@@ -11,7 +11,7 @@
           {{ title }}
         </h5>
       </div>
-      <div class="button-icon--wrap">
+      <div v-if="showCloser" class="button-icon--wrap">
         <slot name="button" />
         <div class="chevron-icon__wrap">
           <fluent-icon v-if="isOpen" size="24" icon="subtract" type="solid" />
@@ -20,7 +20,7 @@
       </div>
     </button>
     <div
-      v-if="!show_title || isOpen"
+      v-if="isOpen"
       class="cw-accordion--content"
       :class="{ compact: compact }"
     >
@@ -46,6 +46,10 @@ export default {
       default: false,
     },
     showTitle: {
+      type: Boolean,
+      default: true,
+    },
+    showCloser: {
       type: Boolean,
       default: true,
     },
