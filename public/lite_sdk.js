@@ -74,7 +74,7 @@
       var websiteToken = window.chatwootLITESDK.websiteToken;
       var g = d.createElement(t);
       var s = d.getElementsByTagName(t)[0];
-      g.src = BASE_URL + '/packs/js/sdk.js';
+      g.src = BASE_URL + '/packs/js/sdk.js?v1';
       g.defer = true;
       g.async = true;
       s.parentNode.insertBefore(g, s);
