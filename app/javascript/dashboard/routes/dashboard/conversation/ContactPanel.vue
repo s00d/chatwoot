@@ -185,7 +185,7 @@ export default {
     this.$store.dispatch('attributes/get', 0);
   },
   methods: {
-    cccc() {
+    ccccc() {
       // eslint-disable-next-line no-console
       console.log('cccccc');
     },
