@@ -76,14 +76,4 @@ module ReportHelper
     end
     result_work_time
   end
-
-  def time_to_date(time)
-    hh = time / 3600
-    hh = "0#{hh}" if hh < 10
-    mm = time / 60 % 60
-    mm = "0#{mm}" if mm < 10
-    ss = time % 60
-    ss = "0#{ss}" if ss < 10
-    format('%<hh>s:%<mm>s:%<ss>s', hh: hh.to_s, mm: mm.to_s, ss: ss.to_s)
-  end
 end
