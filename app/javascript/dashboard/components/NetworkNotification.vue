@@ -21,8 +21,7 @@
           color-scheme="warning"
           icon="dismiss-circle"
           @click="closeNotification"
-        >
-        </woot-button>
+        />
       </div>
     </div>
   </transition>

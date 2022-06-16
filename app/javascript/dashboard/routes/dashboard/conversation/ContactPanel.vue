@@ -51,9 +51,19 @@
               <conversation-info
                 :conversation-attributes="conversationAdditionalAttributes"
                 :contact-attributes="contactAdditionalAttributes"
-              >
-              </conversation-info>
-
+              />
+            </accordion-item>
+          </div>
+          <div v-else-if="element.name === 'contact_attributes'">
+            <accordion-item
+              :title="$t('CONVERSATION_SIDEBAR.ACCORDION.CONTACT_ATTRIBUTES')"
+              :is-open="isContactSidebarItemOpen('is_contact_attributes_open')"
+              compact
+              @click="
+                value =>
+                  toggleSidebarUIState('is_contact_attributes_open', value)
+              "
+            >
               <custom-attributes
                 attribute-type="contact_attribute"
                 attribute-class="conversation--attribute"
