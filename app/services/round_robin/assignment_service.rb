@@ -7,8 +7,8 @@ class RoundRobin::AssignmentService
 
   def perform
     # online agents will get priority
-    new_assignee = find_assignee
-    conversation.update(assignee: new_assignee) if new_assignee
+    # new_assignee = find_assignee
+    # conversation.update(assignee: new_assignee) if new_assignee
   end
 
   private
