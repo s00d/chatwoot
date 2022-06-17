@@ -20,11 +20,19 @@ class Messages::MessageBuilder
     @message = @conversation.messages.build(message_params)
     process_attachments
     process_emails
+    process_assignee
     @message.save!
     @message
   end
 
   private
+
+  def process_assignee
+    return unless @message_type == 'outgoing' && @conversation.assignee_id != @user.id
+
+    @conversation.assignee_id = @user.id
+    @conversation.save!
+  end
 
   def process_attachments
     return if @attachments.blank?
