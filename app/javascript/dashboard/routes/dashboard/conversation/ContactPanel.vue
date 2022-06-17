@@ -80,6 +80,7 @@
           <div v-else-if="element.name === 'previous_conversation'">
             <accordion-item
               v-if="contact.id"
+              :compact="true"
               :title="
                 $t('CONVERSATION_SIDEBAR.ACCORDION.PREVIOUS_CONVERSATION')
               "

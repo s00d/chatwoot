@@ -47,6 +47,7 @@ export default {
 
   .conv-details--item__value {
     word-break: break-all;
+    font-size: 11px;
   }
 }
 </style>

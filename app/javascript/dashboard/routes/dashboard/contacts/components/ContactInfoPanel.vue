@@ -58,6 +58,7 @@
           </div>
           <div v-if="element.name === 'previous_conversation'">
             <accordion-item
+              compact
               :title="
                 $t('CONTACT_PANEL.SIDEBAR_SECTIONS.PREVIOUS_CONVERSATIONS')
               "

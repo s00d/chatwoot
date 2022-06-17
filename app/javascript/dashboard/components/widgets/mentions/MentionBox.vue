@@ -4,6 +4,9 @@
     class="vertical dropdown menu mention--box"
     :style="{ top: getTopPadding() + 'rem' }"
   >
+    <li>
+      <a class="close-icon" @click="$emit('close')">x</a>
+    </li>
     <li
       v-for="(item, index) in items"
       :id="`mention-item-${index}`"
@@ -111,5 +114,12 @@ export default {
   .active a {
     background: var(--w-500);
   }
+}
+
+.close-icon {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 25px;
 }
 </style>

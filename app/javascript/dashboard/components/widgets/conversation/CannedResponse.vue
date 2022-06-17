@@ -1,5 +1,9 @@
 <template>
-  <mention-box :items="items" @mention-select="handleMentionClick" />
+  <mention-box
+    :items="items"
+    @mention-select="handleMentionClick"
+    @close="$emit('close')"
+  />
 </template>
 
 <script>
