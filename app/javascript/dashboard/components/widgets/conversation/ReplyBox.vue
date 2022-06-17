@@ -19,9 +19,9 @@
     <div class="reply-box__top">
       <canned-response
         v-if="showMentions && hasSlashCommand"
-        v-on-clickaway="hideMentions"
         :search-key="mentionSearchKey"
         @click="replaceText"
+        @close="hideMentions"
       />
       <emoji-input
         v-if="showEmojiPicker"
@@ -482,7 +482,19 @@ export default {
     toggleCannedMenu(value) {
       this.showCannedMenu = value;
     },
+    isUp(e) {
+      return e.keyCode === 38 || (e.ctrlKey && e.keyCode === 80); // UP, Ctrl-P
+    },
+    isDown(e) {
+      return e.keyCode === 40 || (e.ctrlKey && e.keyCode === 78); // DOWN, Ctrl-N
+    },
     handleKeyEvents(e) {
+      if (this.hasSlashCommand && this.isUp(e)) {
+        this.$refs.messageInput.$el.blur();
+      }
+      if (this.hasSlashCommand && this.isDown(e)) {
+        this.$refs.messageInput.$el.blur();
+      }
       if (isEscape(e)) {
         this.hideEmojiPicker();
         this.hideMentions();
@@ -578,6 +590,7 @@ export default {
     replaceText(message) {
       setTimeout(() => {
         this.message = message;
+        this.$refs.messageInput.$el.focus();
       }, 100);
     },
     setReplyMode(mode = REPLY_EDITOR_MODES.REPLY) {
