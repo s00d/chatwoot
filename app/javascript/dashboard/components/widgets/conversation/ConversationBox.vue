@@ -157,22 +157,22 @@ export default {
   overflow: hidden;
   overflow: auto;
   background: white;
-  flex-basis: 28rem;
+  flex-basis: 27rem;
 
   @include breakpoint(large up) {
-    flex-basis: 27em;
+    flex-basis: 24em;
   }
 
   @include breakpoint(xlarge up) {
-    flex-basis: 28em;
+    flex-basis: 25em;
   }
 
   @include breakpoint(xxlarge up) {
-    flex-basis: 29rem;
+    flex-basis: 26rem;
   }
 
   @include breakpoint(xxxlarge up) {
-    flex-basis: 30rem;
+    flex-basis: 27rem;
   }
 
   &::v-deep .contact--panel {

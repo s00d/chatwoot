@@ -649,19 +649,19 @@ export default {
 
 .conversations-list-wrap {
   flex-shrink: 0;
-  width: 30rem;
+  width: 25rem;
   overflow: hidden;
   @include breakpoint(large up) {
-    width: 30rem;
+    width: 27rem;
   }
   @include breakpoint(xlarge up) {
-    width: 30rem;
+    width: 27rem;
   }
   @include breakpoint(xxlarge up) {
-    width: 30rem;
+    width: 27rem;
   }
   @include breakpoint(xxxlarge up) {
-    flex-basis: 30rem;
+    flex-basis: 27rem;
   }
 }
 .filter--actions {
