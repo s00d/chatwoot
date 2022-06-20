@@ -1,7 +1,19 @@
 <template>
-  <div v-if="hasSecondaryMenu" class="main-nav secondary-menu">
-    <account-context @toggle-accounts="toggleAccountModal" />
-    <transition-group name="menu-list" tag="ul" class="menu vertical">
+  <div
+    v-if="hasSecondaryMenu"
+    class="main-nav secondary-menu"
+    :class="{ hidden: isContactSidebarItemOpen('is_secondary_menu_open') }"
+  >
+    <account-context
+      v-if="!isContactSidebarItemOpen('is_secondary_menu_open')"
+      @toggle-accounts="toggleAccountModal"
+    />
+    <transition-group
+      v-if="!isContactSidebarItemOpen('is_secondary_menu_open')"
+      name="menu-list"
+      tag="ul"
+      class="menu vertical"
+    >
       <secondary-nav-item
         v-for="menuItem in accessibleMenuItems"
         :key="menuItem.toState"
@@ -14,18 +26,31 @@
         @add-label="showAddLabelPopup"
       />
     </transition-group>
+
+    <div class="sidebar-toggle__wrap">
+      <woot-button
+        variant="smooth"
+        size="tiny"
+        color-scheme="secondary"
+        class="sidebar-toggle--button"
+        :icon="isRightOrLeftIcon"
+        @click="value => toggleSidebarUIState('is_secondary_menu_open', value)"
+      />
+    </div>
   </div>
 </template>
 <script>
 import { frontendURL } from '../../../helper/URLHelper';
 import SecondaryNavItem from './SecondaryNavItem.vue';
 import AccountContext from './AccountContext.vue';
+import uiSettingsMixin from 'dashboard/mixins/uiSettings';
 
 export default {
   components: {
     AccountContext,
     SecondaryNavItem,
   },
+  mixins: [uiSettingsMixin],
   props: {
     accountId: {
       type: Number,
@@ -220,6 +245,12 @@ export default {
         contacts: contactMenuItems,
       };
     },
+    isRightOrLeftIcon() {
+      if (this.isContactSidebarItemOpen('is_secondary_menu_open')) {
+        return 'arrow-chevron-right';
+      }
+      return 'arrow-chevron-left';
+    },
   },
   methods: {
     showAddLabelPopup() {
@@ -236,13 +267,41 @@ export default {
   background: var(--white);
   border-right: 1px solid var(--s-50);
   height: 100%;
-  width: 19rem;
+  width: 16rem;
   flex-shrink: 0;
   overflow: hidden;
-  padding: var(--space-small);
+  padding: var(--space-zero);
 
   &:hover {
     overflow: auto;
+  }
+
+  &.hidden {
+    width: 1rem;
+  }
+}
+
+.sidebar-toggle__wrap {
+  display: flex;
+  justify-content: flex-end;
+
+  .sidebar-toggle--button {
+    position: fixed;
+
+    bottom: var(--space-mega);
+    z-index: var(--z-index-low);
+
+    background: var(--white);
+
+    border-top-left-radius: calc(
+      var(--space-medium) + 1px
+    ); /* 100px of height + 10px of border */
+    border-bottom-left-radius: calc(
+      var(--space-medium) + 1px
+    ); /* 100px of height + 10px of border */
+    border: 1px solid var(--color-border-light);
+    border-right: 0;
+    box-sizing: border-box;
   }
 }
 </style>
