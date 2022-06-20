@@ -21,7 +21,7 @@
 }
 
 .tabs-title {
-  @include margin($zero $space-slab);
+  @include margin($zero $space-small);
 
   .badge {
     background: $color-background;
