@@ -162,7 +162,6 @@ const actions = {
     const pendingMessage = createPendingMessage(data);
     dispatch('sendMessageWithData', pendingMessage);
   },
-
   sendMessageWithData: async ({ commit }, pendingMessage) => {
     try {
       commit(types.ADD_MESSAGE, {
@@ -205,6 +204,24 @@ const actions = {
 
   updateMessage({ commit }, message) {
     commit(types.ADD_MESSAGE, message);
+  },
+
+  editMessage: async function editLabels(
+    { commit },
+    { conversationId, messageId, content }
+  ) {
+    try {
+      const response = await MessageApi.edit(
+        conversationId,
+        messageId,
+        content
+      );
+      const { data } = response;
+      // The delete message is actually deleting the content.
+      commit(types.ADD_MESSAGE, data);
+    } catch (error) {
+      throw new Error(error);
+    }
   },
 
   deleteMessage: async function deleteLabels(

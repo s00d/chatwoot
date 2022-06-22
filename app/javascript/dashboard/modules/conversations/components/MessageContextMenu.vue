@@ -14,6 +14,16 @@
       :class="`dropdown-pane--${menuPosition}`"
     >
       <woot-dropdown-menu>
+        <woot-dropdown-item v-if="showEdit">
+          <woot-button
+            variant="clear"
+            size="small"
+            icon="edit"
+            @click="handleEdit"
+          >
+            {{ $t('CONVERSATION.CONTEXT_MENU.EDIT') }}
+          </woot-button>
+        </woot-dropdown-item>
         <woot-dropdown-item v-if="showCopy">
           <woot-button
             variant="clear"
@@ -24,7 +34,7 @@
             {{ $t('CONVERSATION.CONTEXT_MENU.COPY') }}
           </woot-button>
         </woot-dropdown-item>
-        <woot-dropdown-item>
+        <woot-dropdown-item v-if="showDel">
           <woot-button
             variant="clear"
             color-scheme="alert"
@@ -60,6 +70,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    showEdit: {
+      type: Boolean,
+      default: false,
+    },
+    showDel: {
+      type: Boolean,
+      default: false,
+    },
     menuPosition: {
       type: String,
       default: 'left',
@@ -68,6 +86,9 @@ export default {
   methods: {
     handleContextMenuClick() {
       this.$emit('toggle', !this.isOpen);
+    },
+    handleEdit() {
+      this.$emit('edit');
     },
     handleCopy() {
       this.$emit('copy');

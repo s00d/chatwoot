@@ -11,7 +11,18 @@ class Api::V1::Accounts::Conversations::MessagesController < Api::V1::Accounts::
     render_could_not_create_error(e.message)
   end
 
+  def edit
+    return if message.sender_id != @user.id
+
+    ActiveRecord::Base.transaction do
+      message.update!(content: params[:content])
+      message.save!
+    end
+  end
+
   def destroy
+    return if message.sender_id != @user.id
+
     ActiveRecord::Base.transaction do
       message.update!(content: I18n.t('conversations.messages.deleted'), content_attributes: { deleted: true })
       message.attachments.destroy_all

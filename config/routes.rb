@@ -69,7 +69,7 @@ Rails.application.routes.draw do
               post :filter
             end
             scope module: :conversations do
-              resources :messages, only: [:index, :create, :destroy]
+              resources :messages, only: [:index, :create, :destroy, :edit]
               resources :assignments, only: [:create]
               resources :labels, only: [:create, :index]
               resource :direct_uploads, only: [:create]

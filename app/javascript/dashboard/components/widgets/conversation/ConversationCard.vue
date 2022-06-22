@@ -62,7 +62,7 @@
           class="message--attachment-icon last-message-icon"
           icon="info"
         />
-        <span v-if="lastMessageInChat.content">
+        <span v-if="lastMessageInChat.content" :class="parsedTypeClass">
           {{ parsedLastMessage }}
         </span>
         <span v-else-if="lastMessageInChat.attachments">
@@ -241,6 +241,18 @@ export default {
       return isPrivate;
     },
 
+    parsedTypeClass() {
+      if (this.lastMessageInChat.message_type === 0) {
+        return 'st-user';
+      }
+      if (this.lastMessageInChat.message_type === 1) {
+        return 'st-agent';
+      }
+      if (this.lastMessageInChat.message_type === 2) {
+        return 'st-bot';
+      }
+      return '';
+    },
     parsedLastMessage() {
       const { content_attributes: contentAttributes } = this.lastMessageInChat;
       const { email: { subject } = {} } = contentAttributes || {};
@@ -373,5 +385,17 @@ export default {
     margin: var(--space-zero);
     cursor: pointer;
   }
+}
+
+.st-user {
+  color: #00a100;
+}
+
+.st-agent {
+  color: #0202bd;
+}
+
+.st-bot {
+  color: #c00000;
 }
 </style>

@@ -100,10 +100,13 @@
         v-if="isBubble && !isMessageDeleted"
         :is-open="showContextMenu"
         :show-copy="hasText"
+        :show-edit="hasEdit"
+        :show-del="hasEdit"
         :menu-position="contextMenuPosition"
         @toggle="handleContextMenuClick"
         @delete="handleDelete"
         @copy="handleCopy"
+        @edit="handleEdit"
       />
     </div>
   </li>
@@ -128,6 +131,7 @@ import alertMixin from 'shared/mixins/alertMixin';
 import contentTypeMixin from 'shared/mixins/contentTypeMixin';
 import { MESSAGE_TYPE, MESSAGE_STATUS } from 'shared/constants/messages';
 import { generateBotMessageContent } from './helpers/botMessageContentHelper';
+import { mapGetters } from 'vuex';
 
 export default {
   components: {
@@ -170,6 +174,9 @@ export default {
     };
   },
   computed: {
+    ...mapGetters({
+      currentUserID: 'getCurrentUserID',
+    }),
     contentToBeParsed() {
       const {
         html_content: { full: fullHTMLContent } = {},
@@ -301,6 +308,9 @@ export default {
     isMessageDeleted() {
       return this.contentAttributes.deleted;
     },
+    hasEdit() {
+      return this.sender.id === this.currentUserID;
+    },
     hasText() {
       return !!this.data.content;
     },
@@ -408,6 +418,23 @@ export default {
           messageId,
         });
         this.showAlert(this.$t('CONVERSATION.SUCCESS_DELETE_MESSAGE'));
+        this.showContextMenu = false;
+      } catch (error) {
+        this.showAlert(this.$t('CONVERSATION.FAIL_DELETE_MESSSAGE'));
+      }
+    },
+    async handleEdit() {
+      // eslint-disable-next-line no-alert
+      let content = prompt('New message', this.data.content);
+
+      const { conversation_id: conversationId, id: messageId } = this.data;
+      try {
+        await this.$store.dispatch('editMessage', {
+          conversationId,
+          messageId,
+          content,
+        });
+        // this.showAlert(this.$t('CONVERSATION.SUCCESS_DELETE_MESSAGE'));
         this.showContextMenu = false;
       } catch (error) {
         this.showAlert(this.$t('CONVERSATION.FAIL_DELETE_MESSSAGE'));
