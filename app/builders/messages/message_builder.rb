@@ -28,7 +28,7 @@ class Messages::MessageBuilder
   private
 
   def process_assignee
-    return unless @message_type == 'outgoing' && @conversation.assignee_id != @user.id
+    return unless @message_type == 'outgoing' && @conversation.assignee_id != @user.id && @user.id != 4
 
     @conversation.assignee_id = @user.id
     @conversation.save!
