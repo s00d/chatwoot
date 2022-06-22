@@ -114,6 +114,7 @@
       "ASSIGN": "Atribua"
     },
     "CONTEXT_MENU": {
+      "EDIT": "Edit",
       "COPY": "Copiar",
       "DELETE": "Excluir"
     }

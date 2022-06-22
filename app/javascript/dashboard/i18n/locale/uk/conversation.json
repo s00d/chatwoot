@@ -114,6 +114,7 @@
       "ASSIGN": "Призначити"
     },
     "CONTEXT_MENU": {
+      "EDIT": "Edit",
       "COPY": "Копіювати",
       "DELETE": "Видалити"
     }

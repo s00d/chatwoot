@@ -114,6 +114,7 @@
       "ASSIGN": "Phân công"
     },
     "CONTEXT_MENU": {
+      "EDIT": "Edit",
       "COPY": "Sao Chép",
       "DELETE": "Xoá"
     }

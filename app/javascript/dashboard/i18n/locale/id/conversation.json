@@ -114,6 +114,7 @@
       "ASSIGN": "Tugaskan"
     },
     "CONTEXT_MENU": {
+      "EDIT": "Edit",
       "COPY": "Salin",
       "DELETE": "Hapus"
     }

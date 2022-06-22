@@ -114,6 +114,7 @@
       "ASSIGN": "Assigner"
     },
     "CONTEXT_MENU": {
+      "EDIT": "Edit",
       "COPY": "Copier",
       "DELETE": "Supprimer"
     }

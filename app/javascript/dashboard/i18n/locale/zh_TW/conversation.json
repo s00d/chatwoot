@@ -114,6 +114,7 @@
       "ASSIGN": "指派"
     },
     "CONTEXT_MENU": {
+      "EDIT": "Edit",
       "COPY": "複製",
       "DELETE": "刪除"
     }

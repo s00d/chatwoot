@@ -114,6 +114,7 @@
       "ASSIGN": "Hozzárendelés"
     },
     "CONTEXT_MENU": {
+      "EDIT": "Edit",
       "COPY": "Másolás",
       "DELETE": "Törlés"
     }

@@ -114,6 +114,7 @@
       "ASSIGN": "Αντιστοίχιση"
     },
     "CONTEXT_MENU": {
+      "EDIT": "Edit",
       "COPY": "Αντιγραφή",
       "DELETE": "Διαγραφή"
     }

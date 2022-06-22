@@ -114,6 +114,7 @@
       "ASSIGN": "Zuordnen"
     },
     "CONTEXT_MENU": {
+      "EDIT": "Edit",
       "COPY": "Kopieren",
       "DELETE": "Löschen"
     }

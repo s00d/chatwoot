@@ -114,6 +114,7 @@
       "ASSIGN": "Přiřadit"
     },
     "CONTEXT_MENU": {
+      "EDIT": "Edit",
       "COPY": "Kopírovat",
       "DELETE": "Vymazat"
     }

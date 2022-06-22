@@ -114,6 +114,7 @@
       "ASSIGN": "Tilldela"
     },
     "CONTEXT_MENU": {
+      "EDIT": "Edit",
       "COPY": "Kopiera",
       "DELETE": "Radera"
     }

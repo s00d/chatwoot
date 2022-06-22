@@ -114,6 +114,7 @@
       "ASSIGN": "Przypisz"
     },
     "CONTEXT_MENU": {
+      "EDIT": "Edit",
       "COPY": "Copy",
       "DELETE": "Usuń"
     }

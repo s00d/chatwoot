@@ -114,6 +114,7 @@
       "ASSIGN": "שייך"
     },
     "CONTEXT_MENU": {
+      "EDIT": "Edit",
       "COPY": "העתק",
       "DELETE": "מחק"
     }

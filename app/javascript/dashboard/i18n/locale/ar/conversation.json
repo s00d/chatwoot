@@ -114,6 +114,7 @@
       "ASSIGN": "تكليف"
     },
     "CONTEXT_MENU": {
+      "EDIT": "Edit",
       "COPY": "نسخ",
       "DELETE": "حذف"
     }

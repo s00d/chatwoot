@@ -114,6 +114,7 @@
       "ASSIGN": "Assign"
     },
     "CONTEXT_MENU": {
+      "EDIT": "Edit",
       "COPY": "コピー",
       "DELETE": "削除"
     }
