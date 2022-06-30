@@ -10,6 +10,7 @@ export default {
     unreadMessagesCount(m) {
       return m.messages.filter(
         chat =>
+          !chat.isClicked &&
           chat.created_at * 1000 > m.agent_last_seen_at * 1000 &&
           chat.message_type === 0 &&
           chat.private !== true

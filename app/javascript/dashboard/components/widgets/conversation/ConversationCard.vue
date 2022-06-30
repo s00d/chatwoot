@@ -292,7 +292,7 @@ export default {
       if (this.isActiveChat) {
         return;
       }
-      this.chat.agent_last_seen_at = this.chat.created_at;
+      this.chat.isClicked = true;
       router.push({ path: frontendURL(path) });
     },
     onCardHover() {
