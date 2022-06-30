@@ -77,6 +77,10 @@
   .conversations-list {
     @include flex-weight(1);
     @include scroll-on-hover;
+
+    overflow-y: scroll;
+    overflow-x: scroll;
+    padding-right: 15px;
   }
 
   .chat-list__top {
