@@ -1,0 +1,17 @@
+{
+    "name": "s00d/chatwoot",
+    "autoload": {
+        "psr-4": {
+            "S00d\\Chatwoot\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "s00d",
+            "email": "Virus191288@gmail.com"
+        }
+    ],
+    "require-dev": {
+        "laravel/envoy": "^2.8"
+    }
+}

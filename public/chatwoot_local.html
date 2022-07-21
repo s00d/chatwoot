@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+
+    <script>
+      (function(d, t) {
+        const BASE_URL = 'http://127.0.0.1:3000';
+        const g = d.createElement(t);
+        const s = d.getElementsByTagName(t)[0];
+        g.src = BASE_URL + '/lite_sdk.js?v2';
+        g.defer = true;
+        g.async = true;
+        s.parentNode.insertBefore(g, s);
+        g.onload = function() {
+          window.chatwootLITESDK.BASE_URL = BASE_URL;
+          window.chatwootLITESDK.websiteToken = 'prNQqLyNB1FZxgTg2X2s56Pq';
+          window.chatwootLITESDK.run();
+        };
+      })(document, 'script');
+
+      window.addEventListener('chatwoot:ready', function() {
+        window.chatwootSettings = {
+          hideMessageBubble: false,
+          showPopoutButton: true,
+          position: 'left', // This can be left or right
+          locale: 'en', // Language to be set
+          type: 'standard', // [standard, expanded_bubble, full_screen]
+          darkMode: 'auto', // [light, auto]
+        };
+        const name = 'test user';
+        window.$chatwoot.setUser('1', {
+          email: 'test@onlinesim.ru',
+          name: name,
+          avatar_url: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(name),
+        });
+
+        window.$chatwoot.setCustomAttributes({
+          accountId: 1,
+          pricingPlan: 'paid',
+          profile: `https://onlinesim.ru/v2/pages/profile?hash_id=aaaaaaaaaaaaa`,
+          cabinet: false,
+          auth: true,
+          domain: window.location.host,
+        });
+      });
+    </script>
+</head>
+<body>
+</body>
+</html>
