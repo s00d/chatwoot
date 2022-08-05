@@ -164,11 +164,14 @@ import AddCustomViews from 'dashboard/routes/dashboard/customviews/AddCustomView
 import DeleteCustomViews from 'dashboard/routes/dashboard/customviews/DeleteCustomViews.vue';
 import ConversationBulkActions from './widgets/conversation/conversationBulkActions/Index.vue';
 import alertMixin from 'shared/mixins/alertMixin';
+import LocalStorage from '../helper/localStorage';
 
 import {
   hasPressedAltAndJKey,
   hasPressedAltAndKKey,
 } from 'shared/helpers/KeyboardHelpers';
+
+const mstore = new LocalStorage('mstore');
 
 export default {
   components: {
@@ -379,6 +382,9 @@ export default {
     },
   },
   watch: {
+    activeAssigneeTab(val) {
+      mstore.store({ activeAssigneeTab: val });
+    },
     activeTeam() {
       this.resetAndFetchData();
     },
@@ -398,6 +404,8 @@ export default {
     },
   },
   mounted() {
+    this.activeAssigneeTab =
+      mstore.get().activeAssigneeTab ?? wootConstants.ASSIGNEE_TYPE.ME;
     this.$store.dispatch('setChatFilter', this.activeStatus);
     this.resetAndFetchData();
 
