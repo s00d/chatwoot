@@ -191,16 +191,11 @@ export default {
     },
   },
   mounted() {
-    this.ccccc();
     this.conversationSidebarItems = this.conversationSidebarItemsOrder;
     this.getContactDetails();
     this.$store.dispatch('attributes/get', 0);
   },
   methods: {
-    ccccc() {
-      // eslint-disable-next-line no-console
-      console.log('cccccc');
-    },
     onPanelToggle() {
       this.onToggle();
     },

@@ -102,10 +102,11 @@
         :show-copy="hasText"
         :show-edit="hasEdit"
         :show-del="hasEdit"
+        :show-canned-response-option="isOutgoing"
         :menu-position="contextMenuPosition"
+        :message-content="data.content"
         @toggle="handleContextMenuClick"
         @delete="handleDelete"
-        @copy="handleCopy"
         @edit="handleEdit"
       />
     </div>
@@ -129,7 +130,6 @@ import alertMixin from 'shared/mixins/alertMixin';
 import contentTypeMixin from 'shared/mixins/contentTypeMixin';
 import { MESSAGE_TYPE, MESSAGE_STATUS } from 'shared/constants/messages';
 import { generateBotMessageContent } from './helpers/botMessageContentHelper';
-import { copyTextToClipboard } from 'shared/helpers/clipboard';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -435,11 +435,6 @@ export default {
         this.showAlert(this.$t('CONVERSATION.FAIL_DELETE_MESSSAGE'));
       }
     },
-    async handleCopy() {
-      await copyTextToClipboard(this.data.content);
-      this.showAlert(this.$t('CONTACT_PANEL.COPY_SUCCESSFUL'));
-      this.showContextMenu = false;
-    },
     async retrySendMessage() {
       await this.$store.dispatch('sendMessageWithData', this.data);
     },
@@ -452,6 +447,8 @@ export default {
 <style lang="scss">
 .wrap {
   > .bubble {
+    min-width: 128px;
+
     &.is-image,
     &.is-video {
       padding: 0;

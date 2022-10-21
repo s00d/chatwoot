@@ -235,11 +235,11 @@ export default {
   },
   watch: {
     message(value) {
-      this.hasSlashCommand = value[0] === '/';
+      this.hasSlashCommand = value[0] === '/' || value[0] === '\\';
       const hasNextWord = value.includes(' ');
       const isShortCodeActive = this.hasSlashCommand && !hasNextWord;
       if (isShortCodeActive) {
-        this.cannedResponseSearchKey = value.substr(1, value.length);
+        this.cannedResponseSearchKey = value.substring(1);
         this.showCannedResponseMenu = true;
       } else {
         this.cannedResponseSearchKey = '';

@@ -49,6 +49,18 @@
       class="dropdown-pane dropdown-pane--open"
     >
       <woot-dropdown-menu>
+        <woot-dropdown-item>
+          <woot-button
+            class-names="resolve-all"
+            color-scheme="alert"
+            icon="checkmark"
+            emoji="👀"
+            :is-loading="isLoading"
+            @click="showConfirmCloseAll"
+          >
+            {{ this.$t('CONVERSATION.HEADER.RESOLVE_ALL_ACTION') }}
+          </woot-button>
+        </woot-dropdown-item>
         <woot-dropdown-item v-if="!isPending">
           <woot-button
             variant="clear"
@@ -106,6 +118,16 @@
         </woot-dropdown-sub-menu>
       </woot-dropdown-menu>
     </div>
+
+    <woot-delete-modal
+      :show.sync="isCloseAllConfirm"
+      :on-confirm="onCmdResolveAllConversation"
+      :on-close="closeConfirmCloseAll"
+      title="Confirm"
+      message="you really confirm close all?"
+      confirm-text="YES"
+      reject-text="NO"
+    />
   </div>
 </template>
 
@@ -145,12 +167,16 @@ export default {
   data() {
     return {
       isLoading: false,
+      isCloseAllConfirm: false,
       showActionsDropdown: false,
       STATUS_TYPE: wootConstants.STATUS_TYPE,
     };
   },
   computed: {
-    ...mapGetters({ currentChat: 'getSelectedChat' }),
+    ...mapGetters({
+      currentChat: 'getSelectedChat',
+      allConversations: 'getAllConversations',
+    }),
     isOpen() {
       return this.currentChat.status === wootConstants.STATUS_TYPE.OPEN;
     },
@@ -226,6 +252,32 @@ export default {
     onCmdOpenConversation() {
       this.toggleStatus(this.STATUS_TYPE.OPEN);
     },
+    closeConfirmCloseAll() {
+      this.isCloseAllConfirm = false;
+    },
+    showConfirmCloseAll() {
+      this.closeDropdown();
+      this.isCloseAllConfirm = true;
+    },
+    async onCmdResolveAllConversation() {
+      this.isCloseAllConfirm = false;
+      this.isLoading = true;
+      // eslint-disable-next-line no-restricted-syntax,guard-for-in
+      for (const i in this.allConversations) {
+        const conversation = this.allConversations[i];
+        if (conversation.status === 'open') {
+          // eslint-disable-next-line no-await-in-loop
+          await this.$store.dispatch('toggleStatus', {
+            conversationId: conversation.id,
+            status: this.STATUS_TYPE.RESOLVED,
+          });
+          this.showAlert(
+            `${conversation.id}: ${this.$t('CONVERSATION.CHANGE_STATUS')}`
+          );
+        }
+      }
+      this.isLoading = false;
+    },
     onCmdResolveConversation() {
       this.toggleStatus(this.STATUS_TYPE.RESOLVED);
     },
@@ -256,6 +308,15 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.resolve-all {
+  color: white !important;
+  background-color: #ff382d !important;
+
+  &:hover {
+    opacity: 0.5;
+  }
+}
+
 .resolve-actions {
   position: relative;
   display: flex;
