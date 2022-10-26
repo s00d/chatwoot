@@ -149,6 +149,7 @@
       "ASSIGN": "Atama yap"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "EDIT": "Edit",
       "COPY": "Kopyala",
       "DELETE": "Sil",

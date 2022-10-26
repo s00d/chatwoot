@@ -149,6 +149,7 @@
       "ASSIGN": "指派"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "EDIT": "Edit",
       "COPY": "複製",
       "DELETE": "刪除",

@@ -149,6 +149,7 @@
       "ASSIGN": "Призначити"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "EDIT": "Edit",
       "COPY": "Копіювати",
       "DELETE": "Видалити",

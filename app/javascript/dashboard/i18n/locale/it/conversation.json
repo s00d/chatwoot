@@ -149,6 +149,7 @@
       "ASSIGN": "Assegna"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "EDIT": "Edit",
       "COPY": "Copia",
       "DELETE": "Elimina",

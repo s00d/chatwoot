@@ -149,6 +149,7 @@
       "ASSIGN": "มอบหมาย"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "EDIT": "Edit",
       "COPY": "คัดลอก",
       "DELETE": "ลบ",

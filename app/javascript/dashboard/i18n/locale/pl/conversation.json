@@ -149,6 +149,7 @@
       "ASSIGN": "Przypisz"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "EDIT": "Edit",
       "COPY": "Copy",
       "DELETE": "Usuń",

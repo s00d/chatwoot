@@ -149,6 +149,7 @@
       "ASSIGN": "分配"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "EDIT": "Edit",
       "COPY": "复制",
       "DELETE": "删除",

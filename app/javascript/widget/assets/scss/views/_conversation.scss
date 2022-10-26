@@ -218,6 +218,13 @@
   text-align: left;
   word-break: break-word;
 
+  blockquote {
+    display: block;
+    margin: 0 0 0.4rem;
+    padding: 0.9rem 2rem 0 0.9rem;
+    border-left: 1px solid #C2E1FF;
+  }
+
   :not([audio]) {
     max-width: 100%;
   }

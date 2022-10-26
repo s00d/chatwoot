@@ -149,6 +149,7 @@
       "ASSIGN": "Přiřadit"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "EDIT": "Edit",
       "COPY": "Kopírovat",
       "DELETE": "Vymazat",

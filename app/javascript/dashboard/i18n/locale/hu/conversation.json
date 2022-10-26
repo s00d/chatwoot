@@ -149,6 +149,7 @@
       "ASSIGN": "Hozzárendelés"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "EDIT": "Edit",
       "COPY": "Másolás",
       "DELETE": "Törlés",

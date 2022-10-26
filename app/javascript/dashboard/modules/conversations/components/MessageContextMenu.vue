@@ -24,6 +24,18 @@
       :class="`dropdown-pane--${menuPosition}`"
     >
       <woot-dropdown-menu>
+        <woot-dropdown-item v-if="showDel">
+          <woot-button
+            variant="clear"
+            color-scheme="alert"
+            size="small"
+            icon="delete"
+            @click="handleDelete"
+          >
+            {{ $t('CONVERSATION.CONTEXT_MENU.DELETE') }}
+          </woot-button>
+        </woot-dropdown-item>
+
         <woot-dropdown-item v-if="showEdit">
           <woot-button
             variant="clear"
@@ -35,17 +47,6 @@
           </woot-button>
         </woot-dropdown-item>
         <woot-dropdown-item v-if="showCopy">
-          <woot-dropdown-item>
-            <woot-button
-              variant="clear"
-              color-scheme="alert"
-              size="small"
-              icon="delete"
-              @click="handleDelete"
-            >
-              {{ $t('CONVERSATION.CONTEXT_MENU.DELETE') }}
-            </woot-button>
-          </woot-dropdown-item>
           <woot-button
             variant="clear"
             size="small"
@@ -57,15 +58,15 @@
           </woot-button>
         </woot-dropdown-item>
 
-        <woot-dropdown-item v-if="showDel">
+        <woot-dropdown-item>
           <woot-button
             variant="clear"
-            color-scheme="alert"
             size="small"
-            icon="delete"
-            @click="handleDelete"
+            icon="clipboard"
+            color-scheme="secondary"
+            @click="handleReplay"
           >
-            {{ $t('CONVERSATION.CONTEXT_MENU.DELETE') }}
+            {{ $t('CONVERSATION.CONTEXT_MENU.REPLAY') }}
           </woot-button>
         </woot-dropdown-item>
 
@@ -151,6 +152,9 @@ export default {
       await copyTextToClipboard(this.plainTextContent);
       this.showAlert(this.$t('CONTACT_PANEL.COPY_SUCCESSFUL'));
       this.$emit('toggle', false);
+    },
+    handleReplay() {
+      this.$emit('replay');
     },
     handleDelete() {
       this.$emit('delete');

@@ -149,6 +149,7 @@
       "ASSIGN": "Αντιστοίχιση"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "EDIT": "Edit",
       "COPY": "Αντιγραφή",
       "DELETE": "Διαγραφή",

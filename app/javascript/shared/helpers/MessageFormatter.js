@@ -23,6 +23,10 @@ class MessageFormatter {
       heading(text) {
         return `<strong>${text}</strong>`;
       },
+      blockquote(src) {
+        var text = src.replace(/^ *> ?/gm, '');
+        return `<blockquote>${text}</blockquote>`;
+      },
       link(url, title, text) {
         const mentionRegex = new RegExp(USER_MENTIONS_REGEX);
         if (url.match(mentionRegex)) {
@@ -48,9 +52,14 @@ class MessageFormatter {
       const markedDownOutput = marked(withHash);
       return markedDownOutput;
     }
+
     DOMPurify.addHook('afterSanitizeAttributes', afterSanitizeAttributes);
     return DOMPurify.sanitize(
-      marked(this.message, { breaks: true, gfm: true })
+      marked(this.message.replace(/&gt;+/g, '>'), {
+        breaks: true,
+        gfm: true,
+        sanitize: false,
+      })
     );
   }
 

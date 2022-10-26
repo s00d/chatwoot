@@ -149,6 +149,7 @@
       "ASSIGN": "Piešķirt"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "EDIT": "Edit",
       "COPY": "Kopēt",
       "DELETE": "Dzēst",

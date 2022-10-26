@@ -149,6 +149,7 @@
       "ASSIGN": "Atribuiți"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "EDIT": "Edit",
       "COPY": "Copiază",
       "DELETE": "Şterge",

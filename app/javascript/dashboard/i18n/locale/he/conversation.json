@@ -149,6 +149,7 @@
       "ASSIGN": "שייך"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "EDIT": "Edit",
       "COPY": "העתק",
       "DELETE": "מחק",

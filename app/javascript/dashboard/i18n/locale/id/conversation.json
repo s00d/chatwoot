@@ -149,6 +149,7 @@
       "ASSIGN": "Tugaskan"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "EDIT": "Edit",
       "COPY": "Salin",
       "DELETE": "Hapus",

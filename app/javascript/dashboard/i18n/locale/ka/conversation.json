@@ -149,6 +149,7 @@
       "ASSIGN": "Assign"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "COPY": "Copy",
       "DELETE": "Delete",
       "CREATE_A_CANNED_RESPONSE": "Add to canned responses"

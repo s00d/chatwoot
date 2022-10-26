@@ -149,6 +149,7 @@
       "ASSIGN": "Gán"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "EDIT": "Edit",
       "COPY": "Sao Chép",
       "DELETE": "Xoá",

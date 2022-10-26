@@ -149,6 +149,7 @@
       "ASSIGN": "Assign"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "EDIT": "Edit",
       "COPY": "Copy",
       "DELETE": "حذف کریں۔",

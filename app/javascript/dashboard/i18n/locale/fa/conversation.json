@@ -149,6 +149,7 @@
       "ASSIGN": "اختصاص دادن"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "EDIT": "Edit",
       "COPY": "کپی",
       "DELETE": "حذف",

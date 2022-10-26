@@ -149,6 +149,7 @@
       "ASSIGN": "നിയോഗിക്കുക"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "EDIT": "Edit",
       "COPY": "പകർത്തുക",
       "DELETE": "ഇല്ലാതാക്കുക",

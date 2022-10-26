@@ -149,6 +149,7 @@
       "ASSIGN": "Tilldela"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "EDIT": "Edit",
       "COPY": "Kopiera",
       "DELETE": "Radera",

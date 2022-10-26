@@ -506,6 +506,8 @@ export default {
     // working even if input/textarea is focussed.
     document.addEventListener('paste', this.onPaste);
     document.addEventListener('keydown', this.handleKeyEvents);
+    bus.$on('replayText', this.onTextInsert);
+
     this.setCCEmailFromLastChat();
     this.doAutoSaveDraft = debounce(
       () => {
@@ -518,8 +520,20 @@ export default {
   destroyed() {
     document.removeEventListener('paste', this.onPaste);
     document.removeEventListener('keydown', this.handleKeyEvents);
+    bus.$off('replayText', this.onTextInsert);
   },
   methods: {
+    onTextInsert(val, name) {
+      if (this.message !== '') {
+        this.message += '\n\n';
+      }
+      this.message += `>`;
+      if (name) {
+        this.message += `[${name}]: `;
+      }
+      this.message += `${val}`;
+      this.message += `\n\n [Replay]: `;
+    },
     toggleRichContentEditor() {
       this.updateUISettings({
         display_rich_content_editor: !this.showRichContentEditor,

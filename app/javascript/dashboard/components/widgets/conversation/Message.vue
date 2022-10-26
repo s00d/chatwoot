@@ -108,6 +108,7 @@
         @toggle="handleContextMenuClick"
         @delete="handleDelete"
         @edit="handleEdit"
+        @replay="handleReplay"
       />
     </div>
   </li>
@@ -184,8 +185,12 @@ export default {
       return fullHTMLContent || fullTextContent || '';
     },
     displayQuotedButton() {
-      if (!this.isIncoming) {
-        return false;
+      // if (!this.isIncoming) {
+      //   return false;
+      // }
+
+      if (this.data.content.includes('>')) {
+        return true;
       }
 
       if (this.emailMessageContent.includes('<blockquote')) {
@@ -417,6 +422,9 @@ export default {
       } catch (error) {
         this.showAlert(this.$t('CONVERSATION.FAIL_DELETE_MESSSAGE'));
       }
+    },
+    handleReplay() {
+      bus.$emit('replayText', this.data.content, this.data.sender.name ?? null);
     },
     async handleEdit() {
       // eslint-disable-next-line no-alert

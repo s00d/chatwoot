@@ -149,6 +149,7 @@
       "ASSIGN": "Atribua"
     },
     "CONTEXT_MENU": {
+      "REPLAY": "Replay",
       "EDIT": "Edit",
       "COPY": "Copiar",
       "DELETE": "Excluir",
