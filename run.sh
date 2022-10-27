@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #bundle
 #yarn
 
@@ -18,7 +17,7 @@ if [[ "yes" == $RELOAD ]]
 then
   bundle exec rake db:create
   bundle exec rake db:reset
-else
+fi
 
 
 open http://127.0.0.1:3000/
