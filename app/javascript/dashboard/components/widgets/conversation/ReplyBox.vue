@@ -529,9 +529,9 @@ export default {
       }
       this.message += `>`;
       if (name) {
-        this.message += `[${name}]: `;
+        this.message += ` ${name}: `;
       }
-      this.message += `${val}`;
+      this.message += ` ${val}`;
       this.message += `\n\n [Replay]: `;
     },
     toggleRichContentEditor() {
