@@ -6,7 +6,6 @@ RELOAD="no"
 while [[ "$#" -gt 0 ]]; do
     case $1 in
       -r|--reload|-R|--RELOAD) RELOAD="yes"; shift ;;
-#      -u|--uglify) UGLIFY=1 ;;
       *) echo "Unknown parameter passed: $1"; exit 1 ;;
     esac
     shift
