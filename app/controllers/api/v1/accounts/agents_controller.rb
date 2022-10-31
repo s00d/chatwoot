@@ -42,8 +42,6 @@ class Api::V1::Accounts::AgentsController < Api::V1::Accounts::BaseController
     return @user.send_confirmation_instructions if @user
 
     @user = User.create!(new_agent_params.slice(:email, :name, :password, :password_confirmation))
-    @user.confirm
-    @user
   end
 
   def save_account_user
@@ -64,9 +62,9 @@ class Api::V1::Accounts::AgentsController < Api::V1::Accounts::BaseController
 
   def new_agent_params
     # intial string ensures the password requirements are met
-    # temp_password = "1!aA#{SecureRandom.alphanumeric(12)}"
-    params.require(:agent).permit(:email, :name, :role, :availability, :auto_offline, :password, :password_confirmation)
-          .merge!(inviter: current_user)
+    temp_password = "1!aA#{SecureRandom.alphanumeric(12)}"
+    params.require(:agent).permit(:email, :name, :role, :availability, :auto_offline)
+          .merge!(password: temp_password, password_confirmation: temp_password, inviter: current_user)
   end
 
   def agents

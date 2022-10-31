@@ -42,17 +42,6 @@
             />
           </label>
         </div>
-        <div class="medium-12 columns">
-          <woot-input
-            v-model.trim="agentPassword"
-            type="password"
-            :class="{ error: $v.agentPassword.$error }"
-            :label="$t('LOGIN.PASSWORD.LABEL')"
-            :placeholder="$t('SET_NEW_PASSWORD.PASSWORD.PLACEHOLDER')"
-            :error="passwordErrorText"
-            @blur="$v.agentPassword.$touch"
-          />
-        </div>
         <div class="modal-footer">
           <div class="medium-12 columns">
             <woot-submit-button
@@ -76,7 +65,6 @@
 
 <script>
 import { required, minLength, email } from 'vuelidate/lib/validators';
-import { isValidPassword } from 'shared/helpers/Validators';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -90,7 +78,6 @@ export default {
     return {
       agentName: '',
       agentEmail: '',
-      agentPassword: '',
       agentType: 'agent',
       vertical: 'bottom',
       horizontal: 'center',
@@ -111,19 +98,6 @@ export default {
     ...mapGetters({
       uiFlags: 'agents/getUIFlags',
     }),
-    passwordErrorText() {
-      const { agentPassword } = this.$v;
-      if (!agentPassword.$error) {
-        return '';
-      }
-      if (!agentPassword.minLength) {
-        return this.$t('REGISTER.PASSWORD.ERROR');
-      }
-      if (!agentPassword.isValidPassword) {
-        return this.$t('REGISTER.PASSWORD.IS_INVALID_PASSWORD');
-      }
-      return '';
-    },
   },
   validations: {
     agentName: {
@@ -133,11 +107,6 @@ export default {
     agentEmail: {
       required,
       email,
-    },
-    agentPassword: {
-      required,
-      isValidPassword,
-      minLength: minLength(5),
     },
     agentType: {
       required,
@@ -153,8 +122,6 @@ export default {
         await this.$store.dispatch('agents/create', {
           name: this.agentName,
           email: this.agentEmail,
-          password: this.agentPassword,
-          password_confirmation: this.agentPassword,
           role: this.agentType,
         });
         this.showAlert(this.$t('AGENT_MGMT.ADD.API.SUCCESS_MESSAGE'));
