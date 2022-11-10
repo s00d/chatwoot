@@ -55,6 +55,34 @@ const createState = (content, placeholder, plugins = []) => {
   });
 };
 
+const triggerMCharacters = char => $position => {
+  const regexp = new RegExp(`(?:^)?${char}.*`, 'g');
+
+  const textFrom = $position.before();
+  const textTo = $position.end();
+
+  const text = $position.doc.textBetween(textFrom, textTo, '\0', '\0');
+  let match;
+
+  // eslint-disable-next-line
+  while ((match = regexp.exec(text))) {
+    const prefix = match.input.slice(Math.max(0, match.index - 1), match.index);
+    // @ts-ignore
+    if (!/^[\0]?$/.test(prefix)) {
+      // eslint-disable-next-line
+      continue;
+    }
+
+    const from = match.index + $position.start();
+    let to = from + match[0].length;
+
+    if (from < $position.pos && to >= $position.pos) {
+      return { range: { from, to }, text: match[0] };
+    }
+  }
+  return null;
+};
+
 export default {
   name: 'WootMessageEditor',
   components: { TagAgents, CannedResponse },
@@ -114,7 +142,7 @@ export default {
           },
         }),
         suggestionsPlugin({
-          matcher: triggerCharacters('/'),
+          matcher: triggerMCharacters('/'),
           suggestionClass: '',
           onEnter: args => {
             if (this.isPrivate) {
@@ -128,6 +156,7 @@ export default {
           onChange: args => {
             this.editorView = args.view;
             this.range = args.range;
+            args.text = args.text.replace(' ', '_');
 
             this.cannedSearchTerm = args.text.replace('/', '');
             return false;

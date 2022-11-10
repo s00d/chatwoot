@@ -46,13 +46,8 @@ unless Rails.env.production?
   inbox = Inbox.create!(channel: web_widget, account: account, name: 'Acme Support')
   InboxMember.create!(user: user, inbox: inbox)
 
-  contact = ::ContactInboxWithContactBuilder.new(
-    source_id: user.id,
-    inbox: inbox,
-    hmac_verified: true,
-    contact_attributes: { name: 'jane', email: 'jane@example.com', phone_number: '+2320000' }
-  ).perform&.contact
-
+  contact = Contact.create!(name: 'jane', email: 'jane@example.com', phone_number: '+2320000', account: account)
+  contact_inbox = ContactInbox.create!(inbox: inbox, contact: contact, source_id: user.id, hmac_verified: true)
   conversation = Conversation.create!(
     account: account,
     inbox: inbox,

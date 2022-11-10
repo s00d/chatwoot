@@ -46,10 +46,10 @@ export default {
   },
   methods: {
     getTopPadding() {
-      if (this.items.length <= 4) {
+      if (this.items.length <= 9) {
         return -(this.items.length * 2.9 + 1.7);
       }
-      return -14;
+      return -28;
     },
     handleKeyboardEvent(e) {
       this.processKeyDownEvent(e);
@@ -75,7 +75,7 @@ export default {
   border-bottom: var(--space-small) solid var(--white);
   border-top: 1px solid var(--color-border);
   left: 0;
-  max-height: 14rem;
+  max-height: 28rem;
   overflow: auto;
   padding-top: var(--space-small);
   position: absolute;

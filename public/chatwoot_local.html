@@ -14,7 +14,7 @@
         s.parentNode.insertBefore(g, s);
         g.onload = function() {
           window.chatwootLITESDK.BASE_URL = BASE_URL;
-          window.chatwootLITESDK.websiteToken = '2f5gwiZHto24ifUmJaR2wWLq';
+          window.chatwootLITESDK.websiteToken = 'Qe8EudqcL585Z9GupVYWbhCK';
           window.chatwootLITESDK.run();
         };
       })(document, 'script');
@@ -23,8 +23,9 @@
         window.chatwootSettings = {
           hideMessageBubble: false,
           showPopoutButton: true,
+          useBrowserLanguage: false,
           position: 'left', // This can be left or right
-          locale: 'en', // Language to be set
+          locale: 'ru', // Language to be set
           type: 'standard', // [standard, expanded_bubble, full_screen]
           darkMode: 'auto', // [light, auto]
         };
@@ -42,7 +43,15 @@
           cabinet: false,
           auth: true,
           domain: window.location.host,
+          hash_id: 'aaaaaaaaaaaaa',
+          balance: 0,
+          spent: 0,
+          income: 0,
         });
+
+        window.$chatwoot.setLabel('auth');
+        window.$chatwoot.setLabel('cabinet');
+        // window.$chatwoot.setLocale('ru');
       });
     </script>
 </head>

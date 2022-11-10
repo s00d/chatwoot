@@ -236,7 +236,7 @@ export default {
   watch: {
     message(value) {
       this.hasSlashCommand = value[0] === '/' || value[0] === '\\';
-      const hasNextWord = value.includes(' ');
+      const hasNextWord = value.includes('  ');
       const isShortCodeActive = this.hasSlashCommand && !hasNextWord;
       if (isShortCodeActive) {
         this.cannedResponseSearchKey = value.substring(1);
