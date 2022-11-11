@@ -253,6 +253,7 @@ export default {
           },
           paste: (view, event) => {
             const data = event.clipboardData.files;
+
             if (data.length > 0) {
               event.preventDefault();
             }
