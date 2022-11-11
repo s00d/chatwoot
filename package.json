@@ -75,7 +75,8 @@
     "vuelidate": "0.7.7",
     "vuex": "~2.1.1",
     "vuex-router-sync": "~4.1.2",
-    "wavesurfer.js": "^6.0.4"
+    "wavesurfer.js": "^6.0.4",
+    "webpack": "^4.46.0"
   },
   "devDependencies": {
     "@babel/core": "7.13.16",
@@ -104,7 +105,7 @@
     "eslint-plugin-import": "2.22.1",
     "eslint-plugin-jsx-a11y": "6.4.1",
     "eslint-plugin-prettier": "3.4.0",
-    "eslint-plugin-storybook": "^0.6.1",
+    "eslint-plugin-storybook": "^0.5.13",
     "eslint-plugin-vue": "^6.2.2",
     "expect-more-jest": "^2.4.2",
     "husky": "^7.0.0",

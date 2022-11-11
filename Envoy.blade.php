@@ -28,8 +28,9 @@
   git reset --hard HEAD
   git checkout master && git pull
   echo "change ruby"
-  rvm install "ruby-3.0.4"
-  rvm use 3.0.4 --default
+  latest_ruby_version="$(cat '.ruby-version')"
+  rvm install "ruby-$latest_ruby_version"
+  rvm use "$latest_ruby_version" --default
   echo "build"
   bundle
   yarn

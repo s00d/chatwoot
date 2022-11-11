@@ -1978,7 +1978,7 @@ __metadata:
     eslint-plugin-import: 2.22.1
     eslint-plugin-jsx-a11y: 6.4.1
     eslint-plugin-prettier: 3.4.0
-    eslint-plugin-storybook: ^0.6.1
+    eslint-plugin-storybook: ^0.5.13
     eslint-plugin-vue: ^6.2.2
     expect-more-jest: ^2.4.2
     foundation-sites: ~6.5.3
@@ -2027,6 +2027,7 @@ __metadata:
     vuex: ~2.1.1
     vuex-router-sync: ~4.1.2
     wavesurfer.js: ^6.0.4
+    webpack: 4
     webpack-dev-server: 3.11.2
   languageName: unknown
   linkType: soft
@@ -9173,16 +9174,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-storybook@npm:^0.6.1":
-  version: 0.6.1
-  resolution: "eslint-plugin-storybook@npm:0.6.1"
+"eslint-plugin-storybook@npm:^0.5.13":
+  version: 0.5.13
+  resolution: "eslint-plugin-storybook@npm:0.5.13"
   dependencies:
     "@storybook/csf": ^0.0.1
     "@typescript-eslint/experimental-utils": ^5.3.0
     requireindex: ^1.1.0
   peerDependencies:
     eslint: ">=6"
-  checksum: 28d384f05044758d7200b255e872937bf2441d5983fb786216d553dbd20d156e826f45a5b478a06669a526b7aa8d9eab410187c49bff055e9768ec223ba8137e
+  checksum: 78a74daff68394e080aeff52250c5a6a3a6779f2867366c7db93ce36afd6e3113c3190b4a1d68c6a220b2511b3a3747aeab3d43bdce87fc6a63464847b9576fa
   languageName: node
   linkType: hard
 
