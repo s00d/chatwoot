@@ -61,3 +61,5 @@ test/cypress/videos/*
 /config/master.key
 /config/*.enc
 /vendor/
+Envoy.blade.php
+composer.lock
