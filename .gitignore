@@ -31,7 +31,7 @@ master.key
 .env
 
 public/uploads
-public/packs*
+#public/packs*
 
 # VIM files
 *.swp
