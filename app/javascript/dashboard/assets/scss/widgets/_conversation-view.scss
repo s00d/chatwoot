@@ -86,8 +86,21 @@
 
     overflow-y: scroll;
     overflow-x: scroll;
-    padding-right: 15px;
+    //padding-right: 0;
   }
+
+  @-moz-document url-prefix() {
+    .conversations-list {
+      padding-right: 15px;
+    }
+  }
+
+  @supports (-moz-appearance:none) {
+    .conversations-list {
+      padding-right: 15px;
+    }
+  }
+
 
   .chat-list__top {
     @include flex;

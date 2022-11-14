@@ -34,7 +34,7 @@
   echo "build"
   bundle
   yarn
-  rake assets:precompile RAILS_ENV=production
+//   rake assets:precompile RAILS_ENV=production
   RAILS_ENV=production bundle exec rake db:migrate
   exit
 

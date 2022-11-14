@@ -9,6 +9,7 @@
       v-if="showCannedMenu && !isPrivate"
       :search-key="cannedSearchTerm"
       @click="insertCannedResponse"
+      @close="closeMention"
     />
     <div ref="editor" />
   </div>
@@ -68,7 +69,7 @@ const triggerMCharacters = char => $position => {
   while ((match = regexp.exec(text))) {
     const prefix = match.input.slice(Math.max(0, match.index - 1), match.index);
     // @ts-ignore
-    if (!/^[\0]?$/.test(prefix)) {
+    if (!/^[/\0]?$/.test(prefix)) {
       // eslint-disable-next-line
       continue;
     }
@@ -142,7 +143,7 @@ export default {
           },
         }),
         suggestionsPlugin({
-          matcher: triggerMCharacters('/'),
+          matcher: triggerMCharacters('[/|\\\\]'),
           suggestionClass: '',
           onEnter: args => {
             if (this.isPrivate) {
@@ -158,35 +159,9 @@ export default {
             this.range = args.range;
             args.text = args.text.replace(' ', '_');
 
-            this.cannedSearchTerm = args.text.replace('/', '');
-            return false;
-          },
-          onExit: () => {
-            this.cannedSearchTerm = '';
-            this.showCannedMenu = false;
-            return false;
-          },
-          onKeyDown: ({ event }) => {
-            return event.keyCode === 13 && this.showCannedMenu;
-          },
-        }),
-        suggestionsPlugin({
-          matcher: triggerCharacters('\\\\'),
-          suggestionClass: '',
-          onEnter: args => {
-            if (this.isPrivate) {
-              return false;
-            }
-            this.showCannedMenu = true;
-            this.range = args.range;
-            this.editorView = args.view;
-            return false;
-          },
-          onChange: args => {
-            this.editorView = args.view;
-            this.range = args.range;
-
-            this.cannedSearchTerm = args.text.replace('\\', '');
+            this.cannedSearchTerm = args.text
+              .replaceAll('/', '')
+              .replaceAll('\\', '');
             return false;
           },
           onExit: () => {
@@ -352,6 +327,10 @@ export default {
     },
     onFocus() {
       this.$emit('focus');
+    },
+    closeMention() {
+      this.mentionSearchKey = '';
+      this.showUserMentions = false;
     },
   },
 };
