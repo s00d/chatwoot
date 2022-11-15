@@ -9,7 +9,6 @@ class V2::ReportBuilder
   def initialize(account, params)
     @account = account
     @params = params
-    @user = Current.account_user
 
     timezone_offset = (params[:timezone_offset] || 0).to_f
     @timezone = ActiveSupport::TimeZone[timezone_offset]&.name
