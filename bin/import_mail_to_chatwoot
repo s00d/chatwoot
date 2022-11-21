@@ -1,0 +1,20 @@
+INGRESS_PASSWORD=6e72113d5ee0e859bfaf3f667d5e2191
+URL=http://localhost:3000/rails/action_mailbox/relay/inbound_emails
+bin/rails action_mailbox:ingress:postfix
+curl -sS -u "actionmailbox:$INGRESS_PASSWORD" \
+ -A "Action Mailbox curl relayer" \
+ -H "Content-Type: message/rfc822" \
+ --data-binary @- \
+ $URL
+
+
+cat my_incoming_message | bin/rails action_mailbox:ingress:exim \                                                                                                                              [1407bda89]
+  RAILS_ENV=production \
+  URL=http://localhost:3000/rails/action_mailbox/postfix/inbound_emails \
+  INGRESS_PASSWORD=6e72113d5ee0e859bfaf3f667d5e2191
+
+
+cat my_incoming_message | bin/rails action_mailbox:ingress:postfix \
+  INGRESS_PASSWORD=6e72113d5ee0e859bfaf3f667d5e2191 \
+  URL=http://localhost:3000/rails/action_mailbox/postfix/inbound_emails \
+  RAILS_ENV=production

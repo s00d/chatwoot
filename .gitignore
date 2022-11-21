@@ -63,3 +63,5 @@ test/cypress/videos/*
 /vendor/
 Envoy.blade.php
 composer.lock
+
+.vscode/settings.json

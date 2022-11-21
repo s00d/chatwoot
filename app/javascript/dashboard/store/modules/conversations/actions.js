@@ -198,10 +198,6 @@ const actions = {
     }
   },
 
-  updateConversationRead({ commit }, timestamp) {
-    commit(types.SET_CONVERSATION_LAST_SEEN, timestamp);
-  },
-
   updateMessage({ commit }, message) {
     commit(types.ADD_MESSAGE, message);
   },
@@ -269,6 +265,12 @@ const actions = {
       meta: { sender },
     } = conversation;
     commit(types.UPDATE_CONVERSATION, conversation);
+
+    dispatch('conversationLabels/setConversationLabel', {
+      id: conversation.id,
+      data: conversation.labels,
+    });
+
     dispatch('contacts/setContact', sender);
   },
 

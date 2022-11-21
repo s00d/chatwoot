@@ -1,29 +1,22 @@
 {
-  "application.css": "/packs/css/application-98a8d372.css",
-  "application.js": "/packs/js/application-e97002dd4341ac4a3baa.js",
-  "application.js.map": "/packs/js/application-e97002dd4341ac4a3baa.js.map",
+  "application.js": "/packs/js/application-9d07409f38ea142f71f7.js",
+  "application.js.map": "/packs/js/application-9d07409f38ea142f71f7.js.map",
   "encoderWorker.min.js": "/packs/encoderWorker.min.js",
   "entrypoints": {
     "application": {
-      "css": [
-        "/packs/css/application-98a8d372.css"
-      ],
       "js": [
-        "/packs/js/application-e97002dd4341ac4a3baa.js"
+        "/packs/js/application-9d07409f38ea142f71f7.js"
       ],
       "js.map": [
-        "/packs/js/application-e97002dd4341ac4a3baa.js.map"
+        "/packs/js/application-9d07409f38ea142f71f7.js.map"
       ]
     },
     "portal": {
-      "css": [
-        "/packs/css/portal-aeb45644.css"
-      ],
       "js": [
-        "/packs/js/portal-e97002dd4341ac4a3baa.js"
+        "/packs/js/portal-9d07409f38ea142f71f7.js"
       ],
       "js.map": [
-        "/packs/js/portal-e97002dd4341ac4a3baa.js.map"
+        "/packs/js/portal-9d07409f38ea142f71f7.js.map"
       ]
     },
     "sdk": {
@@ -35,47 +28,35 @@
       ]
     },
     "superadmin_pages": {
-      "css": [
-        "/packs/css/superadmin_pages-ec39e2db.css"
-      ],
       "js": [
-        "/packs/js/superadmin_pages-e97002dd4341ac4a3baa.js"
+        "/packs/js/superadmin_pages-9d07409f38ea142f71f7.js"
       ],
       "js.map": [
-        "/packs/js/superadmin_pages-e97002dd4341ac4a3baa.js.map"
+        "/packs/js/superadmin_pages-9d07409f38ea142f71f7.js.map"
       ]
     },
     "superadmin": {
-      "css": [
-        "/packs/css/superadmin-882b423c.css"
-      ],
       "js": [
-        "/packs/js/superadmin-e97002dd4341ac4a3baa.js"
+        "/packs/js/superadmin-9d07409f38ea142f71f7.js"
       ],
       "js.map": [
-        "/packs/js/superadmin-e97002dd4341ac4a3baa.js.map"
+        "/packs/js/superadmin-9d07409f38ea142f71f7.js.map"
       ]
     },
     "survey": {
-      "css": [
-        "/packs/css/survey-92e14e8e.css"
-      ],
       "js": [
-        "/packs/js/survey-e97002dd4341ac4a3baa.js"
+        "/packs/js/survey-9d07409f38ea142f71f7.js"
       ],
       "js.map": [
-        "/packs/js/survey-e97002dd4341ac4a3baa.js.map"
+        "/packs/js/survey-9d07409f38ea142f71f7.js.map"
       ]
     },
     "widget": {
-      "css": [
-        "/packs/css/widget-dfd6836a.css"
-      ],
       "js": [
-        "/packs/js/widget-e97002dd4341ac4a3baa.js"
+        "/packs/js/widget-9d07409f38ea142f71f7.js"
       ],
       "js.map": [
-        "/packs/js/widget-e97002dd4341ac4a3baa.js.map"
+        "/packs/js/widget-9d07409f38ea142f71f7.js.map"
       ]
     }
   },
@@ -115,21 +96,16 @@
   "media/shared/assets/fonts/Inter-Thin.woff": "/packs/media/shared/assets/fonts/Inter-Thin-046ff26493bd0c8b7af11d58d459e525.woff",
   "media/shared/assets/fonts/Inter-Thin.woff2": "/packs/media/shared/assets/fonts/Inter-Thin-bc0c400ab97641432db27b3541daa5ac.woff2",
   "media/widget/assets/images/typing.gif": "/packs/media/widget/assets/images/typing-6027d21b24f45e3377a729a55158f948.gif",
-  "portal.css": "/packs/css/portal-aeb45644.css",
-  "portal.js": "/packs/js/portal-e97002dd4341ac4a3baa.js",
-  "portal.js.map": "/packs/js/portal-e97002dd4341ac4a3baa.js.map",
+  "portal.js": "/packs/js/portal-9d07409f38ea142f71f7.js",
+  "portal.js.map": "/packs/js/portal-9d07409f38ea142f71f7.js.map",
   "sdk.js": "/packs/js/sdk.js",
   "sdk.js.map": "/packs/js/sdk.js.map",
-  "superadmin.css": "/packs/css/superadmin-882b423c.css",
-  "superadmin.js": "/packs/js/superadmin-e97002dd4341ac4a3baa.js",
-  "superadmin.js.map": "/packs/js/superadmin-e97002dd4341ac4a3baa.js.map",
-  "superadmin_pages.css": "/packs/css/superadmin_pages-ec39e2db.css",
-  "superadmin_pages.js": "/packs/js/superadmin_pages-e97002dd4341ac4a3baa.js",
-  "superadmin_pages.js.map": "/packs/js/superadmin_pages-e97002dd4341ac4a3baa.js.map",
-  "survey.css": "/packs/css/survey-92e14e8e.css",
-  "survey.js": "/packs/js/survey-e97002dd4341ac4a3baa.js",
-  "survey.js.map": "/packs/js/survey-e97002dd4341ac4a3baa.js.map",
-  "widget.css": "/packs/css/widget-dfd6836a.css",
-  "widget.js": "/packs/js/widget-e97002dd4341ac4a3baa.js",
-  "widget.js.map": "/packs/js/widget-e97002dd4341ac4a3baa.js.map"
+  "superadmin.js": "/packs/js/superadmin-9d07409f38ea142f71f7.js",
+  "superadmin.js.map": "/packs/js/superadmin-9d07409f38ea142f71f7.js.map",
+  "superadmin_pages.js": "/packs/js/superadmin_pages-9d07409f38ea142f71f7.js",
+  "superadmin_pages.js.map": "/packs/js/superadmin_pages-9d07409f38ea142f71f7.js.map",
+  "survey.js": "/packs/js/survey-9d07409f38ea142f71f7.js",
+  "survey.js.map": "/packs/js/survey-9d07409f38ea142f71f7.js.map",
+  "widget.js": "/packs/js/widget-9d07409f38ea142f71f7.js",
+  "widget.js.map": "/packs/js/widget-9d07409f38ea142f71f7.js.map"
 }
