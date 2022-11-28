@@ -148,5 +148,6 @@
     "*.scss": [
       "scss-lint"
     ]
-  }
+  },
+  "packageManager": "yarn@3.3.0"
 }
