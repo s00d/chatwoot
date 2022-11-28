@@ -71,8 +71,10 @@ module ReportHelper
     range.each do |date|
       result_work_time[date] = 0
     end
-    TimeTracking.where(account_id: account.id, user_id: user.id, created_at: range).find_each do |item|
-      result_work_time[item.date_at] = item.workime.to_i / 60
+    if @user.present?
+      TimeTracking.where(account_id: account.id, user_id: @user.id, created_at: range).find_each do |item|
+        result_work_time[item.date_at] = item.workime.to_i / 60
+      end
     end
     result_work_time
   end
