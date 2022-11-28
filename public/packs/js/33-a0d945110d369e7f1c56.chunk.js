@@ -1,2 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[33],{2612:function(n,t,e){"use strict";e.r(t);var o={},l=e(0),s=Object(l.a)(o,(function(){var n=this,t=n.$createElement;return(n._self._c||t)("div",[n._v("Component to edit CSML Bots")])}),[],!1,null,null,null);t.default=s.exports}}]);
-//# sourceMappingURL=33-a0d945110d369e7f1c56.chunk.js.map

@@ -37,7 +37,6 @@ export default {
     UpdateBanner,
     WootSnackbarBox,
   },
-
   data() {
     return {
       showAddAccountModal: false,
