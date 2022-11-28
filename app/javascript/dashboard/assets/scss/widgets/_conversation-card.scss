@@ -96,7 +96,7 @@
       $unread-size: $space-normal;
       @include round-corner;
       @include light-shadow;
-      background: darken($success-color, 3%);
+      background: darken($alert-color, 3%);
       color: $color-white;
       display: none;
       font-size: $font-size-micro;
@@ -106,7 +106,7 @@
       margin-left: auto;
       margin-top: $space-smaller;
       min-width: $unread-size;
-      padding: 0 $space-smaller;
+      padding: $space-smaller $space-smaller $space-normal-large;
       text-align: center;
     }
 
