@@ -268,7 +268,7 @@ class Message < ApplicationRecord
       time = tracker.active_at.time.to_i if tracker.active_at.present?
 
       diff = now - time
-      tracker.workime += diff if diff < 1800
+      tracker.workime += diff if diff < 600
       tracker.active_at = Time.zone.now
       tracker.save!
     end
