@@ -236,7 +236,7 @@ export default {
 .activity-wrap {
   .message-text--metadata {
     .time {
-      color: var(--s-300);
+      color: var(--b-600);
       display: flex;
       text-align: center;
       font-size: var(--font-size-micro);
