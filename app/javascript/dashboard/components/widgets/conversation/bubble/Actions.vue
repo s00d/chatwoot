@@ -206,7 +206,7 @@ export default {
 .left {
   .message-text--metadata {
     .time {
-      color: var(--s-400);
+      color: var(--b-600);
     }
   }
 }
