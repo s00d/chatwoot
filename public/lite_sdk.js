@@ -109,7 +109,11 @@
   window.chatwootLITESDK = {
     BASE_URL: '//',
     websiteToken: '',
-    run: function run() {
+    run: function run(force = false) {
+      if (force) {
+        open(true);
+        return;
+      }
       var time = Math.floor(Date.now() / 1000);
       var worked_date = storage_get('chatwoot_opened_date');
       if (worked_date && time - worked_date < 3600) {
@@ -119,8 +123,4 @@
       }
     },
   };
-
-  window.addEventListener('chatwoot:show2', function on_show() {
-    open(true);
-  });
 })();
