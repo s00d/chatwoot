@@ -16,11 +16,6 @@
 #  index_time_tracking_users_on_account_id  (account_id)
 #  index_time_tracking_users_on_user_id     (user_id)
 #
-# Foreign Keys
-#
-#  fk_rails_...  (account_id => accounts.id)
-#  fk_rails_...  (user_id => users.id)
-#
 
 class TimeTracking < ApplicationRecord
   belongs_to :account
