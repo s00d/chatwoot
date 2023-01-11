@@ -120,7 +120,7 @@
     },
   };
 
-  window.addEventListener('chatwoot:show2', function on_close() {
+  window.addEventListener('chatwoot:show2', function on_show() {
     open(true);
   });
 })();
