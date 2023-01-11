@@ -83,7 +83,6 @@
           websiteToken: websiteToken,
           baseUrl: BASE_URL,
         });
-
         window.addEventListener('chatwoot:open2', function on_close() {
           var time = Math.floor(Date.now() / 1000);
           storage_set('chatwoot_opened_date', time);
@@ -120,4 +119,8 @@
       }
     },
   };
+
+  window.addEventListener('chatwoot:show2', function on_close() {
+    open(true);
+  });
 })();
