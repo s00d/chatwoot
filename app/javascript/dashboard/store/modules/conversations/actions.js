@@ -7,8 +7,12 @@ import { createPendingMessage } from 'dashboard/helper/commons';
 import {
   buildConversationList,
   isOnMentionsView,
+  isOnUnattendedView,
 } from './helpers/actionHelpers';
-
+import messageReadActions from './actions/messageReadActions';
+import AnalyticsHelper, {
+  ANALYTICS_EVENTS,
+} from '../../../helper/AnalyticsHelper';
 // actions
 const actions = {
   getConversation: async ({ commit }, conversationId) => {
@@ -169,6 +173,11 @@ const actions = {
         status: MESSAGE_STATUS.PROGRESS,
       });
       const response = await MessageApi.create(pendingMessage);
+      AnalyticsHelper.track(
+        pendingMessage.private
+          ? ANALYTICS_EVENTS.SENT_PRIVATE_NOTE
+          : ANALYTICS_EVENTS.SENT_MESSAGE
+      );
       commit(types.ADD_MESSAGE, {
         ...response.data,
         status: MESSAGE_STATUS.SENT,
@@ -247,6 +256,7 @@ const actions = {
     if (
       !hasAppliedFilters &&
       !isOnMentionsView(rootState) &&
+      !isOnUnattendedView(rootState) &&
       isMatchingInboxFilter
     ) {
       commit(types.ADD_CONVERSATION, conversation);
@@ -256,6 +266,12 @@ const actions = {
 
   addMentions({ dispatch, rootState }, conversation) {
     if (isOnMentionsView(rootState)) {
+      dispatch('updateConversation', conversation);
+    }
+  },
+
+  addUnattended({ dispatch, rootState }, conversation) {
+    if (isOnUnattendedView(rootState)) {
       dispatch('updateConversation', conversation);
     }
   },
@@ -272,17 +288,6 @@ const actions = {
     });
 
     dispatch('contacts/setContact', sender);
-  },
-
-  markMessagesRead: async ({ commit }, data) => {
-    try {
-      const {
-        data: { id, agent_last_seen_at: lastSeen },
-      } = await ConversationApi.markMessageRead(data);
-      setTimeout(() => commit(types.MARK_MESSAGE_READ, { id, lastSeen }), 4000);
-    } catch (error) {
-      // Handle error
-    }
   },
 
   setChatFilter({ commit }, data) {
@@ -353,6 +358,7 @@ const actions = {
   clearConversationFilters({ commit }) {
     commit(types.CLEAR_CONVERSATION_FILTERS);
   },
+  ...messageReadActions,
 };
 
 export default actions;

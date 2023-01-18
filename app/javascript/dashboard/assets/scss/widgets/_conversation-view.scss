@@ -81,12 +81,13 @@
   }
 
   .conversations-list {
-    @include scroll-on-hover;
-    flex: 1 1;
-
     overflow-y: scroll;
     overflow-x: scroll;
-    //padding-right: 0;
+    flex: 1 1;
+
+    @include breakpoint(large up) {
+      @include scroll-on-hover;
+    }
   }
 
   @-moz-document url-prefix() {
@@ -341,6 +342,7 @@
       var(--space-one);
 
     .is-text {
+      align-items: center;
       display: inline-flex;
       text-align: start;
 

@@ -1,2 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[33],{2647:function(e,n,t){"use strict";t.r(n);var o=t(0),l=Object(o.a)({},(function(){var e=this,n=e.$createElement;return(e._self._c||n)("div",[e._v("Component to view details of portal")])}),[],!1,null,null,null);n.default=l.exports}}]);
-//# sourceMappingURL=33-06f3c9d6cd73664b5ec1.chunk.js.map

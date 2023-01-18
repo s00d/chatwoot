@@ -293,14 +293,7 @@ export default {
   flex-shrink: 0;
   overflow-y: hidden;
   padding: var(--space-zero);
-
-  @include breakpoint(xlarge down) {
-    position: absolute;
-  }
-
-  @include breakpoint(xlarge up) {
-    position: unset;
-  }
+  position: unset;
 
   &:hover {
     overflow-y: hidden;

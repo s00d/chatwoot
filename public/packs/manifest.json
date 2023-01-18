@@ -1,18 +1,20 @@
 {
-  "application.css": "/packs/css/application-14505348.css",
-  "application.js": "/packs/js/application-5cfce9af67c5c9450013.js",
-  "application.js.map": "/packs/js/application-5cfce9af67c5c9450013.js.map",
+  "application.css": "/packs/css/application-f97b00fa.css",
+  "application.js": "/packs/js/application-0d088272af62c6cb5976.js",
+  "application.js.map": "/packs/js/application-0d088272af62c6cb5976.js.map",
+  "auto-track.js": "/packs/js/auto-track-acb7e9ef3e2cf634cf38.chunk.js",
+  "auto-track.js.map": "/packs/js/auto-track-acb7e9ef3e2cf634cf38.chunk.js.map",
   "encoderWorker.min.js": "/packs/encoderWorker.min.js",
   "entrypoints": {
     "application": {
       "css": [
-        "/packs/css/application-14505348.css"
+        "/packs/css/application-f97b00fa.css"
       ],
       "js": [
-        "/packs/js/application-5cfce9af67c5c9450013.js"
+        "/packs/js/application-0d088272af62c6cb5976.js"
       ],
       "js.map": [
-        "/packs/js/application-5cfce9af67c5c9450013.js.map"
+        "/packs/js/application-0d088272af62c6cb5976.js.map"
       ]
     },
     "portal": {
@@ -20,10 +22,10 @@
         "/packs/css/portal-39924067.css"
       ],
       "js": [
-        "/packs/js/portal-5cfce9af67c5c9450013.js"
+        "/packs/js/portal-0d088272af62c6cb5976.js"
       ],
       "js.map": [
-        "/packs/js/portal-5cfce9af67c5c9450013.js.map"
+        "/packs/js/portal-0d088272af62c6cb5976.js.map"
       ]
     },
     "sdk": {
@@ -39,57 +41,50 @@
         "/packs/css/superadmin_pages-ff4b1d4e.css"
       ],
       "js": [
-        "/packs/js/superadmin_pages-5cfce9af67c5c9450013.js"
+        "/packs/js/superadmin_pages-0d088272af62c6cb5976.js"
       ],
       "js.map": [
-        "/packs/js/superadmin_pages-5cfce9af67c5c9450013.js.map"
+        "/packs/js/superadmin_pages-0d088272af62c6cb5976.js.map"
       ]
     },
     "superadmin": {
       "css": [
-        "/packs/css/superadmin-a50a9e4d.css"
+        "/packs/css/superadmin-475587af.css"
       ],
       "js": [
-        "/packs/js/superadmin-5cfce9af67c5c9450013.js"
+        "/packs/js/superadmin-0d088272af62c6cb5976.js"
       ],
       "js.map": [
-        "/packs/js/superadmin-5cfce9af67c5c9450013.js.map"
+        "/packs/js/superadmin-0d088272af62c6cb5976.js.map"
       ]
     },
     "survey": {
       "css": [
-        "/packs/css/survey-f0d04f93.css"
+        "/packs/css/survey-f1782c7d.css"
       ],
       "js": [
-        "/packs/js/survey-5cfce9af67c5c9450013.js"
+        "/packs/js/survey-0d088272af62c6cb5976.js"
       ],
       "js.map": [
-        "/packs/js/survey-5cfce9af67c5c9450013.js.map"
+        "/packs/js/survey-0d088272af62c6cb5976.js.map"
       ]
     },
     "widget": {
       "css": [
-        "/packs/css/widget-bd155f5b.css"
+        "/packs/css/widget-ecc025d6.css"
       ],
       "js": [
-        "/packs/js/widget-5cfce9af67c5c9450013.js"
+        "/packs/js/widget-0d088272af62c6cb5976.js"
       ],
       "js.map": [
-        "/packs/js/widget-5cfce9af67c5c9450013.js.map"
+        "/packs/js/widget-0d088272af62c6cb5976.js.map"
       ]
     }
   },
+  "legacyVideos.js": "/packs/js/legacyVideos-d6b1bb74322e2504641c.chunk.js",
+  "legacyVideos.js.map": "/packs/js/legacyVideos-d6b1bb74322e2504641c.chunk.js.map",
   "media/dashboard/assets/images/bubble-logo.svg": "/packs/media/dashboard/assets/images/bubble-logo-eec5daaebf0c7009bba7568fd9b9ad4a.svg",
-  "media/dashboard/assets/images/channels/api.png": "/packs/media/dashboard/assets/images/channels/api-24484816aff369b55b7f9b0d73e307df.png",
-  "media/dashboard/assets/images/channels/email.png": "/packs/media/dashboard/assets/images/channels/email-edb81e257f766dcf134c4a0b65f446c4.png",
   "media/dashboard/assets/images/channels/facebook_login.png": "/packs/media/dashboard/assets/images/channels/facebook_login-7692d6c379288885d619b1e80bb214a4.png",
-  "media/dashboard/assets/images/channels/line.png": "/packs/media/dashboard/assets/images/channels/line-6c4fad9f00eb3796397246b91f4c6b70.png",
-  "media/dashboard/assets/images/channels/messenger.png": "/packs/media/dashboard/assets/images/channels/messenger-653a8e7520f561a255446e15a7ad3672.png",
-  "media/dashboard/assets/images/channels/sms.png": "/packs/media/dashboard/assets/images/channels/sms-99d9ede6d8879df79ba4768c20c35bee.png",
-  "media/dashboard/assets/images/channels/telegram.png": "/packs/media/dashboard/assets/images/channels/telegram-c098afe3a464bed8ad5337d4cee490b7.png",
-  "media/dashboard/assets/images/channels/twitter.png": "/packs/media/dashboard/assets/images/channels/twitter-f7bb5bf512cea46241b7c3618c4d94ae.png",
-  "media/dashboard/assets/images/channels/website.png": "/packs/media/dashboard/assets/images/channels/website-754e87fb4b13b9cdd77e2800a0241b05.png",
-  "media/dashboard/assets/images/channels/whatsapp.png": "/packs/media/dashboard/assets/images/channels/whatsapp-4936fb8a94148593afdb3dc1305ad7a7.png",
   "media/dashboard/assets/images/chat.svg": "/packs/media/dashboard/assets/images/chat-a06542d766feaecc071c3a2b77f313e8.svg",
   "media/dashboard/assets/images/chatwoot_bot.png": "/packs/media/dashboard/assets/images/chatwoot_bot-905112376e6493b37e2cecea8f9dc50c.png",
   "media/dashboard/assets/images/flag.svg": "/packs/media/dashboard/assets/images/flag-2fe41f128623199c8388d77dfc4cff4e.svg",
@@ -115,21 +110,32 @@
   "media/shared/assets/fonts/Inter-Thin.woff": "/packs/media/shared/assets/fonts/Inter-Thin-046ff26493bd0c8b7af11d58d459e525.woff",
   "media/shared/assets/fonts/Inter-Thin.woff2": "/packs/media/shared/assets/fonts/Inter-Thin-bc0c400ab97641432db27b3541daa5ac.woff2",
   "media/widget/assets/images/typing.gif": "/packs/media/widget/assets/images/typing-6027d21b24f45e3377a729a55158f948.gif",
+  "middleware.js": "/packs/js/middleware-5017f1d2610cf649b854.chunk.js",
+  "middleware.js.map": "/packs/js/middleware-5017f1d2610cf649b854.chunk.js.map",
   "portal.css": "/packs/css/portal-39924067.css",
-  "portal.js": "/packs/js/portal-5cfce9af67c5c9450013.js",
-  "portal.js.map": "/packs/js/portal-5cfce9af67c5c9450013.js.map",
+  "portal.js": "/packs/js/portal-0d088272af62c6cb5976.js",
+  "portal.js.map": "/packs/js/portal-0d088272af62c6cb5976.js.map",
+  "queryString.js": "/packs/js/queryString-0f2dcdcd4279b98f13f1.chunk.js",
+  "queryString.js.map": "/packs/js/queryString-0f2dcdcd4279b98f13f1.chunk.js.map",
+  "remoteMiddleware.js": "/packs/js/remoteMiddleware-0dbf79aefac702617ed4.chunk.js",
+  "remoteMiddleware.js.map": "/packs/js/remoteMiddleware-0dbf79aefac702617ed4.chunk.js.map",
+  "schemaFilter.js": "/packs/js/schemaFilter-5858a0a2f1a35810af76.chunk.js",
+  "schemaFilter.js.map": "/packs/js/schemaFilter-5858a0a2f1a35810af76.chunk.js.map",
   "sdk.js": "/packs/js/sdk.js",
   "sdk.js.map": "/packs/js/sdk.js.map",
-  "superadmin.css": "/packs/css/superadmin-a50a9e4d.css",
-  "superadmin.js": "/packs/js/superadmin-5cfce9af67c5c9450013.js",
-  "superadmin.js.map": "/packs/js/superadmin-5cfce9af67c5c9450013.js.map",
+  "superadmin.css": "/packs/css/superadmin-475587af.css",
+  "superadmin.js": "/packs/js/superadmin-0d088272af62c6cb5976.js",
+  "superadmin.js.map": "/packs/js/superadmin-0d088272af62c6cb5976.js.map",
   "superadmin_pages.css": "/packs/css/superadmin_pages-ff4b1d4e.css",
-  "superadmin_pages.js": "/packs/js/superadmin_pages-5cfce9af67c5c9450013.js",
-  "superadmin_pages.js.map": "/packs/js/superadmin_pages-5cfce9af67c5c9450013.js.map",
-  "survey.css": "/packs/css/survey-f0d04f93.css",
-  "survey.js": "/packs/js/survey-5cfce9af67c5c9450013.js",
-  "survey.js.map": "/packs/js/survey-5cfce9af67c5c9450013.js.map",
-  "widget.css": "/packs/css/widget-bd155f5b.css",
-  "widget.js": "/packs/js/widget-5cfce9af67c5c9450013.js",
-  "widget.js.map": "/packs/js/widget-5cfce9af67c5c9450013.js.map"
+  "superadmin_pages.js": "/packs/js/superadmin_pages-0d088272af62c6cb5976.js",
+  "superadmin_pages.js.map": "/packs/js/superadmin_pages-0d088272af62c6cb5976.js.map",
+  "survey.css": "/packs/css/survey-f1782c7d.css",
+  "survey.js": "/packs/js/survey-0d088272af62c6cb5976.js",
+  "survey.js.map": "/packs/js/survey-0d088272af62c6cb5976.js.map",
+  "vendors~ajs-destination.js": "/packs/js/vendors~ajs-destination-7341b696087a4e8e7205.chunk.js",
+  "vendors~ajs-destination.js.map": "/packs/js/vendors~ajs-destination-7341b696087a4e8e7205.chunk.js.map",
+  "waveWorker.min.js": "/packs/waveWorker.min.js",
+  "widget.css": "/packs/css/widget-ecc025d6.css",
+  "widget.js": "/packs/js/widget-0d088272af62c6cb5976.js",
+  "widget.js.map": "/packs/js/widget-0d088272af62c6cb5976.js.map"
 }
