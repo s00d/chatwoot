@@ -163,7 +163,7 @@ export default {
       return MESSAGE_STATUS.SENT === this.messageStatus;
     },
     readableTime() {
-      return this.messageStamp(this.createdAt, 'LLL d, h:mm a');
+      return this.messageStamp(this.createdAt, 'LLL d, kk:mm');
     },
     screenName() {
       const { additional_attributes: additionalAttributes = {} } =

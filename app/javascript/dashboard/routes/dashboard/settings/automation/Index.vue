@@ -272,7 +272,7 @@ export default {
       }
     },
     readableTime(date) {
-      return this.messageStamp(new Date(date), 'LLL d, h:mm a');
+      return this.messageStamp(new Date(date), 'LLL d, kk:mm');
     },
   },
 };

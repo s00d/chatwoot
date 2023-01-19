@@ -4,7 +4,7 @@ import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 export default {
   methods: {
-    messageStamp(time, dateFormat = 'h:mm a') {
+    messageStamp(time, dateFormat = 'kk:mm') {
       const unixTime = fromUnixTime(time);
       return format(unixTime, dateFormat);
     },

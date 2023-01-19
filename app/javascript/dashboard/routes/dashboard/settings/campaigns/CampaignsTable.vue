@@ -86,7 +86,7 @@ export default {
           url: item.trigger_rules.url,
           timeOnPage: item.trigger_rules.time_on_page,
           scheduledAt: item.scheduled_at
-            ? this.messageStamp(new Date(item.scheduled_at), 'LLL d, h:mm a')
+            ? this.messageStamp(new Date(item.scheduled_at), 'LLL d, kk:mm')
             : '---',
         };
       });
