@@ -12,7 +12,7 @@
     position: fixed;
     user-select: none;
     width: 64px;
-    z-index: 2147483000 !important;
+    z-index: 1000 !important;
 }
 .woot-widget-bubble:hover {
   background: #1f93ff;
