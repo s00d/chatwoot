@@ -1937,8 +1937,8 @@ __metadata:
     "@babel/plugin-proposal-class-properties": 7.13.0
     "@babel/preset-env": 7.13.15
     "@braid/vue-formulate": ^2.5.2
-    "@chatwoot/prosemirror-schema": "https://github.com/chatwoot/prosemirror-schema.git#beta"
-    "@chatwoot/utils": ^0.0.10
+    "@chatwoot/prosemirror-schema": "https://github.com/chatwoot/prosemirror-schema.git"
+    "@chatwoot/utils": ^0.0.11
     "@hcaptcha/vue-hcaptcha": ^0.3.2
     "@june-so/analytics-next": ^1.36.5
     "@rails/actioncable": 6.1.3
@@ -2031,9 +2031,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@chatwoot/prosemirror-schema@https://github.com/chatwoot/prosemirror-schema.git#beta":
+"@chatwoot/prosemirror-schema@https://github.com/chatwoot/prosemirror-schema.git":
   version: 1.0.0
-  resolution: "@chatwoot/prosemirror-schema@https://github.com/chatwoot/prosemirror-schema.git#commit=e74e54cca4acaa4d87f3e0e48d47ffaea283ec88"
+  resolution: "@chatwoot/prosemirror-schema@https://github.com/chatwoot/prosemirror-schema.git#commit=ebbf09d6ebd9138cdf2bb47257bb02ebbf01af53"
   dependencies:
     prosemirror-commands: ^1.1.4
     prosemirror-dropcursor: ^1.3.2
@@ -2049,16 +2049,16 @@ __metadata:
     prosemirror-tables: ^1.3.0
     prosemirror-utils: ^0.9.6
     prosemirror-view: ^1.17.2
-  checksum: e5eadd363c4a5ca152eda317a26cda0ab30de1ccc0566e47dac8ec51eac9c6e83cf095cec32dcd6d8d5a322b3ee15201e822e5305f6ed64bdc123ebf8bec3d2e
+  checksum: 5aad71fcbeabf3843b68b3a27f6bf8a39b8cce1535074a18e8c6c64cbaf6e18300911195fe36bcbd7c217942b1a84a4c21889c776f54f6d1b4e536a8833d9bff
   languageName: node
   linkType: hard
 
-"@chatwoot/utils@npm:^0.0.10":
-  version: 0.0.10
-  resolution: "@chatwoot/utils@npm:0.0.10"
+"@chatwoot/utils@npm:^0.0.11":
+  version: 0.0.11
+  resolution: "@chatwoot/utils@npm:0.0.11"
   dependencies:
-    date-fns: ^2.22.1
-  checksum: 4431cfd29ea55eae5de44d9b220eeea54dcc5df498813b09ba34cf03794d8cd5113ea6f6331ab60349fadcfdf3029bedd2f578b2c1c43fe9c115f51da97969de
+    date-fns: ^2.29.1
+  checksum: c3b246d270e50cacdb9d9332fd4123e18cb6d5221ec31473ca6cb11d714be949260c0cfad45f73aa3557fcb98270cd58425bef0c77647cc7f670a6cc1fa00548
   languageName: node
   linkType: hard
 
@@ -9377,10 +9377,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"date-fns@npm:^2.22.1":
-  version: 2.28.0
-  resolution: "date-fns@npm:2.28.0"
-  checksum: a0516b2e4f99b8bffc6cc5193349f185f195398385bdcaf07f17c2c4a24473c99d933eb0018be4142a86a6d46cb0b06be6440ad874f15e795acbedd6fd727a1f
+"date-fns@npm:^2.29.1":
+  version: 2.29.3
+  resolution: "date-fns@npm:2.29.3"
+  checksum: e01cf5b62af04e05dfff921bb9c9933310ed0e1ae9a81eb8653452e64dc841acf7f6e01e1a5ae5644d0337e9a7f936175fd2cb6819dc122fdd9c5e86c56be484
   languageName: node
   linkType: hard
 

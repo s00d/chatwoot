@@ -24,7 +24,7 @@
       :class="`dropdown-pane--${menuPosition}`"
     >
       <woot-dropdown-menu>
-        <woot-dropdown-item v-if="showDel">
+        <woot-dropdown-item v-if="showDelete">
           <woot-button
             variant="clear"
             color-scheme="alert"
@@ -71,16 +71,28 @@
         </woot-dropdown-item>
 
         <woot-dropdown-item>
-          <woot-button
-            v-if="showCannedResponseOption"
-            variant="clear"
-            size="small"
-            icon="comment-add"
-            color-scheme="secondary"
-            @click="showCannedResponseModal"
-          >
-            {{ $t('CONVERSATION.CONTEXT_MENU.CREATE_A_CANNED_RESPONSE') }}
-          </woot-button>
+          <woot-dropdown-item v-if="showCannedResponseOption">
+            <woot-button
+              variant="clear"
+              size="small"
+              icon="comment-add"
+              color-scheme="secondary"
+              @click="showCannedResponseModal"
+            >
+              {{ $t('CONVERSATION.CONTEXT_MENU.CREATE_A_CANNED_RESPONSE') }}
+            </woot-button>
+          </woot-dropdown-item>
+          <woot-dropdown-item>
+            <woot-button
+              variant="clear"
+              size="small"
+              icon="translate"
+              color-scheme="secondary"
+              @click="handleTranslate"
+            >
+              {{ $t('CONVERSATION.CONTEXT_MENU.TRANSLATE') }}
+            </woot-button>
+          </woot-dropdown-item>
         </woot-dropdown-item>
       </woot-dropdown-menu>
     </div>
@@ -95,9 +107,7 @@ import AddCannedModal from 'dashboard/routes/dashboard/settings/canned/AddCanned
 import WootDropdownItem from 'shared/components/ui/dropdown/DropdownItem';
 import WootDropdownMenu from 'shared/components/ui/dropdown/DropdownMenu';
 import { copyTextToClipboard } from 'shared/helpers/clipboard';
-import AnalyticsHelper, {
-  ANALYTICS_EVENTS,
-} from '../../../helper/AnalyticsHelper';
+import { ACCOUNT_EVENTS } from '../../../helper/AnalyticsHelper/events';
 
 export default {
   components: {
@@ -119,11 +129,11 @@ export default {
       type: Boolean,
       default: false,
     },
-    showEdit: {
+    showDelete: {
       type: Boolean,
       default: false,
     },
-    showDel: {
+    showEdit: {
       type: Boolean,
       default: false,
     },
@@ -167,8 +177,13 @@ export default {
       this.$emit('toggle', false);
     },
     showCannedResponseModal() {
-      AnalyticsHelper.track(ANALYTICS_EVENTS.ADDED_TO_CANNED_RESPONSE);
+      this.$track(ACCOUNT_EVENTS.ADDED_TO_CANNED_RESPONSE);
       this.isCannedResponseModalOpen = true;
+    },
+
+    handleTranslate() {
+      this.$emit('translate');
+      this.handleContextMenuClick();
     },
   },
 };

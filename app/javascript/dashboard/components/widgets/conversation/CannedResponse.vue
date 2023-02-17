@@ -3,7 +3,11 @@
     :items="items"
     @mention-select="handleMentionClick"
     @close="$emit('close')"
-  />
+  >
+    <template slot-scope="{ item }">
+      <strong>{{ item.label }}</strong> - {{ item.description }}
+    </template>
+  </mention-box>
 </template>
 
 <script>

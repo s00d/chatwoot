@@ -27,6 +27,7 @@ import {
   CHATWOOT_CLOSE,
   CHATWOOT_CLOSE_2,
   CHATWOOT_ERROR,
+  CHATWOOT_ON_MESSAGE,
   CHATWOOT_LOADED,
   CHATWOOT_OPEN,
   CHATWOOT_OPEN_2,
@@ -188,7 +189,9 @@ export const IFrameHelper = {
         Cookies.remove(getUserCookieName());
       }
     },
-
+    onMessage({ data }) {
+      dispatchWindowEvent({ eventName: CHATWOOT_ON_MESSAGE, data });
+    },
     setBubbleLabel(message) {
       setBubbleText(window.$chatwoot.launcherTitle || message.label);
     },

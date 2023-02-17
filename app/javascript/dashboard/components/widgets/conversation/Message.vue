@@ -45,6 +45,14 @@
               :longitude="attachment.coordinates_long"
               :name="attachment.fallback_title"
             />
+            <bubble-contact
+              v-else-if="attachment.file_type === 'contact'"
+              :name="data.content"
+              :phone-number="attachment.fallback_title"
+            />
+            <instagram-image-error-placeholder
+              v-else-if="hasImageError && hasInstagramStory"
+            />
             <bubble-file v-else :url="attachment.data_url" />
           </div>
         </div>
@@ -65,6 +73,39 @@
           :created-at="createdAt"
         />
       </div>
+      <woot-modal
+        v-if="showTranslateModal"
+        modal-type="right-aligned"
+        show
+        :on-close="onCloseTranslateModal"
+      >
+        <div class="column content">
+          <p>
+            <b>{{ $t('TRANSLATE_MODAL.ORIGINAL_CONTENT') }}</b>
+          </p>
+          <p v-dompurify-html="data.content" />
+          <br />
+          <hr />
+          <div v-if="translationsAvailable">
+            <p>
+              <b>{{ $t('TRANSLATE_MODAL.TRANSLATED_CONTENT') }}</b>
+            </p>
+            <div
+              v-for="(translation, language) in translations"
+              :key="language"
+            >
+              <p>
+                <strong>{{ language }}:</strong>
+              </p>
+              <p v-dompurify-html="translation" />
+              <br />
+            </div>
+          </div>
+          <p v-else>
+            {{ $t('TRANSLATE_MODAL.NO_TRANSLATIONS_AVAILABLE') }}
+          </p>
+        </div>
+      </woot-modal>
       <spinner v-if="isPending" size="tiny" />
       <div
         v-if="showAvatar"
@@ -102,13 +143,14 @@
         v-if="isBubble && !isMessageDeleted"
         :is-open="showContextMenu"
         :show-copy="hasText"
+        :show-delete="hasText || hasAttachments"
+        :show-canned-response-option="isOutgoing && hasText"
         :show-edit="hasEdit"
-        :show-del="hasEdit"
-        :show-canned-response-option="isOutgoing"
         :menu-position="contextMenuPosition"
         :message-content="data.content"
         @toggle="handleContextMenuClick"
         @delete="handleDelete"
+        @translate="handleTranslate"
         @edit="handleEdit"
         @replay="handleReplay"
       />
@@ -125,9 +167,10 @@ import BubbleLocation from './bubble/Location';
 import BubbleMailHead from './bubble/MailHead';
 import BubbleText from './bubble/Text';
 import BubbleVideo from './bubble/Video.vue';
+import BubbleContact from './bubble/Contact';
 import Spinner from 'shared/components/Spinner';
 import ContextMenu from 'dashboard/modules/conversations/components/MessageContextMenu';
-
+import instagramImageErrorPlaceholder from './instagramImageErrorPlaceholder.vue';
 import alertMixin from 'shared/mixins/alertMixin';
 import contentTypeMixin from 'shared/mixins/contentTypeMixin';
 import { MESSAGE_TYPE, MESSAGE_STATUS } from 'shared/constants/messages';
@@ -144,8 +187,10 @@ export default {
     BubbleMailHead,
     BubbleText,
     BubbleVideo,
+    BubbleContact,
     ContextMenu,
     Spinner,
+    instagramImageErrorPlaceholder,
   },
   mixins: [alertMixin, messageFormatterMixin, contentTypeMixin],
   props: {
@@ -174,10 +219,13 @@ export default {
     return {
       showContextMenu: false,
       hasImageError: false,
+      showTranslateModal: false,
     };
   },
   computed: {
     ...mapGetters({
+      getAccount: 'accounts/getAccount',
+      currentAccountId: 'getCurrentAccountId',
       currentUserID: 'getCurrentUserID',
     }),
     shouldRenderMessage() {
@@ -195,6 +243,9 @@ export default {
       } = this.contentAttributes.email || {};
       return fullHTMLContent || fullTextContent || '';
     },
+    translations() {
+      return this.contentAttributes.translations || {};
+    },
     displayQuotedButton() {
       // if (!this.isIncoming) {
       //   return false;
@@ -209,6 +260,9 @@ export default {
       }
 
       return false;
+    },
+    translationsAvailable() {
+      return !!Object.keys(this.translations).length;
     },
     message() {
       if (this.contentType === 'input_csat') {
@@ -454,6 +508,19 @@ export default {
     },
     onImageLoadError() {
       this.hasImageError = true;
+    },
+    handleTranslate() {
+      const { locale } = this.getAccount(this.currentAccountId);
+      const { conversation_id: conversationId, id: messageId } = this.data;
+      this.$store.dispatch('translateMessage', {
+        conversationId,
+        messageId,
+        targetLanguage: locale || 'en',
+      });
+      this.showTranslateModal = true;
+    },
+    onCloseTranslateModal() {
+      this.showTranslateModal = false;
     },
   },
 };

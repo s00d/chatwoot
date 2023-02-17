@@ -14,6 +14,7 @@
 #  website_url           :string
 #  welcome_tagline       :string
 #  welcome_title         :string
+#  welcome_title_ru      :string
 #  widget_color          :string           default("#1f93ff")
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null

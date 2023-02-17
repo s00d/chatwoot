@@ -65,3 +65,8 @@ Envoy.blade.php
 composer.lock
 
 .vscode/settings.json
+
+# yalc for local testing
+.yalc
+yalc.lock
+#.yarn

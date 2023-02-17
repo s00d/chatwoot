@@ -2,7 +2,6 @@
   <ul
     v-if="items.length"
     class="vertical dropdown menu mention--box"
-    :style="{ top: getTopSpacing() + 'rem' }"
     :class="{ 'with-bottom-border': items.length <= 4 }"
   >
     <li
@@ -101,6 +100,7 @@ export default {
   box-shadow: var(--shadow-medium);
   font-size: var(--font-size-small);
   left: 0;
+  bottom: 100%;
   line-height: 1.2;
   max-height: 20rem;
   overflow: auto;
