@@ -1,11 +1,15 @@
 import { createConsumer } from '@rails/actioncable';
+import * as ActionCable from '@rails/actioncable';
 import { BUS_EVENTS } from 'shared/constants/busEvents';
+
+ActionCable.logger.enabled = true;
 
 const PRESENCE_INTERVAL = 20000;
 
 class BaseActionCableConnector {
   constructor(app, pubsubToken, websocketHost = '') {
     const websocketURL = websocketHost ? `${websocketHost}/cable` : undefined;
+    this.con = 0;
     this.consumer = createConsumer(websocketURL);
     this.subscription = this.consumer.subscriptions.create(
       {
@@ -18,6 +22,7 @@ class BaseActionCableConnector {
         updatePresence() {
           this.perform('update_presence');
         },
+        connected: this.onConnected,
         received: this.onReceived,
         disconnected: this.onDisconnected,
       }
@@ -34,6 +39,13 @@ class BaseActionCableConnector {
   disconnect() {
     this.consumer.disconnect();
   }
+
+  onConnected = () => {
+    this.con += 1;
+    if (this.con > 1) {
+      window.bus.$emit(BUS_EVENTS.WEBSOCKET_RECONNECTED);
+    }
+  };
 
   // eslint-disable-next-line class-methods-use-this
   onDisconnected() {

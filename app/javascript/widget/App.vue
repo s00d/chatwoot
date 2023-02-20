@@ -40,6 +40,7 @@ import {
 } from './constants/widgetBusEvents';
 
 import { SDK_SET_BUBBLE_VISIBILITY } from '../shared/constants/sharedFrameEvents';
+import { BUS_EVENTS } from '../shared/constants/busEvents';
 
 export default {
   name: 'App',
@@ -79,7 +80,7 @@ export default {
       this.setCampaignView();
     },
   },
-  mounted() {
+  async mounted() {
     const { websiteToken, locale, widgetColor } = window.chatwootWebChannel;
     this.setLocale(locale);
     this.setWidgetColor(widgetColor);
@@ -99,6 +100,10 @@ export default {
     this.$store.dispatch('conversationAttributes/getAttributes');
     this.registerUnreadEvents();
     this.registerCampaignEvents();
+
+    window.bus.$on(BUS_EVENTS.WEBSOCKET_RECONNECTED, () => {
+      this.fetchOldConversations();
+    });
   },
   methods: {
     ...mapActions('appConfig', [
