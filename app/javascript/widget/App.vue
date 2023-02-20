@@ -88,6 +88,9 @@ export default {
     if (this.isIFrame) {
       this.registerListeners();
       this.sendLoadedEvent();
+      window.bus.$on(BUS_EVENTS.WEBSOCKET_RECONNECTED, () => {
+        this.fetchOldConversations();
+      });
     } else {
       this.fetchOldConversations();
       this.fetchAvailableAgents(websiteToken);
@@ -100,10 +103,6 @@ export default {
     this.$store.dispatch('conversationAttributes/getAttributes');
     this.registerUnreadEvents();
     this.registerCampaignEvents();
-
-    window.bus.$on(BUS_EVENTS.WEBSOCKET_RECONNECTED, () => {
-      this.fetchOldConversations();
-    });
   },
   methods: {
     ...mapActions('appConfig', [
