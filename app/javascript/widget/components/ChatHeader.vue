@@ -22,6 +22,7 @@
           class="font-medium text-base flex items-center"
           :class="$dm('text-black-900', 'dark:text-slate-50')"
         >
+          <span v-dompurify-html="$t('CHAT_HEADER')" class="mr-1" />
           <span v-dompurify-html="title" class="mr-1" />
           <div
             :class="
