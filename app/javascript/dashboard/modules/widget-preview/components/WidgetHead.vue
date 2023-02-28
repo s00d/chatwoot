@@ -10,7 +10,7 @@
         />
         <div v-if="!isDefaultScreen">
           <div class="title-block">
-            <span>{{ config.websiteName }}</span>
+            Support&nbsp;<span>{{ config.websiteName }}</span>
             <div v-if="config.isOnline" class="online-dot" />
           </div>
           <div>{{ config.replyTime }}</div>
