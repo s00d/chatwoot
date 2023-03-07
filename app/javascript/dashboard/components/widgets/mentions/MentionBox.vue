@@ -115,8 +115,9 @@ export default {
 
   .button {
     transition: none;
-    height: var(--space-large);
-    line-height: 1.4;
+    height: var(--space-medium);
+    line-height: 1.2;
+    font-size: 12px;
   }
 }
 
