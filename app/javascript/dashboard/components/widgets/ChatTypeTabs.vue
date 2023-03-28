@@ -1,5 +1,5 @@
 <template>
-  <woot-tabs :index="activeTabIndex" @change="onTabChange">
+  <woot-tabs :index="activeTabIndex" :has-scroll="false" @change="onTabChange">
     <woot-tabs-item
       v-for="item in items"
       :key="item.key"

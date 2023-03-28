@@ -9,9 +9,10 @@ export default {
       type: Boolean,
       default: true,
     },
-  },
-  data() {
-    return { hasScroll: false };
+    hasScroll: {
+      type: Boolean,
+      default: true,
+    },
   },
   created() {
     window.addEventListener('resize', this.computeScrollWidth);

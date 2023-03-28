@@ -1,5 +1,6 @@
 .tabs--container {
   display: flex;
+  overflow-x: auto;
 }
 
 .tabs--container--with-border {
