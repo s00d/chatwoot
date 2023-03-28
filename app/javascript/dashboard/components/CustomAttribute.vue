@@ -120,11 +120,6 @@ import { required, url } from 'vuelidate/lib/validators';
 import { BUS_EVENTS } from 'shared/constants/busEvents';
 import MultiselectDropdown from 'shared/components/ui/MultiselectDropdown.vue';
 import { isValidURL } from '../helper/URLHelper';
-import {
-  CMD_MUTE_CONVERSATION,
-  CMD_SEND_TRANSCRIPT,
-  CMD_UNMUTE_CONVERSATION
-} from "../routes/dashboard/commands/commandBarBusEvents";
 const DATE_FORMAT = 'yyyy-MM-dd';
 
 export default {
