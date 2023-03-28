@@ -336,7 +336,6 @@ export default {
   align-items: center;
   height: 3.9rem;
   background: var(--color-background-light);
-
   border: 1px solid var(--color-border);
   padding: var(--space-smaller) var(--space-small);
   border-radius: var(--border-radius-small);
@@ -344,6 +343,7 @@ export default {
   .contact-name {
     margin: 0;
     margin-left: var(--space-small);
+    margin-right: var(--space-small);
   }
 }
 
@@ -351,10 +351,6 @@ export default {
   min-height: 8rem;
 }
 
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-}
 .row.gutter-small {
   gap: var(--space-small);
 }

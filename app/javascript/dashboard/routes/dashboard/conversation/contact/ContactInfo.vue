@@ -1,13 +1,21 @@
 <template>
   <div class="contact--profile">
     <div class="contact--info">
-      <thumbnail
-        v-if="showAvatar"
-        :src="contact.thumbnail"
-        size="56px"
-        :username="contact.name"
-        :status="contact.availability_status"
-      />
+      <div class="contact-info--header">
+        <thumbnail
+          v-if="showAvatar"
+          :src="contact.thumbnail"
+          size="56px"
+          :username="contact.name"
+          :status="contact.availability_status"
+        />
+        <woot-button
+          v-if="showCloseButton"
+          :icon="closeIconName"
+          class="clear secondary close-button--rtl"
+          @click="onPanelToggle"
+        />
+      </div>
 
       <div class="contact--details">
         <div v-if="showAvatar" class="contact--name-wrap">
@@ -195,6 +203,14 @@ export default {
       type: Boolean,
       default: true,
     },
+    showCloseButton: {
+      type: Boolean,
+      default: true,
+    },
+    closeIconName: {
+      type: String,
+      default: 'chevron-right',
+    },
   },
   data() {
     return {
@@ -244,6 +260,9 @@ export default {
     },
     toggleEditModal() {
       this.showEditModal = !this.showEditModal;
+    },
+    onPanelToggle() {
+      this.$emit('toggle-panel');
     },
     toggleConversationModal() {
       this.showConversationModal = !this.showConversationModal;
@@ -296,10 +315,6 @@ export default {
   position: relative;
   align-items: flex-start;
   padding: var(--space-normal);
-
-  .user-thumbnail-box {
-    margin-right: var(--space-normal);
-  }
 }
 
 .contact--details {
@@ -309,6 +324,12 @@ export default {
 
 .contact--info {
   text-align: left;
+}
+
+.contact-info--header {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
 }
 
 .contact--name-wrap {
@@ -339,6 +360,7 @@ export default {
 
 .contact--name {
   text-transform: capitalize;
+  white-space: normal;
   margin: 0 var(--space-smaller) 0 0;
   white-space: nowrap;
   overflow-x: scroll;
@@ -368,9 +390,10 @@ export default {
     margin-right: var(--space-small);
   }
 }
-.merege-summary--card {
+.merge-summary--card {
   padding: var(--space-normal);
 }
+
 .contact--bio {
   word-wrap: break-word;
 }
