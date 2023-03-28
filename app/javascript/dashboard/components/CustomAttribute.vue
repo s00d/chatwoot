@@ -120,6 +120,11 @@ import { required, url } from 'vuelidate/lib/validators';
 import { BUS_EVENTS } from 'shared/constants/busEvents';
 import MultiselectDropdown from 'shared/components/ui/MultiselectDropdown.vue';
 import { isValidURL } from '../helper/URLHelper';
+import {
+  CMD_MUTE_CONVERSATION,
+  CMD_SEND_TRANSCRIPT,
+  CMD_UNMUTE_CONVERSATION
+} from "../routes/dashboard/commands/commandBarBusEvents";
 const DATE_FORMAT = 'yyyy-MM-dd';
 
 export default {
@@ -218,13 +223,17 @@ export default {
   },
   mounted() {
     this.editedValue = this.formattedValue;
-    bus.$on(BUS_EVENTS.FOCUS_CUSTOM_ATTRIBUTE, focusAttributeKey => {
+    bus.$on(BUS_EVENTS.FOCUS_CUSTOM_ATTRIBUTE, this.onFocusAttribute);
+  },
+  destroyed() {
+    bus.$off(BUS_EVENTS.FOCUS_CUSTOM_ATTRIBUTE, this.onFocusAttribute);
+  },
+  methods: {
+    onFocusAttribute(focusAttributeKey) {
       if (this.attributeKey === focusAttributeKey) {
         this.onEdit();
       }
-    });
-  },
-  methods: {
+    },
     focusInput() {
       if (this.$refs.inputfield) {
         this.$refs.inputfield.focus();
