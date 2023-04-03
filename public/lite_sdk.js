@@ -1,4 +1,4 @@
-(function init(pos = 'right') {
+(function init() {
   var styles = `
 .woot-widget-bubble {
     background: #1f93ff;
@@ -60,6 +60,8 @@
   styleSheet.innerText = styles;
   document.head.appendChild(styleSheet);
 
+  var pos = window.chatwootLITESDK.pos;
+  if (!pos) pos = 'right';
   // eslint-disable-next-line vars-on-top
   var newDiv = document.createElement('div');
   newDiv.innerHTML =
