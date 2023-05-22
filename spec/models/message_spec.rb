@@ -10,8 +10,78 @@ RSpec.describe Message, type: :model do
     it { is_expected.to validate_presence_of(:account_id) }
   end
 
+  describe 'length validations' do
+    let(:message) { create(:message) }
+
+    context 'when it validates name length' do
+      it 'valid when within limit' do
+        message.content = 'a' * 120_000
+        expect(message.valid?).to be true
+      end
+
+      it 'invalid when crossed the limit' do
+        message.content = 'a' * 150_001
+        message.valid?
+        expect(message.errors[:content]).to include('is too long (maximum is 150000 characters)')
+      end
+    end
+  end
+
   describe 'concerns' do
     it_behaves_like 'liqudable'
+  end
+
+  describe 'Check if message is a valid first reply' do
+    it 'is valid if it is outgoing' do
+      outgoing_message = create(:message, message_type: :outgoing)
+      expect(outgoing_message.valid_first_reply?).to be true
+    end
+
+    it 'is invalid if it is not outgoing' do
+      incoming_message = create(:message, message_type: :incoming)
+      expect(incoming_message.valid_first_reply?).to be false
+
+      activity_message = create(:message, message_type: :activity)
+      expect(activity_message.valid_first_reply?).to be false
+
+      template_message = create(:message, message_type: :template)
+      expect(template_message.valid_first_reply?).to be false
+    end
+
+    it 'is invalid if it is outgoing but private' do
+      conversation = create(:conversation)
+
+      outgoing_message = create(:message, message_type: :outgoing, conversation: conversation, private: true)
+      expect(outgoing_message.valid_first_reply?).to be false
+
+      # next message should be a valid reply
+      next_message = create(:message, message_type: :outgoing, conversation: conversation)
+      expect(next_message.valid_first_reply?).to be true
+    end
+
+    it 'is invalid if it is not the first reply' do
+      conversation = create(:conversation)
+      first_message = create(:message, message_type: :outgoing, conversation: conversation)
+      expect(first_message.valid_first_reply?).to be true
+
+      second_message = create(:message, message_type: :outgoing, conversation: conversation)
+      expect(second_message.valid_first_reply?).to be false
+    end
+
+    it 'is invalid if it is sent as campaign' do
+      conversation = create(:conversation)
+      campaign_message = create(:message, message_type: :outgoing, conversation: conversation, additional_attributes: { campaign_id: 1 })
+      expect(campaign_message.valid_first_reply?).to be false
+
+      second_message = create(:message, message_type: :outgoing, conversation: conversation)
+      expect(second_message.valid_first_reply?).to be true
+    end
+
+    it 'is invalid if it is sent by automation' do
+      conversation = create(:conversation)
+      automation_message = create(:message, message_type: :outgoing, conversation: conversation, content_attributes: { automation_rule_id: 1 })
+      expect(automation_message.valid_first_reply?).to be false
+    end
   end
 
   describe '#reopen_conversation' do

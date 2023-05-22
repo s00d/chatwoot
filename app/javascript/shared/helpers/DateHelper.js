@@ -30,3 +30,11 @@ export const isTimeAfter = (h1, m1, h2, m2) => {
 
   return true;
 };
+
+export const generateRelativeTime = (value, unit, languageCode) => {
+  const code = languageCode?.replace(/_/g, '-'); // Hacky fix we need to handle it from source
+  const rtf = new Intl.RelativeTimeFormat(code, {
+    numeric: 'auto',
+  });
+  return rtf.format(value, unit);
+};

@@ -64,7 +64,8 @@ test/cypress/videos/*
 Envoy.blade.php
 composer.lock
 
-.vscode/settings.json
+#ignore files under .vscode directory
+.vscode
 
 # yalc for local testing
 .yalc
@@ -72,3 +73,8 @@ yalc.lock
 #.yarn
 .yarn/cache
 .yarn/install-state.gz
+
+/node_modules
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity

@@ -18,11 +18,22 @@ export default {
       type: Array,
       default: () => [],
     },
+    selectedTab: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {
       activeTab: 0,
     };
+  },
+  watch: {
+    selectedTab(value, oldValue) {
+      if (value !== oldValue) {
+        this.activeTab = this.selectedTab;
+      }
+    },
   },
   methods: {
     onTabChange(index) {
@@ -35,6 +46,6 @@ export default {
 <style lang="scss" scoped>
 .tab-container {
   margin-top: var(--space-smaller);
-  border-bottom: 1px solid var(--s-50);
+  border-bottom: 1px solid var(--s-100);
 }
 </style>

@@ -23,7 +23,7 @@
         "ERROR": "Будь ласка, введіть правильне ім'я облікового запису"
       },
       "LANGUAGE": {
-        "LABEL": "Site language",
+        "LABEL": "Мова сайту",
         "PLACEHOLDER": "Ім'я вашого облікового запису",
         "ERROR": ""
       },
@@ -55,7 +55,7 @@
       "ENTER_TO_SELECT": "Натисніть Enter, щоб обрати",
       "ENTER_TO_REMOVE": "Натисніть Enter, щоб видалити",
       "SELECT_ONE": "Виберіть",
-      "SELECT": "Select"
+      "SELECT": "Обрати"
     }
   },
   "NOTIFICATIONS_PAGE": {
@@ -101,6 +101,7 @@
       "REPORTS": "Звіти",
       "CONVERSATION": "Діалог",
       "CHANGE_ASSIGNEE": "Змінити виконавця",
+      "CHANGE_PRIORITY": "Змінити пріоритет",
       "CHANGE_TEAM": "Змінити команду",
       "ADD_LABEL": "Додати мітку до діалогу",
       "REMOVE_LABEL": "Видалити мітку з діалогу",
@@ -126,6 +127,7 @@
       "GO_TO_NOTIFICATIONS": "Перейти до сповіщень",
       "ADD_LABELS_TO_CONVERSATION": "Додати мітку до діалогу",
       "ASSIGN_AN_AGENT": "Призначити агента",
+      "ASSIGN_PRIORITY": "Призначити пріоритет",
       "ASSIGN_A_TEAM": "Призначити команду",
       "MUTE_CONVERSATION": "Вимкнути звук для розмови",
       "UNMUTE_CONVERSATION": "Увімкнути звук для розмови",
@@ -140,6 +142,6 @@
     }
   },
   "DASHBOARD_APPS": {
-    "LOADING_MESSAGE": "Loading Dashboard App..."
+    "LOADING_MESSAGE": "Завантаження дашборду..."
   }
 }

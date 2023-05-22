@@ -16,6 +16,7 @@
       :title="$t('SEARCH.PLACEHOLDER_KEYBINDING')"
       :show-close="false"
       small
+      class="helper-label"
     />
   </div>
 </template>
@@ -76,7 +77,8 @@ export default {
   display: flex;
   align-items: center;
   padding: var(--space-small) var(--space-normal);
-  border-bottom: 1px solid var(--s-100);
+  border: 1px solid var(--s-100);
+  border-radius: var(--border-radius-small);
   transition: border-bottom 0.2s ease-in-out;
 
   input[type='search'] {
@@ -86,7 +88,7 @@ export default {
   }
 
   &.is-focused {
-    border-bottom: 1px solid var(--w-100);
+    border-color: var(--w-100);
 
     .icon {
       color: var(--w-400);
@@ -99,5 +101,9 @@ export default {
   .icon {
     color: var(--s-400);
   }
+}
+
+.helper-label {
+  margin: 0;
 }
 </style>

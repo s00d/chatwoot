@@ -9,9 +9,11 @@ import es from './locale/es.json';
 import fa from './locale/fa.json';
 import fi from './locale/fi.json';
 import fr from './locale/fr.json';
+import he from './locale/he.json';
 import hi from './locale/hi.json';
 import hu from './locale/hu.json';
 import id from './locale/id.json';
+import is from './locale/is.json';
 import it from './locale/it.json';
 import ja from './locale/ja.json';
 import ko from './locale/ko.json';
@@ -46,9 +48,11 @@ export default {
   fa,
   fi,
   fr,
+  he,
   hi,
   hu,
   id,
+  is,
   it,
   ja,
   ko,

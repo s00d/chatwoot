@@ -93,7 +93,9 @@ import { mapGetters } from 'vuex';
 
 import ReplyBox from './ReplyBox';
 import Message from './Message';
-import conversationMixin from '../../../mixins/conversations';
+import conversationMixin, {
+  filterDuplicateSourceMessages,
+} from '../../../mixins/conversations';
 import Banner from 'dashboard/components/ui/Banner.vue';
 import { getTypingUsersText } from '../../../helper/commons';
 import { BUS_EVENTS } from 'shared/constants/busEvents';
@@ -171,32 +173,31 @@ export default {
 
       return '';
     },
-
     getMessages() {
-      const [chat] = this.allConversations.filter(
-        c => c.id === this.currentChat.id
-      );
-      return chat;
+      const messages = this.currentChat.messages || [];
+      if (this.isAWhatsAppChannel) {
+        return filterDuplicateSourceMessages(messages);
+      }
+      return messages;
     },
     getReadMessages() {
-      const chat = this.getMessages;
-      return chat === undefined ? null : this.readMessages(chat);
+      return this.readMessages(
+        this.getMessages,
+        this.currentChat.agent_last_seen_at
+      );
     },
     getUnReadMessages() {
-      const chat = this.getMessages;
-      return chat === undefined ? null : this.unReadMessages(chat);
+      return this.unReadMessages(
+        this.getMessages,
+        this.currentChat.agent_last_seen_at
+      );
     },
     shouldShowSpinner() {
       return (
-        (this.getMessages && this.getMessages.dataFetched === undefined) ||
+        (this.currentChat && this.currentChat.dataFetched === undefined) ||
         (!this.listLoadingStatus && this.isLoadingPrevious)
       );
     },
-
-    shouldLoadMoreChats() {
-      return !this.listLoadingStatus && !this.isLoadingPrevious;
-    },
-
     conversationType() {
       const { additional_attributes: additionalAttributes } = this.currentChat;
       const type = additionalAttributes ? additionalAttributes.type : '';
@@ -213,7 +214,7 @@ export default {
 
     selectedTweet() {
       if (this.selectedTweetId) {
-        const { messages = [] } = this.getMessages;
+        const { messages = [] } = this.currentChat;
         const [selectedMessage] = messages.filter(
           message => message.id === this.selectedTweetId
         );
@@ -302,8 +303,16 @@ export default {
     setSelectedTweet(tweetId) {
       this.selectedTweetId = tweetId;
     },
-    onScrollToMessage() {
-      this.$nextTick(() => this.scrollToBottom());
+    onScrollToMessage({ messageId = '' } = {}) {
+      this.$nextTick(() => {
+        const messageElement = document.getElementById('message' + messageId);
+        if (messageElement) {
+          messageElement.scrollIntoView({ behavior: 'smooth' });
+          this.fetchPreviousMessages();
+        } else {
+          this.scrollToBottom();
+        }
+      });
       this.makeMessagesRead();
     },
     showPopoutReplyBox() {
@@ -354,31 +363,40 @@ export default {
       this.scrollTopBeforeLoad = this.conversationPanel.scrollTop;
     },
 
-    handleScroll(e) {
+    async fetchPreviousMessages(scrollTop = 0) {
       this.setScrollParams();
+      const shouldLoadMoreMessages =
+        this.currentChat.dataFetched === true &&
+        !this.listLoadingStatus &&
+        !this.isLoadingPrevious;
 
-      const dataFetchCheck =
-        this.getMessages.dataFetched === true && this.shouldLoadMoreChats;
       if (
-        e.target.scrollTop < 100 &&
+        scrollTop < 100 &&
         !this.isLoadingPrevious &&
-        dataFetchCheck
+        shouldLoadMoreMessages
       ) {
         this.isLoadingPrevious = true;
-        this.$store
-          .dispatch('fetchPreviousMessages', {
+        try {
+          await this.$store.dispatch('fetchPreviousMessages', {
             conversationId: this.currentChat.id,
-            before: this.getMessages.messages[0].id,
-          })
-          .then(() => {
-            const heightDifference =
-              this.conversationPanel.scrollHeight - this.heightBeforeLoad;
-            this.conversationPanel.scrollTop =
-              this.scrollTopBeforeLoad + heightDifference;
-            this.isLoadingPrevious = false;
-            this.setScrollParams();
+            before: this.currentChat.messages[0].id,
           });
+          const heightDifference =
+            this.conversationPanel.scrollHeight - this.heightBeforeLoad;
+          this.conversationPanel.scrollTop =
+            this.scrollTopBeforeLoad + heightDifference;
+          this.setScrollParams();
+        } catch (error) {
+          // Ignore Error
+        } finally {
+          this.isLoadingPrevious = false;
+        }
       }
+    },
+
+    handleScroll(e) {
+      bus.$emit(BUS_EVENTS.ON_MESSAGE_LIST_SCROLL);
+      this.fetchPreviousMessages(e.target.scrollTop);
     },
 
     makeMessagesRead() {
