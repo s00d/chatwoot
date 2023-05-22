@@ -102,9 +102,8 @@
           variant="icon"
           @click="handleEdit"
         />
-        <hr v-if="enabledOptions['replay']" />
+        <hr />
         <menu-item
-          v-if="enabledOptions['replay']"
           :option="{
             icon: 'clipboard',
             label: this.$t('CONVERSATION.CONTEXT_MENU.REPLAY'),
@@ -200,9 +199,9 @@ export default {
     async handleEdit() {
       this.$emit('edit');
 
-      let content = prompt('New message', this.data.content);
+      let content = prompt('New message', this.messageContent);
 
-      const { conversation_id: conversationId, id: messageId } = this.data;
+      const { conversation_id: conversationId, id: messageId } = this.message;
       try {
         await this.$store.dispatch('editMessage', {
           conversationId,
@@ -214,7 +213,11 @@ export default {
       }
     },
     handleReplay() {
-      bus.$emit('replayText', this.data.content, this.data.sender.name ?? null);
+      bus.$emit(
+        'replayText',
+        this.message.content,
+        this.message.sender.name ?? null
+      );
     },
     async handleCopy() {
       await copyTextToClipboard(this.plainTextContent);

@@ -193,7 +193,7 @@ import DeleteCustomViews from 'dashboard/routes/dashboard/customviews/DeleteCust
 import ConversationBulkActions from './widgets/conversation/conversationBulkActions/Index.vue';
 import alertMixin from 'shared/mixins/alertMixin';
 import filterMixin from 'shared/mixins/filterMixin';
-import { LocalStorage } from 'dashboard/helper/localStorage';
+import { LocalStorage } from 'shared/helpers/localStorage';
 
 import {
   hasPressedAltAndJKey,
