@@ -9,7 +9,7 @@
     }"
     @mouseenter="onCardHover"
     @mouseleave="onCardLeave"
-    @click="cardClick(chat)"
+    @click="onCardClick"
     @contextmenu="openContextMenu($event)"
   >
     <label v-if="hovered || selected" class="checkbox-wrapper" @click.stop>
@@ -325,22 +325,33 @@ export default {
     },
   },
   methods: {
-    cardClick(chat) {
-      const { activeInbox } = this;
-      const path = conversationUrl({
-        accountId: this.accountId,
-        activeInbox,
-        id: chat.id,
-        label: this.activeLabel,
-        teamId: this.teamId,
-        foldersId: this.foldersId,
-        conversationType: this.conversationType,
-      });
+    onCardClick(e) {
+      const { activeInbox, chat } = this;
+      const path = frontendURL(
+        conversationUrl({
+          accountId: this.accountId,
+          activeInbox,
+          id: chat.id,
+          label: this.activeLabel,
+          teamId: this.teamId,
+          foldersId: this.foldersId,
+          conversationType: this.conversationType,
+        })
+      );
+
+      if (e.metaKey || e.ctrlKey) {
+        window.open(
+          window.chatwootConfig.hostURL + path,
+          '_blank',
+          'noopener noreferrer nofollow'
+        );
+        return;
+      }
       if (this.isActiveChat) {
         return;
       }
       this.chat.isClicked = true;
-      router.push({ path: frontendURL(path) });
+      router.push({ path });
     },
     onCardHover() {
       this.hovered = !this.hideThumbnail;

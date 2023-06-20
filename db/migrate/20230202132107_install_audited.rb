@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class InstallAudited < ActiveRecord::Migration[6.1]
+  # rubocop:disable Metrics/MethodLength
   def self.up
     create_table :audits, :force => true do |t|
       t.bigint :auditable_id
@@ -18,6 +19,8 @@ class InstallAudited < ActiveRecord::Migration[6.1]
       t.string :request_uuid
       t.datetime :created_at
     end
+    # rubocop:enable Metrics/MethodLength
+
     add_index :audits, [:auditable_type, :auditable_id, :version], :name => 'auditable_index'
     add_index :audits, [:associated_type, :associated_id], :name => 'associated_index'
     add_index :audits, [:user_id, :user_type], :name => 'user_index'
