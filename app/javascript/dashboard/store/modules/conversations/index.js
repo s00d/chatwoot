@@ -29,7 +29,7 @@ export const mutations = {
         c => c.id === conversation.id
       );
       if (indexInCurrentList < 0) {
-        newAllConversations.push(conversation);
+        newAllConversations.unshift(conversation);
       }
     });
     _state.allConversations = newAllConversations;
@@ -183,7 +183,7 @@ export const mutations = {
   },
 
   [types.ADD_CONVERSATION](_state, conversation) {
-    _state.allConversations.push(conversation);
+    _state.allConversations.unshift(conversation);
   },
 
   [types.UPDATE_CONVERSATION](_state, conversation) {
@@ -202,7 +202,7 @@ export const mutations = {
         window.bus.$emit(BUS_EVENTS.SCROLL_TO_MESSAGE);
       }
     } else {
-      _state.allConversations.push(conversation);
+      _state.allConversations.unshift(conversation);
     }
   },
 
