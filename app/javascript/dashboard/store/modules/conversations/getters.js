@@ -14,7 +14,18 @@ export const getSelectedChatConversation = ({
 const getters = {
   getAllConversations: ({ allConversations, chatSortFilter }) => {
     const comparator = {
-      latest: (a, b) => b.last_activity_at - a.last_activity_at,
+      latest: (a, b) => {
+        if (!a.last_activity_at && !b.last_activity_at) {
+          return 0; // Если оба элемента не имеют last_activity_at, сохраняем текущий порядок
+        }
+        if (!a.last_activity_at) {
+          return -1; // Если у элемента a нет last_activity_at, помещаем его вверху
+        }
+        if (!b.last_activity_at) {
+          return 1; // Если у элемента b нет last_activity_at, помещаем его вверху
+        }
+        return b.last_activity_at - a.last_activity_at; // Сортируем по убыванию last_activity_at
+      },
       sort_on_created_at: (a, b) => a.created_at - b.created_at,
       sort_on_priority: (a, b) => {
         return (
