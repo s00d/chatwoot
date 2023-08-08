@@ -1,24 +1,31 @@
 {
-  "application.js": "/packs/js/application-38856d85e4f2bc358a6e.js",
-  "application.js.map": "/packs/js/application-38856d85e4f2bc358a6e.js.map",
-  "auto-track.js": "/packs/js/auto-track-c0acb9fc7cf2940032c9.chunk.js",
-  "auto-track.js.map": "/packs/js/auto-track-c0acb9fc7cf2940032c9.chunk.js.map",
+  "application.css": "/packs/css/application-5ddcc0ab.css",
+  "application.js": "/packs/js/application-6f9a01bbc91e4b0293a1.js",
+  "application.js.map": "/packs/js/application-6f9a01bbc91e4b0293a1.js.map",
+  "auto-track.js": "/packs/js/auto-track-b639089e6c3da4441cf3.chunk.js",
+  "auto-track.js.map": "/packs/js/auto-track-b639089e6c3da4441cf3.chunk.js.map",
   "encoderWorker.min.js": "/packs/encoderWorker.min.js",
   "entrypoints": {
     "application": {
+      "css": [
+        "/packs/css/application-5ddcc0ab.css"
+      ],
       "js": [
-        "/packs/js/application-38856d85e4f2bc358a6e.js"
+        "/packs/js/application-6f9a01bbc91e4b0293a1.js"
       ],
       "js.map": [
-        "/packs/js/application-38856d85e4f2bc358a6e.js.map"
+        "/packs/js/application-6f9a01bbc91e4b0293a1.js.map"
       ]
     },
     "portal": {
+      "css": [
+        "/packs/css/portal-8cb4bd6f.css"
+      ],
       "js": [
-        "/packs/js/portal-38856d85e4f2bc358a6e.js"
+        "/packs/js/portal-6f9a01bbc91e4b0293a1.js"
       ],
       "js.map": [
-        "/packs/js/portal-38856d85e4f2bc358a6e.js.map"
+        "/packs/js/portal-6f9a01bbc91e4b0293a1.js.map"
       ]
     },
     "sdk": {
@@ -30,40 +37,52 @@
       ]
     },
     "superadmin_pages": {
+      "css": [
+        "/packs/css/superadmin_pages-ff4b1d4e.css"
+      ],
       "js": [
-        "/packs/js/superadmin_pages-38856d85e4f2bc358a6e.js"
+        "/packs/js/superadmin_pages-6f9a01bbc91e4b0293a1.js"
       ],
       "js.map": [
-        "/packs/js/superadmin_pages-38856d85e4f2bc358a6e.js.map"
+        "/packs/js/superadmin_pages-6f9a01bbc91e4b0293a1.js.map"
       ]
     },
     "superadmin": {
+      "css": [
+        "/packs/css/superadmin-e7f22ffc.css"
+      ],
       "js": [
-        "/packs/js/superadmin-38856d85e4f2bc358a6e.js"
+        "/packs/js/superadmin-6f9a01bbc91e4b0293a1.js"
       ],
       "js.map": [
-        "/packs/js/superadmin-38856d85e4f2bc358a6e.js.map"
+        "/packs/js/superadmin-6f9a01bbc91e4b0293a1.js.map"
       ]
     },
     "survey": {
+      "css": [
+        "/packs/css/survey-038b64c0.css"
+      ],
       "js": [
-        "/packs/js/survey-38856d85e4f2bc358a6e.js"
+        "/packs/js/survey-6f9a01bbc91e4b0293a1.js"
       ],
       "js.map": [
-        "/packs/js/survey-38856d85e4f2bc358a6e.js.map"
+        "/packs/js/survey-6f9a01bbc91e4b0293a1.js.map"
       ]
     },
     "widget": {
+      "css": [
+        "/packs/css/widget-2636a2d8.css"
+      ],
       "js": [
-        "/packs/js/widget-38856d85e4f2bc358a6e.js"
+        "/packs/js/widget-6f9a01bbc91e4b0293a1.js"
       ],
       "js.map": [
-        "/packs/js/widget-38856d85e4f2bc358a6e.js.map"
+        "/packs/js/widget-6f9a01bbc91e4b0293a1.js.map"
       ]
     }
   },
-  "legacyVideos.js": "/packs/js/legacyVideos-26e5a9f317bec6678240.chunk.js",
-  "legacyVideos.js.map": "/packs/js/legacyVideos-26e5a9f317bec6678240.chunk.js.map",
+  "legacyVideos.js": "/packs/js/legacyVideos-c3d542c151e1a5c59a38.chunk.js",
+  "legacyVideos.js.map": "/packs/js/legacyVideos-c3d542c151e1a5c59a38.chunk.js.map",
   "media/dashboard/assets/images/bubble-logo.svg": "/packs/media/dashboard/assets/images/bubble-logo-eec5daaebf0c7009bba7568fd9b9ad4a.svg",
   "media/dashboard/assets/images/channels/facebook_login.png": "/packs/media/dashboard/assets/images/channels/facebook_login-7692d6c379288885d619b1e80bb214a4.png",
   "media/dashboard/assets/images/chat.svg": "/packs/media/dashboard/assets/images/chat-a06542d766feaecc071c3a2b77f313e8.svg",
@@ -91,27 +110,32 @@
   "media/shared/assets/fonts/Inter-Thin.woff": "/packs/media/shared/assets/fonts/Inter-Thin-046ff26493bd0c8b7af11d58d459e525.woff",
   "media/shared/assets/fonts/Inter-Thin.woff2": "/packs/media/shared/assets/fonts/Inter-Thin-bc0c400ab97641432db27b3541daa5ac.woff2",
   "media/widget/assets/images/typing.gif": "/packs/media/widget/assets/images/typing-6027d21b24f45e3377a729a55158f948.gif",
-  "middleware.js": "/packs/js/middleware-b677bb8e7a4d1713e50c.chunk.js",
-  "middleware.js.map": "/packs/js/middleware-b677bb8e7a4d1713e50c.chunk.js.map",
-  "portal.js": "/packs/js/portal-38856d85e4f2bc358a6e.js",
-  "portal.js.map": "/packs/js/portal-38856d85e4f2bc358a6e.js.map",
-  "queryString.js": "/packs/js/queryString-a6bd2d33b18c2c2e2f90.chunk.js",
-  "queryString.js.map": "/packs/js/queryString-a6bd2d33b18c2c2e2f90.chunk.js.map",
-  "remoteMiddleware.js": "/packs/js/remoteMiddleware-50e3e0ebc13fae27c519.chunk.js",
-  "remoteMiddleware.js.map": "/packs/js/remoteMiddleware-50e3e0ebc13fae27c519.chunk.js.map",
-  "schemaFilter.js": "/packs/js/schemaFilter-e63e28f0470251c4fb0e.chunk.js",
-  "schemaFilter.js.map": "/packs/js/schemaFilter-e63e28f0470251c4fb0e.chunk.js.map",
+  "middleware.js": "/packs/js/middleware-ccf34736d34af366d80d.chunk.js",
+  "middleware.js.map": "/packs/js/middleware-ccf34736d34af366d80d.chunk.js.map",
+  "portal.css": "/packs/css/portal-8cb4bd6f.css",
+  "portal.js": "/packs/js/portal-6f9a01bbc91e4b0293a1.js",
+  "portal.js.map": "/packs/js/portal-6f9a01bbc91e4b0293a1.js.map",
+  "queryString.js": "/packs/js/queryString-c92a5d9cff57026ba240.chunk.js",
+  "queryString.js.map": "/packs/js/queryString-c92a5d9cff57026ba240.chunk.js.map",
+  "remoteMiddleware.js": "/packs/js/remoteMiddleware-50e7502cd13201f87f57.chunk.js",
+  "remoteMiddleware.js.map": "/packs/js/remoteMiddleware-50e7502cd13201f87f57.chunk.js.map",
+  "schemaFilter.js": "/packs/js/schemaFilter-f66d6989a5816f80d4f7.chunk.js",
+  "schemaFilter.js.map": "/packs/js/schemaFilter-f66d6989a5816f80d4f7.chunk.js.map",
   "sdk.js": "/packs/js/sdk.js",
   "sdk.js.map": "/packs/js/sdk.js.map",
-  "superadmin.js": "/packs/js/superadmin-38856d85e4f2bc358a6e.js",
-  "superadmin.js.map": "/packs/js/superadmin-38856d85e4f2bc358a6e.js.map",
-  "superadmin_pages.js": "/packs/js/superadmin_pages-38856d85e4f2bc358a6e.js",
-  "superadmin_pages.js.map": "/packs/js/superadmin_pages-38856d85e4f2bc358a6e.js.map",
-  "survey.js": "/packs/js/survey-38856d85e4f2bc358a6e.js",
-  "survey.js.map": "/packs/js/survey-38856d85e4f2bc358a6e.js.map",
-  "vendors~ajs-destination.js": "/packs/js/vendors~ajs-destination-c2fa430dbfc7e73e7e61.chunk.js",
-  "vendors~ajs-destination.js.map": "/packs/js/vendors~ajs-destination-c2fa430dbfc7e73e7e61.chunk.js.map",
+  "superadmin.css": "/packs/css/superadmin-e7f22ffc.css",
+  "superadmin.js": "/packs/js/superadmin-6f9a01bbc91e4b0293a1.js",
+  "superadmin.js.map": "/packs/js/superadmin-6f9a01bbc91e4b0293a1.js.map",
+  "superadmin_pages.css": "/packs/css/superadmin_pages-ff4b1d4e.css",
+  "superadmin_pages.js": "/packs/js/superadmin_pages-6f9a01bbc91e4b0293a1.js",
+  "superadmin_pages.js.map": "/packs/js/superadmin_pages-6f9a01bbc91e4b0293a1.js.map",
+  "survey.css": "/packs/css/survey-038b64c0.css",
+  "survey.js": "/packs/js/survey-6f9a01bbc91e4b0293a1.js",
+  "survey.js.map": "/packs/js/survey-6f9a01bbc91e4b0293a1.js.map",
+  "vendors~ajs-destination.js": "/packs/js/vendors~ajs-destination-7c07b3c7de5f5e086324.chunk.js",
+  "vendors~ajs-destination.js.map": "/packs/js/vendors~ajs-destination-7c07b3c7de5f5e086324.chunk.js.map",
   "waveWorker.min.js": "/packs/waveWorker.min.js",
-  "widget.js": "/packs/js/widget-38856d85e4f2bc358a6e.js",
-  "widget.js.map": "/packs/js/widget-38856d85e4f2bc358a6e.js.map"
+  "widget.css": "/packs/css/widget-2636a2d8.css",
+  "widget.js": "/packs/js/widget-6f9a01bbc91e4b0293a1.js",
+  "widget.js.map": "/packs/js/widget-6f9a01bbc91e4b0293a1.js.map"
 }
