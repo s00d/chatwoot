@@ -14,20 +14,7 @@ export default {
       default: true,
     },
   },
-  created() {
-    window.addEventListener('resize', this.computeScrollWidth);
-  },
-  beforeDestroy() {
-    window.removeEventListener('resize', this.computeScrollWidth);
-  },
-  mounted() {
-    this.computeScrollWidth();
-  },
   methods: {
-    computeScrollWidth() {
-      const tabElement = this.$el.getElementsByClassName('tabs')[0];
-      this.hasScroll = tabElement.scrollWidth > tabElement.clientWidth;
-    },
     onScrollClick(direction) {
       const tabElement = this.$el.getElementsByClassName('tabs')[0];
       let scrollPosition = tabElement.scrollLeft;
