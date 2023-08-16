@@ -1,6 +1,6 @@
 <template>
   <div
-    class="conversation flex flex-shrink-0 flex-grow-0 w-auto max-w-full cursor-pointer relative py-0 px-4 border-transparent border-l-2 border-t-0 border-b-0 border-r-0 border-solid items-start hover:bg-slate-25 dark:hover:bg-slate-800 group"
+    class="conversation flex flex-shrink-0 flex-grow-0 w-auto max-w-full cursor-pointer relative py-0 px-0 border-transparent border-l-2 border-t-0 border-b-0 border-r-0 border-solid items-start hover:bg-slate-25 dark:hover:bg-slate-800 group"
     :class="{
       'active bg-slate-25 dark:bg-slate-800 border-woot-500': isActiveChat,
       'unread-chat': hasUnread,
@@ -31,7 +31,7 @@
       size="40px"
     />
     <div
-      class="py-3 px-0 border-b group-last:border-transparent group-hover:border-transparent border-slate-50 dark:border-slate-800/75 columns"
+      class="py-1 px-0 border-b group-last:border-transparent group-hover:border-transparent border-slate-50 dark:border-slate-800/75 columns"
     >
       <div class="flex justify-between">
         <inbox-name v-if="showInboxName" :inbox="inbox" />
@@ -452,7 +452,7 @@ export default {
   }
 
   &::v-deep .user-thumbnail-box {
-    @apply mt-4;
+    @apply mt-2;
   }
 
   &.conversation-selected {
@@ -485,10 +485,10 @@ export default {
 }
 
 .st-agent {
-  color: #0202bd;
+  color: #4f4fff;
 }
 
 .st-bot {
-  color: #c00000;
+  color: #c02727;
 }
 </style>

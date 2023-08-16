@@ -567,7 +567,6 @@ export default {
     document.addEventListener('keydown', this.handleKeyEvents);
     bus.$on('replayText', this.onTextInsert);
 
-    this.setCCEmailFromLastChat();
     this.setCCAndToEmailsFromLastChat();
     this.doAutoSaveDraft = debounce(
       () => {

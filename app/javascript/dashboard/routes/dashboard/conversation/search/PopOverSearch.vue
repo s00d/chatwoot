@@ -7,7 +7,7 @@
       />
       <router-link
         :to="searchUrl"
-        class="search-link flex-1 items-center gap-1 text-left mr-1 rtl:mr-0 rtl:ml-1 h-6 rtl:text-right rounded-md px-2 py-0 bg-slate-25 dark:bg-slate-800 inline-flex"
+        class="search-link flex-1 items-center gap-1 text-left mr-1 rtl:mr-0 rtl:ml-1 h-6 rtl:text-right rounded-md px-0 py-0 bg-slate-25 dark:bg-slate-800 inline-flex"
       >
         <div class="flex">
           <fluent-icon

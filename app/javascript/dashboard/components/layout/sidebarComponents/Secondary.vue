@@ -1,8 +1,8 @@
 <template>
   <div
     v-if="hasSecondaryMenu"
-    class="h-full overflow-auto w-48 flex flex-col bg-white dark:bg-slate-900 border-r dark:border-slate-800/50 rtl:border-r-0 rtl:border-l border-slate-50 text-sm px-2 pb-8"
-    :class="{ hidden: isContactSidebarItemOpen('is_secondary_menu_open') }"
+    class="h-full secondary-menu overflow-auto w-40 flex flex-col bg-white dark:bg-slate-900 border-r dark:border-slate-800/50 rtl:border-r-0 rtl:border-l border-slate-50 text-sm px-2 pb-8"
+    :class="{ min: isContactSidebarItemOpen('is_secondary_menu_open') }"
   >
     <account-context
       v-if="!isContactSidebarItemOpen('is_secondary_menu_open')"
@@ -279,3 +279,35 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.secondary-menu {
+  &.min {
+    width: 1rem;
+  }
+}
+
+
+.sidebar-toggle__wrap {
+  display: flex;
+  justify-content: flex-end;
+
+  .sidebar-toggle--button {
+    position: fixed;
+
+    bottom: var(--space-mega);
+    z-index: var(--z-index-low);
+
+    background: var(--white);
+
+    border-top-left-radius: calc(
+      var(--space-medium) + 1px
+    ); /* 100px of height + 10px of border */
+    border-bottom-left-radius: calc(
+      var(--space-medium) + 1px
+    ); /* 100px of height + 10px of border */
+    border: 1px solid var(--color-border-light);
+    border-right: 0;
+    box-sizing: border-box;
+  }
+}
+</style>

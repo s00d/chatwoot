@@ -968,7 +968,7 @@ export default {
 @tailwind components;
 @layer components {
   .flex-basis-clamp {
-    flex-basis: clamp(20rem, 4vw + 21.25rem, 27.5rem);
+    flex-basis: clamp(20rem, 2vw + 18.25rem, 27.5rem);
   }
 }
 </style>
@@ -994,6 +994,8 @@ export default {
 
 .tab--chat-type {
   @apply py-0 px-4;
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
 
   ::v-deep {
     .tabs {
