@@ -94,7 +94,9 @@
           if (isOpen) {
             window.$chatwoot.toggle('open');
           }
-          document.body.removeChild(newDiv);
+          try {
+            document.body.removeChild(newDiv);
+          } catch (e) {}
         });
       };
     })(document, 'script');
