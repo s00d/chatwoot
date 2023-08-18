@@ -21,7 +21,17 @@ class Api::V1::Widget::ContactsController < Api::V1::Widget::BaseController
 
     @contact_inbox.update(hmac_verified: true) if should_verify_hmac? && valid_hmac?
 
-    identify_contact(contact)
+    begin
+      identify_contact(contact)
+    rescue ActiveRecord::RecordInvalid => e
+      if e.message.include?("Email has already been taken")
+        email = contact.email
+        contact.update(email: "#{email}_")
+        identify_contact(contact)
+      else
+        raise e
+      end
+    end
   end
 
   # TODO : clean up this with proper routes delete contacts/custom_attributes
