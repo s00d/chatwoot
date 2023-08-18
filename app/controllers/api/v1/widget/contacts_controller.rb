@@ -34,23 +34,12 @@ class Api::V1::Widget::ContactsController < Api::V1::Widget::BaseController
   private
 
   def identify_contact(contact)
-    begin
-      contact_identify_action = ContactIdentifyAction.new(
-        contact: contact,
-        params: permitted_params.to_h.deep_symbolize_keys,
-        discard_invalid_attrs: true
-      )
-      @contact = contact_identify_action.perform
-    rescue ActiveRecord::RecordInvalid => e
-      Rails.logger.debug e
-      Rails.logger.debug e.message
-      if e.record.is_a?(ActiveModel::Validations)
-        raise unless e.record.errors.details[:email].any? { |error| error[:error] == :taken }
-
-        contact.email += '_'
-        retry
-      end
-    end
+    contact_identify_action = ContactIdentifyAction.new(
+      contact: contact,
+      params: permitted_params.to_h.deep_symbolize_keys,
+      discard_invalid_attrs: true
+    )
+    @contact = contact_identify_action.perform
   end
 
   def a_different_contact?
