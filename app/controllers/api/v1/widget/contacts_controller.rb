@@ -21,17 +21,7 @@ class Api::V1::Widget::ContactsController < Api::V1::Widget::BaseController
 
     @contact_inbox.update(hmac_verified: true) if should_verify_hmac? && valid_hmac?
 
-    begin
-      identify_contact(contact)
-    rescue ActiveRecord::RecordInvalid => e
-      if e.message.include?('Email has already been taken')
-        email = contact.email
-        contact.update(email: "#{email}_")
-        identify_contact(contact)
-      else
-        raise e
-      end
-    end
+    identify_contact(contact)
   end
 
   # TODO : clean up this with proper routes delete contacts/custom_attributes
@@ -49,7 +39,16 @@ class Api::V1::Widget::ContactsController < Api::V1::Widget::BaseController
       params: permitted_params.to_h.deep_symbolize_keys,
       discard_invalid_attrs: true
     )
-    @contact = contact_identify_action.perform
+    begin
+      @contact = contact_identify_action.perform
+    rescue ActiveRecord::RecordInvalid => e
+      if e.record.is_a?(ActiveModel::Validations)
+        raise unless e.record.errors.details[:email].any? { |error| error[:error] == :taken }
+
+        contact.email += '_'
+        retry
+      end
+    end
   end
 
   def a_different_contact?
