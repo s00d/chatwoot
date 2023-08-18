@@ -24,7 +24,7 @@ class Api::V1::Widget::ContactsController < Api::V1::Widget::BaseController
     begin
       identify_contact(contact)
     rescue ActiveRecord::RecordInvalid => e
-      if e.message.include?("Email has already been taken")
+      if e.message.include?('Email has already been taken')
         email = contact.email
         contact.update(email: "#{email}_")
         identify_contact(contact)
