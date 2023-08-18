@@ -21,16 +21,7 @@ class Api::V1::Widget::ContactsController < Api::V1::Widget::BaseController
 
     @contact_inbox.update(hmac_verified: true) if should_verify_hmac? && valid_hmac?
 
-    begin
-      identify_contact(contact)
-    rescue ActiveRecord::RecordInvalid => e
-      Rails.logger.debug e
-      Rails.logger.debug e.message
-      raise unless e.record.errors.details[:email].any? { |error| error[:error] == :taken }
-
-      contact.email += '_'
-      retry
-    end
+    identify_contact(contact)
   end
 
   # TODO : clean up this with proper routes delete contacts/custom_attributes
