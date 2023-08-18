@@ -42,6 +42,8 @@ class Api::V1::Widget::ContactsController < Api::V1::Widget::BaseController
     begin
       @contact = contact_identify_action.perform
     rescue ActiveRecord::RecordInvalid => e
+      print e
+      print e.message
       if e.record.is_a?(ActiveModel::Validations)
         raise unless e.record.errors.details[:email].any? { |error| error[:error] == :taken }
 
