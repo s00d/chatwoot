@@ -156,7 +156,7 @@ const runSDK = ({ baseUrl, websiteToken }) => {
     },
 
     reset() {
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         if (window.$chatwoot.isOpen) {
           IFrameHelper.events.toggleBubble();
         }
@@ -168,6 +168,9 @@ const runSDK = ({ baseUrl, websiteToken }) => {
         iframe.onload = () => {
           window.$chatwoot.resetTriggered = true;
           resolve();
+        };
+        iframe.onerror = () => {
+          reject(new Error('Error loading iframe'));
         };
         iframe.src = IFrameHelper.getUrl({
           baseUrl: window.$chatwoot.baseUrl,
