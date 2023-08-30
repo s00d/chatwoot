@@ -29,12 +29,6 @@ export const mutations = {
         c => c.id === conversation.id
       );
       if (indexInCurrentList < 0) {
-        // eslint-disable-next-line no-console
-        console.log(
-          'SET_ALL_CONVERSATION',
-          conversation.id,
-          conversation.last_activity_at
-        );
         newAllConversations.unshift(conversation);
       }
     });
@@ -198,15 +192,6 @@ export const mutations = {
   },
 
   [types.ADD_CONVERSATION](_state, conversation) {
-    // if (!conversation.last_activity_at) {
-    //   conversation.last_activity_at = Math.floor(Date.now() / 1000);
-    // }
-    // eslint-disable-next-line no-console
-    console.log(
-      'ADD_CONVERSATION',
-      conversation.id,
-      conversation.last_activity_at
-    );
     _state.allConversations.unshift(conversation);
   },
 
@@ -227,12 +212,6 @@ export const mutations = {
         window.bus.$emit(BUS_EVENTS.SCROLL_TO_MESSAGE);
       }
     } else {
-      // eslint-disable-next-line no-console
-      console.log(
-        'UPDATE_CONVERSATION',
-        conversation.id,
-        conversation.last_activity_at
-      );
       _state.allConversations.unshift(conversation);
     }
   },
