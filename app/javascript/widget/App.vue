@@ -41,7 +41,7 @@ import {
   ON_CAMPAIGN_MESSAGE_CLICK,
   ON_UNREAD_MESSAGE_CLICK,
 } from './constants/widgetBusEvents';
-
+import darkModeMixin from 'widget/mixins/darkModeMixin';
 import { SDK_SET_BUBBLE_VISIBILITY } from '../shared/constants/sharedFrameEvents';
 import { BUS_EVENTS } from '../shared/constants/busEvents';
 
@@ -50,7 +50,7 @@ export default {
   components: {
     Spinner,
   },
-  mixins: [availabilityMixin, configMixin, routerMixin],
+  mixins: [availabilityMixin, configMixin, routerMixin, darkModeMixin],
   data() {
     return {
       isMobile: false,
@@ -68,7 +68,6 @@ export default {
       isFetchingList: 'conversation/getIsFetchingList',
       isRightAligned: 'appConfig/isRightAligned',
       isWidgetOpen: 'appConfig/getIsWidgetOpen',
-      darkMode: 'appConfig/darkMode',
       messageCount: 'conversation/getMessageCount',
       unreadMessageCount: 'conversation/getUnreadMessageCount',
       isWidgetStyleFlat: 'appConfig/isWidgetStyleFlat',
@@ -78,12 +77,6 @@ export default {
     },
     isRNWebView() {
       return RNHelper.isRNWebView();
-    },
-    prefersDarkMode() {
-      const isOSOnDarkMode =
-        this.darkMode === 'auto' &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches;
-      return isOSOnDarkMode || this.darkMode === 'dark';
     },
   },
   watch: {
