@@ -1,25 +1,24 @@
 {
-  "application.js": "/packs/js/application-29ee4f28beaf7e49d3d8.js",
-  "application.js.map": "/packs/js/application-a84f6934b39db51e35b4.hot-update.js.map",
+  "application.js": "/packs/js/application-57923f8a0ddca8e0e62e.js",
+  "application.js.map": "/packs/js/application-57923f8a0ddca8e0e62e.js.map",
   "auto-track.js": "/packs/js/auto-track-c0acb9fc7cf2940032c9.chunk.js",
   "auto-track.js.map": "/packs/js/auto-track-c0acb9fc7cf2940032c9.chunk.js.map",
   "encoderWorker.min.js": "/packs/encoderWorker.min.js",
   "entrypoints": {
     "application": {
       "js": [
-        "/packs/js/application-29ee4f28beaf7e49d3d8.js"
+        "/packs/js/application-57923f8a0ddca8e0e62e.js"
       ],
       "js.map": [
-        "/packs/js/application-29ee4f28beaf7e49d3d8.js.map",
-        "/packs/js/application-a84f6934b39db51e35b4.hot-update.js.map"
+        "/packs/js/application-57923f8a0ddca8e0e62e.js.map"
       ]
     },
     "portal": {
       "js": [
-        "/packs/js/portal-29ee4f28beaf7e49d3d8.js"
+        "/packs/js/portal-57923f8a0ddca8e0e62e.js"
       ],
       "js.map": [
-        "/packs/js/portal-29ee4f28beaf7e49d3d8.js.map"
+        "/packs/js/portal-57923f8a0ddca8e0e62e.js.map"
       ]
     },
     "sdk": {
@@ -32,47 +31,49 @@
     },
     "superadmin_pages": {
       "js": [
-        "/packs/js/superadmin_pages-29ee4f28beaf7e49d3d8.js"
+        "/packs/js/superadmin_pages-57923f8a0ddca8e0e62e.js"
       ],
       "js.map": [
-        "/packs/js/superadmin_pages-29ee4f28beaf7e49d3d8.js.map"
+        "/packs/js/superadmin_pages-57923f8a0ddca8e0e62e.js.map"
       ]
     },
     "superadmin": {
       "js": [
-        "/packs/js/superadmin-29ee4f28beaf7e49d3d8.js"
+        "/packs/js/superadmin-57923f8a0ddca8e0e62e.js"
       ],
       "js.map": [
-        "/packs/js/superadmin-29ee4f28beaf7e49d3d8.js.map"
+        "/packs/js/superadmin-57923f8a0ddca8e0e62e.js.map"
       ]
     },
     "survey": {
       "js": [
-        "/packs/js/survey-29ee4f28beaf7e49d3d8.js"
+        "/packs/js/survey-57923f8a0ddca8e0e62e.js"
       ],
       "js.map": [
-        "/packs/js/survey-29ee4f28beaf7e49d3d8.js.map"
+        "/packs/js/survey-57923f8a0ddca8e0e62e.js.map",
+        "/packs/js/survey-750832f138f73bd6ea02.hot-update.js.map"
       ]
     },
     "v3app": {
       "js": [
-        "/packs/js/v3app-29ee4f28beaf7e49d3d8.js"
+        "/packs/js/v3app-57923f8a0ddca8e0e62e.js"
       ],
       "js.map": [
-        "/packs/js/v3app-29ee4f28beaf7e49d3d8.js.map"
+        "/packs/js/v3app-57923f8a0ddca8e0e62e.js.map"
       ]
     },
     "widget": {
       "js": [
-        "/packs/js/widget-29ee4f28beaf7e49d3d8.js"
+        "/packs/js/widget-57923f8a0ddca8e0e62e.js"
       ],
       "js.map": [
-        "/packs/js/widget-29ee4f28beaf7e49d3d8.js.map"
+        "/packs/js/widget-57923f8a0ddca8e0e62e.js.map",
+        "/packs/js/widget-750832f138f73bd6ea02.hot-update.js.map"
       ]
     }
   },
-  "legacyVideos.js": "/packs/js/legacyVideos-23252e3eb804c65b2856.chunk.js",
-  "legacyVideos.js.map": "/packs/js/legacyVideos-23252e3eb804c65b2856.chunk.js.map",
+  "legacyVideos.js": "/packs/js/legacyVideos-536439daea55c9d88f58.chunk.js",
+  "legacyVideos.js.map": "/packs/js/legacyVideos-536439daea55c9d88f58.chunk.js.map",
   "media/dashboard/assets/images/bubble-logo.svg": "/packs/media/dashboard/assets/images/bubble-logo-eec5daaebf0c7009bba7568fd9b9ad4a.svg",
   "media/dashboard/assets/images/channels/facebook_login.png": "/packs/media/dashboard/assets/images/channels/facebook_login-7692d6c379288885d619b1e80bb214a4.png",
   "media/dashboard/assets/images/chatwoot_bot.png": "/packs/media/dashboard/assets/images/chatwoot_bot-905112376e6493b37e2cecea8f9dc50c.png",
@@ -110,8 +111,8 @@
   "media/widget/assets/images/typing.gif": "/packs/media/widget/assets/images/typing-6027d21b24f45e3377a729a55158f948.gif",
   "middleware.js": "/packs/js/middleware-b677bb8e7a4d1713e50c.chunk.js",
   "middleware.js.map": "/packs/js/middleware-b677bb8e7a4d1713e50c.chunk.js.map",
-  "portal.js": "/packs/js/portal-29ee4f28beaf7e49d3d8.js",
-  "portal.js.map": "/packs/js/portal-29ee4f28beaf7e49d3d8.js.map",
+  "portal.js": "/packs/js/portal-57923f8a0ddca8e0e62e.js",
+  "portal.js.map": "/packs/js/portal-57923f8a0ddca8e0e62e.js.map",
   "queryString.js": "/packs/js/queryString-a6bd2d33b18c2c2e2f90.chunk.js",
   "queryString.js.map": "/packs/js/queryString-a6bd2d33b18c2c2e2f90.chunk.js.map",
   "remoteMiddleware.js": "/packs/js/remoteMiddleware-50e3e0ebc13fae27c519.chunk.js",
@@ -120,17 +121,17 @@
   "schemaFilter.js.map": "/packs/js/schemaFilter-e63e28f0470251c4fb0e.chunk.js.map",
   "sdk.js": "/packs/js/sdk.js",
   "sdk.js.map": "/packs/js/sdk.js.map",
-  "superadmin.js": "/packs/js/superadmin-29ee4f28beaf7e49d3d8.js",
-  "superadmin.js.map": "/packs/js/superadmin-29ee4f28beaf7e49d3d8.js.map",
-  "superadmin_pages.js": "/packs/js/superadmin_pages-29ee4f28beaf7e49d3d8.js",
-  "superadmin_pages.js.map": "/packs/js/superadmin_pages-29ee4f28beaf7e49d3d8.js.map",
-  "survey.js": "/packs/js/survey-29ee4f28beaf7e49d3d8.js",
-  "survey.js.map": "/packs/js/survey-29ee4f28beaf7e49d3d8.js.map",
-  "v3app.js": "/packs/js/v3app-29ee4f28beaf7e49d3d8.js",
-  "v3app.js.map": "/packs/js/v3app-29ee4f28beaf7e49d3d8.js.map",
+  "superadmin.js": "/packs/js/superadmin-57923f8a0ddca8e0e62e.js",
+  "superadmin.js.map": "/packs/js/superadmin-57923f8a0ddca8e0e62e.js.map",
+  "superadmin_pages.js": "/packs/js/superadmin_pages-57923f8a0ddca8e0e62e.js",
+  "superadmin_pages.js.map": "/packs/js/superadmin_pages-57923f8a0ddca8e0e62e.js.map",
+  "survey.js": "/packs/js/survey-57923f8a0ddca8e0e62e.js",
+  "survey.js.map": "/packs/js/survey-750832f138f73bd6ea02.hot-update.js.map",
+  "v3app.js": "/packs/js/v3app-57923f8a0ddca8e0e62e.js",
+  "v3app.js.map": "/packs/js/v3app-57923f8a0ddca8e0e62e.js.map",
   "vendors~ajs-destination.js": "/packs/js/vendors~ajs-destination-c2fa430dbfc7e73e7e61.chunk.js",
   "vendors~ajs-destination.js.map": "/packs/js/vendors~ajs-destination-c2fa430dbfc7e73e7e61.chunk.js.map",
   "waveWorker.min.js": "/packs/waveWorker.min.js",
-  "widget.js": "/packs/js/widget-29ee4f28beaf7e49d3d8.js",
-  "widget.js.map": "/packs/js/widget-29ee4f28beaf7e49d3d8.js.map"
+  "widget.js": "/packs/js/widget-57923f8a0ddca8e0e62e.js",
+  "widget.js.map": "/packs/js/widget-750832f138f73bd6ea02.hot-update.js.map"
 }

@@ -3009,7 +3009,7 @@ __metadata:
     "@babel/plugin-proposal-class-properties": 7.13.0
     "@babel/preset-env": 7.13.15
     "@braid/vue-formulate": ^2.5.2
-    "@chatwoot/prosemirror-schema": "https://github.com/chatwoot/prosemirror-schema.git"
+    "@chatwoot/prosemirror-schema": "https://github.com/chatwoot/prosemirror-schema.git#825755b53f1ef4ae14fac2393b53a02e14ce21e0"
     "@chatwoot/utils": ^0.0.16
     "@hcaptcha/vue-hcaptcha": ^0.3.2
     "@june-so/analytics-next": ^1.36.5
@@ -3122,10 +3122,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@chatwoot/prosemirror-schema@https://github.com/chatwoot/prosemirror-schema.git":
+"@chatwoot/prosemirror-schema@https://github.com/chatwoot/prosemirror-schema.git#825755b53f1ef4ae14fac2393b53a02e14ce21e0":
   version: 1.0.0
-  resolution: "@chatwoot/prosemirror-schema@https://github.com/chatwoot/prosemirror-schema.git#commit=ebbf09d6ebd9138cdf2bb47257bb02ebbf01af53"
+  resolution: "@chatwoot/prosemirror-schema@https://github.com/chatwoot/prosemirror-schema.git#commit=825755b53f1ef4ae14fac2393b53a02e14ce21e0"
   dependencies:
+    markdown-it-sup: ^1.0.0
     prosemirror-commands: ^1.1.4
     prosemirror-dropcursor: ^1.3.2
     prosemirror-gapcursor: ^1.1.5
@@ -3140,7 +3141,7 @@ __metadata:
     prosemirror-tables: ^1.3.0
     prosemirror-utils: ^0.9.6
     prosemirror-view: ^1.17.2
-  checksum: 5aad71fcbeabf3843b68b3a27f6bf8a39b8cce1535074a18e8c6c64cbaf6e18300911195fe36bcbd7c217942b1a84a4c21889c776f54f6d1b4e536a8833d9bff
+  checksum: 964187b325eeaf669b831075bce7e71f65ed9a351d6103c4fe487cdb9f380193c7b2b0281001f98f7c8d668ff2a67f9381fc0ba7a078b4062f0006990a5c0cc7
   languageName: node
   linkType: hard
 
@@ -17345,6 +17346,13 @@ __metadata:
   version: 4.0.1
   resolution: "markdown-it-link-attributes@npm:4.0.1"
   checksum: e859b0a3653998b7acddaf5e37052a00e940150d76b0275322e133a14179979c3516692610df75553f3b2e5d4010e1e5138f10bc85efab4768b9293a5b39f0a6
+  languageName: node
+  linkType: hard
+
+"markdown-it-sup@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "markdown-it-sup@npm:1.0.0"
+  checksum: 9e593acb8c79dbb917645affde3c46ecb50baa59c740ffe4ecc7bfa470b5b746338f12c65219d6c4112f9f2b01b68cbd151aaabbac878f34e07c7120e5959324
   languageName: node
   linkType: hard
 
