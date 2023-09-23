@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import EmojiOrIcon from 'shared/components/EmojiOrIcon';
+import EmojiOrIcon from 'shared/components/EmojiOrIcon.vue';
 
 export default {
   components: {
