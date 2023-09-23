@@ -942,6 +942,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/parser@npm:^7.18.4":
+  version: 7.22.16
+  resolution: "@babel/parser@npm:7.22.16"
+  bin:
+    parser: ./bin/babel-parser.js
+  checksum: 944c756b5bdeb07b9fec16ecef6b3c61aff9d4c4b924abadcf01afa1840a740b8e2357ae00482b5b37daad6d2bfd848c947f27ad65138d687b6fdc924bc59edd
+  languageName: node
+  linkType: hard
+
 "@babel/parser@npm:^7.20.7, @babel/parser@npm:^7.21.5, @babel/parser@npm:^7.21.8":
   version: 7.21.8
   resolution: "@babel/parser@npm:7.21.8"
@@ -3009,7 +3018,7 @@ __metadata:
     "@babel/plugin-proposal-class-properties": 7.13.0
     "@babel/preset-env": 7.13.15
     "@braid/vue-formulate": ^2.5.2
-    "@chatwoot/prosemirror-schema": "https://github.com/chatwoot/prosemirror-schema.git#825755b53f1ef4ae14fac2393b53a02e14ce21e0"
+    "@chatwoot/prosemirror-schema": ^1.0.1
     "@chatwoot/utils": ^0.0.16
     "@hcaptcha/vue-hcaptcha": ^0.3.2
     "@june-so/analytics-next": ^1.36.5
@@ -3081,7 +3090,6 @@ __metadata:
     md5: ^2.3.0
     ninja-keys: ^1.1.9
     opus-recorder: ^8.0.5
-    pinia: ^2.1.4
     postcss: ^8.4.24
     postcss-loader: ^4.2.0
     postcss-preset-env: ^8.5.1
@@ -3089,14 +3097,13 @@ __metadata:
     rimraf: ^3.0.0
     semver: 7.5.2
     size-limit: ^8.2.4
-    spinkit: ~1.2.5
     tailwindcss: ^3.3.2
     turbolinks: ^5.2.0
     url-loader: ^2.0.0
     urlpattern-polyfill: ^6.0.2
     v-tooltip: ~2.1.3
     videojs-record: ^4.5.0
-    vue: 2.6.12
+    vue: ^2.7.0
     vue-chartjs: 3.5.1
     vue-clickaway: ~2.1.0
     vue-color: 2.8.1
@@ -3105,10 +3112,10 @@ __metadata:
     vue-i18n: 8.24.3
     vue-jest: 4
     vue-letter: ^0.1.3
-    vue-loader: 15.9.6
+    vue-loader: ^15.10.0
     vue-multiselect: ~2.1.6
     vue-router: ~3.5.2
-    vue-template-compiler: 2.6.12
+    vue-template-compiler: ^2.7.0
     vue-upload-component: 2.8.22
     vue2-datepicker: ^3.9.1
     vuedraggable: ^2.24.3
@@ -3122,9 +3129,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@chatwoot/prosemirror-schema@https://github.com/chatwoot/prosemirror-schema.git#825755b53f1ef4ae14fac2393b53a02e14ce21e0":
-  version: 1.0.0
-  resolution: "@chatwoot/prosemirror-schema@https://github.com/chatwoot/prosemirror-schema.git#commit=825755b53f1ef4ae14fac2393b53a02e14ce21e0"
+"@chatwoot/prosemirror-schema@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@chatwoot/prosemirror-schema@npm:1.0.1"
   dependencies:
     markdown-it-sup: ^1.0.0
     prosemirror-commands: ^1.1.4
@@ -3141,7 +3148,7 @@ __metadata:
     prosemirror-tables: ^1.3.0
     prosemirror-utils: ^0.9.6
     prosemirror-view: ^1.17.2
-  checksum: 964187b325eeaf669b831075bce7e71f65ed9a351d6103c4fe487cdb9f380193c7b2b0281001f98f7c8d668ff2a67f9381fc0ba7a078b4062f0006990a5c0cc7
+  checksum: 4a2df0881a19f7ee344f9e00397f1b5e07f1a810b1649712707b7ef8c34755b7571fedda0d0e875c265d0e13e00a370c2de709ca162cc3a3d0611928786a1638
   languageName: node
   linkType: hard
 
@@ -7389,6 +7396,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vue/compiler-sfc@npm:2.7.14":
+  version: 2.7.14
+  resolution: "@vue/compiler-sfc@npm:2.7.14"
+  dependencies:
+    "@babel/parser": ^7.18.4
+    postcss: ^8.4.14
+    source-map: ^0.6.1
+  checksum: 25e00abaecb311f1effbf539bc3e4fdeedb39d35f9c2947b2640187a047e6a7400e693fd7da1d3a98977b9078c5bf629ca47f8b9a59dc14a080c0a1e1dd06a49
+  languageName: node
+  linkType: hard
+
 "@vue/compiler-sfc@npm:^3.2.0":
   version: 3.2.37
   resolution: "@vue/compiler-sfc@npm:3.2.37"
@@ -7434,13 +7452,6 @@ __metadata:
     prettier:
       optional: true
   checksum: 26ac79b12b414cfb21f7eba8e7827254a28f1e491002f36eeb67ff8e4a014d2008b56d5da0ccb6a23353ec095b089c4e581679793dafd69a2d852f115838ada5
-  languageName: node
-  linkType: hard
-
-"@vue/devtools-api@npm:^6.5.0":
-  version: 6.5.0
-  resolution: "@vue/devtools-api@npm:6.5.0"
-  checksum: ec819ef3a426e91d09e9cfefd2827e9ed8ec9d62bb3b3e0674f3da8c7e92a4b879c3b777dc7329172ca6fe2670b62dd5580d23160339208f0f5ae038f2e504ad
   languageName: node
   linkType: hard
 
@@ -11067,6 +11078,13 @@ __metadata:
   version: 3.0.8
   resolution: "csstype@npm:3.0.8"
   checksum: 5939a003858a31a32cbc52a8f45496aa0c2bcb4629b21c5bc14a7ddcac1a3d4adfd655f56843dc14940f60563378e9444af2c9c373b3f212601b9eeb6740b8db
+  languageName: node
+  linkType: hard
+
+"csstype@npm:^3.1.0":
+  version: 3.1.2
+  resolution: "csstype@npm:3.1.2"
+  checksum: e1a52e6c25c1314d6beef5168da704ab29c5186b877c07d822bd0806717d9a265e8493a2e35ca7e68d0f5d472d43fac1cdce70fd79fd0853dff81f3028d857b5
   languageName: node
   linkType: hard
 
@@ -19233,25 +19251,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pinia@npm:^2.1.4":
-  version: 2.1.6
-  resolution: "pinia@npm:2.1.6"
-  dependencies:
-    "@vue/devtools-api": ^6.5.0
-    vue-demi: ">=0.14.5"
-  peerDependencies:
-    "@vue/composition-api": ^1.4.0
-    typescript: ">=4.4.4"
-    vue: ^2.6.14 || ^3.3.0
-  peerDependenciesMeta:
-    "@vue/composition-api":
-      optional: true
-    typescript:
-      optional: true
-  checksum: 4e881e590c4f6ec9c2dc6174cf7ecc71a48bff1f3a5be878669b3b2fd32994fa64c3cbf499d138bc4e0f222ac6ad1d07935b0a592791acdaf8c9f2a12c98f042
-  languageName: node
-  linkType: hard
-
 "pinkie-promise@npm:^2.0.0":
   version: 2.0.1
   resolution: "pinkie-promise@npm:2.0.1"
@@ -20641,6 +20640,17 @@ __metadata:
     nanoid: ^3.1.22
     source-map: ^0.6.1
   checksum: 1f4a4d85c220d90d11486d0a21a0549dff91e52b8857957c797feb408b31f929b142d0b7ab029ec81bb5a48b0e8605ba716d674571fa98962737c90164d64648
+  languageName: node
+  linkType: hard
+
+"postcss@npm:^8.4.14":
+  version: 8.4.30
+  resolution: "postcss@npm:8.4.30"
+  dependencies:
+    nanoid: ^3.3.6
+    picocolors: ^1.0.0
+    source-map-js: ^1.0.2
+  checksum: 6c810c10c9bd3e03ca016e0b6b6756261e640aba1a9a7b1200b55502bc34b9165e38f590aef3493afc2f30ab55cdfcd43fd0f8408d69a77318ddbcf2a8ad164b
   languageName: node
   linkType: hard
 
@@ -23221,13 +23231,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"spinkit@npm:~1.2.5":
-  version: 1.2.5
-  resolution: "spinkit@npm:1.2.5"
-  checksum: 200597fb85dd5ae494a6993ba54c5f40572656230fed95e790b9928bdb74405cb0373cf3b3d2bd25c72660ea6873eb9ad6138855d3351c5822535c2edb701f0d
-  languageName: node
-  linkType: hard
-
 "split-string@npm:^3.0.1, split-string@npm:^3.0.2":
   version: 3.1.0
   resolution: "split-string@npm:3.1.0"
@@ -25263,22 +25266,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-demi@npm:>=0.14.5":
-  version: 0.14.5
-  resolution: "vue-demi@npm:0.14.5"
-  peerDependencies:
-    "@vue/composition-api": ^1.0.0-rc.1
-    vue: ^3.0.0-0 || ^2.6.0
-  peerDependenciesMeta:
-    "@vue/composition-api":
-      optional: true
-  bin:
-    vue-demi-fix: bin/vue-demi-fix.js
-    vue-demi-switch: bin/vue-demi-switch.js
-  checksum: ff44b9372b8224590514252a2f73363cced6062205f9628a6b130dccb80e2023d55cd9d1da94aeb68d5539b7ea9eedcecf88ab281a3a9ff48b8db4c5366b9643
-  languageName: node
-  linkType: hard
-
 "vue-docgen-api@npm:^4.44.15":
   version: 4.47.0
   resolution: "vue-docgen-api@npm:4.47.0"
@@ -25422,9 +25409,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-loader@npm:15.9.6":
-  version: 15.9.6
-  resolution: "vue-loader@npm:15.9.6"
+"vue-loader@npm:^15.10.0":
+  version: 15.10.2
+  resolution: "vue-loader@npm:15.10.2"
   dependencies:
     "@vue/component-compiler-utils": ^3.1.0
     hash-sum: ^1.0.2
@@ -25437,9 +25424,11 @@ __metadata:
   peerDependenciesMeta:
     cache-loader:
       optional: true
+    prettier:
+      optional: true
     vue-template-compiler:
       optional: true
-  checksum: 38ad9b5d569880122d1e6ded549a20b7ba2d7d2ccc751daea482ea12f532970fbf27df536c50ffda3dac0b6cb6f0a8d68d1c9591992a9e36c88670a02a841016
+  checksum: 3f4bfd100967af90ad5bd37de9a1dc2ca2f04b1bd7e695772a960186d74c51e161c89c08dd8623062b9151bd2f0bf493d2bbcd381214fa189977e0d379519b57
   languageName: node
   linkType: hard
 
@@ -25478,13 +25467,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-template-compiler@npm:2.6.12, vue-template-compiler@npm:^2.6.11":
+"vue-template-compiler@npm:^2.6.11":
   version: 2.6.12
   resolution: "vue-template-compiler@npm:2.6.12"
   dependencies:
     de-indent: ^1.0.2
     he: ^1.1.0
   checksum: 55e996f9bc1045fe5afd6adbc951f28431624c6c9f6ab31c06f2c8257965b63a5ce6c171719f31cb5aae6978b97de7c0eb2770ccb868d6754a81a93100cb7912
+  languageName: node
+  linkType: hard
+
+"vue-template-compiler@npm:^2.7.0":
+  version: 2.7.14
+  resolution: "vue-template-compiler@npm:2.7.14"
+  dependencies:
+    de-indent: ^1.0.2
+    he: ^1.2.0
+  checksum: eba9d2eed6b7110c963bc356b47bdd11d4023d25148abb7e5f7826db2fefe7ad8a575787ee0d8fa47701d44a6f54bde475279b1319f44e1049271eb2419f93a7
   languageName: node
   linkType: hard
 
@@ -25513,10 +25512,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue@npm:2.6.12, vue@npm:^2.6.12":
+"vue@npm:^2.6.12":
   version: 2.6.12
   resolution: "vue@npm:2.6.12"
   checksum: a8959e30990c5464131e451d3f9c2a6e6964c2d1137a30fbcd2bc66174a6c2d6f63e4dcec9c17fa0f236580953ff1ad44c25437c5e02ee1cf74b588bbac1a0bf
+  languageName: node
+  linkType: hard
+
+"vue@npm:^2.7.0":
+  version: 2.7.14
+  resolution: "vue@npm:2.7.14"
+  dependencies:
+    "@vue/compiler-sfc": 2.7.14
+    csstype: ^3.1.0
+  checksum: 8b06da67cc40870c66a30b7a6bc2874950cd4383792c371eb30497dd14fc7b41cf308b1c4517368d8f0e7ac16198c08de19236f6a79fe43f4bdbc4a1d9d4ad07
   languageName: node
   linkType: hard
 
