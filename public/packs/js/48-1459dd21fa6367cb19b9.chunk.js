@@ -1,0 +1,2 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[48],{3068:function(t,s,e){},3205:function(t,s,e){"use strict";e(3068)},3278:function(t,s,e){"use strict";e.r(s);var n={components:{EmptyState:e(226).a}},a=(e(3205),e(1)),c=Object(a.a)(n,(function(){var t=this,s=t._self._c;return s("div",{staticClass:"suspended-page"},[s("empty-state",{attrs:{title:t.$t("APP_GLOBAL.ACCOUNT_SUSPENDED.TITLE"),message:t.$t("APP_GLOBAL.ACCOUNT_SUSPENDED.MESSAGE")}})],1)}),[],!1,null,"712c3b15",null);s.default=c.exports}}]);
+//# sourceMappingURL=48-1459dd21fa6367cb19b9.chunk.js.map
