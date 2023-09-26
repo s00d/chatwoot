@@ -2,23 +2,7 @@
   <div
     v-if="globalConfig.brandName && !disableBranding"
     class="px-0 py-3 flex justify-center"
-  >
-    <a
-      :href="brandRedirectURL"
-      rel="noreferrer noopener nofollow"
-      target="_blank"
-      class="branding--link justify-center"
-    >
-      <img
-        class="branding--image"
-        :alt="globalConfig.brandName"
-        :src="globalConfig.logoThumbnail"
-      />
-      <span>
-        {{ useInstallationName($t('POWERED_BY'), globalConfig.brandName) }}
-      </span>
-    </a>
-  </div>
+  />
   <div v-else class="p-3" />
 </template>
 

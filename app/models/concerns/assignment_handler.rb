@@ -37,8 +37,9 @@ module AssignmentHandler
   end
 
   def process_assignment_changes
-    process_assignment_activities
-    process_participant_assignment
+    Rails.logger.info 'process_assignment_changes off'
+    # process_assignment_activities
+    # process_participant_assignment
   end
 
   def process_assignment_activities

@@ -1,18 +1,17 @@
 <template>
   <div
     v-if="hasSecondaryMenu"
-    class="main-nav secondary-menu"
-    :class="{ hidden: isContactSidebarItemOpen('is_secondary_menu_open') }"
+    class="h-full secondary-menu overflow-auto w-40 flex flex-col bg-white dark:bg-slate-900 border-r dark:border-slate-800/50 rtl:border-r-0 rtl:border-l border-slate-50 text-sm px-2 pb-8"
+    :class="{ min: isContactSidebarItemOpen('is_secondary_menu_open') }"
   >
     <account-context
       v-if="!isContactSidebarItemOpen('is_secondary_menu_open')"
-      @toggle-accounts="toggleAccountModal"
-    />
+      @toggle-accounts="toggleAccountModal" />
     <transition-group
       v-if="!isContactSidebarItemOpen('is_secondary_menu_open')"
       name="menu-list"
       tag="ul"
-      class="menu vertical"
+      class="pt-2 list-none ml-0 mb-0"
     >
       <secondary-nav-item
         v-for="menuItem in accessibleMenuItems"
@@ -281,33 +280,12 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-@import '~dashboard/assets/scss/woot';
-
 .secondary-menu {
-  display: flex;
-  flex-direction: column;
-  background: var(--white);
-  border-right: 1px solid var(--s-50);
-  height: 100%;
-  width: 16rem;
-  flex-shrink: 0;
-  overflow-y: hidden;
-  padding: var(--space-zero);
-  position: unset;
-
-  &:hover {
-    overflow-y: hidden;
-  }
-
-  .menu {
-    padding: var(--space-small);
-    overflow-y: auto;
-  }
-
-  &.hidden {
+  &.min {
     width: 1rem;
   }
 }
+
 
 .sidebar-toggle__wrap {
   display: flex;

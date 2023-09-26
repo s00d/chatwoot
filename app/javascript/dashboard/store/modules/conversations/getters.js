@@ -10,32 +10,36 @@ export const getSelectedChatConversation = ({
 }) =>
   allConversations.filter(conversation => conversation.id === selectedChatId);
 
+const sortComparator = {
+  latest: (a, b) => b.last_activity_at - a.last_activity_at,
+  sort_on_created_at: (a, b) => a.created_at - b.created_at,
+  sort_on_priority: (a, b) => {
+    return (
+      CONVERSATION_PRIORITY_ORDER[a.priority] -
+      CONVERSATION_PRIORITY_ORDER[b.priority]
+    );
+  },
+  sort_on_waiting_since: (a, b) => {
+    if (!a.waiting_since && !b.waiting_since) {
+      return a.created_at - b.created_at;
+    }
+
+    if (!a.waiting_since) {
+      return 1;
+    }
+
+    if (!b.waiting_since) {
+      return -1;
+    }
+
+    return a.waiting_since - b.waiting_since;
+  },
+};
+
 // getters
 const getters = {
   getAllConversations: ({ allConversations, chatSortFilter }) => {
-    const comparator = {
-      latest: (a, b) => {
-        if (!a.last_activity_at && !b.last_activity_at) {
-          return 0; // Если оба элемента не имеют last_activity_at, сохраняем текущий порядок
-        }
-        if (!a.last_activity_at) {
-          return -1; // Если у элемента a нет last_activity_at, помещаем его вверху
-        }
-        if (!b.last_activity_at) {
-          return 1; // Если у элемента b нет last_activity_at, помещаем его вверху
-        }
-        return b.last_activity_at - a.last_activity_at; // Сортируем по убыванию last_activity_at
-      },
-      sort_on_created_at: (a, b) => a.created_at - b.created_at,
-      sort_on_priority: (a, b) => {
-        return (
-          CONVERSATION_PRIORITY_ORDER[a.priority] -
-          CONVERSATION_PRIORITY_ORDER[b.priority]
-        );
-      },
-    };
-
-    return allConversations.sort(comparator[chatSortFilter]);
+    return allConversations.sort(sortComparator[chatSortFilter]);
   },
   getSelectedChat: ({ selectedChatId, allConversations }) => {
     const selectedChat = allConversations.find(
@@ -45,8 +49,7 @@ const getters = {
   },
   getSelectedChatAttachments: (_state, _getters) => {
     const selectedChat = _getters.getSelectedChat;
-    const { attachments } = selectedChat;
-    return attachments;
+    return selectedChat.attachments || [];
   },
   getLastEmailInSelectedChat: (stage, _getters) => {
     const selectedChat = _getters.getSelectedChat;
