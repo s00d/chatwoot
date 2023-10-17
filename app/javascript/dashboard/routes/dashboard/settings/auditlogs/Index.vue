@@ -41,7 +41,7 @@
                 {{
                   messageTimestamp(
                     auditLogItem.created_at,
-                    'MMM dd, yyyy hh:mm a'
+                    'LLL d yyyy, kk:mm'
                   )
                 }}
               </td>
