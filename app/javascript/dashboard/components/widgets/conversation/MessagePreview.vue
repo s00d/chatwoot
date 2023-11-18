@@ -20,7 +20,7 @@
         icon="info"
       />
     </template>
-    <span v-if="message.content">
+    <span v-if="message.content" :class="parsedTypeClass">
       {{ parsedLastMessage }}
     </span>
     <span v-else-if="message.attachments">
@@ -88,6 +88,31 @@ export default {
     attachmentMessageContent() {
       return `CHAT_LIST.ATTACHMENTS.${this.lastMessageFileType}.CONTENT`;
     },
+    parsedTypeClass() {
+      if (this.message.message_type === 0) {
+        return 'st-user';
+      }
+      if (this.message.message_type === 1) {
+        return 'st-agent';
+      }
+      if (this.message.message_type === 2) {
+        return 'st-bot';
+      }
+      return '';
+    },
   },
 };
 </script>
+<style lang="scss" scoped>
+.st-user {
+  color: #00a100;
+}
+
+.st-agent {
+  color: #4f4fff;
+}
+
+.st-bot {
+  color: #c02727;
+}
+</style>
