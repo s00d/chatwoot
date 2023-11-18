@@ -110,14 +110,6 @@
           @click="handleEdit"
         />
         <hr />
-        <menu-item
-          :option="{
-            icon: 'clipboard',
-            label: this.$t('CONVERSATION.CONTEXT_MENU.REPLAY'),
-          }"
-          variant="icon"
-          @click="handleReplay"
-        />
       </div>
     </woot-context-menu>
   </div>
@@ -221,13 +213,6 @@ export default {
       } catch (error) {
         this.showAlert(this.$t('CONVERSATION.FAIL_DELETE_MESSSAGE'));
       }
-    },
-    handleReplay() {
-      bus.$emit(
-        'replayText',
-        this.message.content,
-        this.message.sender.name ?? null
-      );
     },
     async handleCopy() {
       await copyTextToClipboard(this.plainTextContent);

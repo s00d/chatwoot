@@ -579,8 +579,6 @@ export default {
     // working even if input/textarea is focussed.
     document.addEventListener('paste', this.onPaste);
     document.addEventListener('keydown', this.handleKeyEvents);
-    bus.$on('replayText', this.onTextInsert);
-
     this.setCCAndToEmailsFromLastChat();
     this.doAutoSaveDraft = debounce(
       () => {
@@ -611,20 +609,8 @@ export default {
       BUS_EVENTS.NEW_CONVERSATION_MODAL,
       this.onNewConversationModalActive
     );
-    bus.$off('replayText', this.onTextInsert);
   },
   methods: {
-    onTextInsert(val, name) {
-      if (this.message !== '') {
-        this.message += '\n\n';
-      }
-      this.message += `>`;
-      if (name) {
-        this.message += ` ${name}: `;
-      }
-      this.message += ` ${val}`;
-      this.message += `\n\n [Replay]: `;
-    },
     handleInsert(article) {
       const { url, title } = article;
       if (this.isRichEditorEnabled) {
