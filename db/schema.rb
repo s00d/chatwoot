@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_14_111614) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -34,7 +34,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.bigint "inviter_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "active_at"
+    t.datetime "active_at", precision: nil
     t.integer "availability", default: 0, null: false
     t.boolean "auto_offline", default: true, null: false
     t.index ["account_id", "user_id"], name: "uniq_user_id_per_account_id", unique: true
@@ -44,12 +44,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
 
   create_table "accounts", id: :serial, force: :cascade do |t|
     t.string "name", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "locale", default: 0
     t.string "domain", limit: 100
     t.string "support_email", limit: 100
-    t.integer "feature_flags", default: 0, null: false
+    t.bigint "feature_flags", default: 0, null: false
     t.integer "auto_resolve_duration"
     t.jsonb "limits", default: {}
     t.jsonb "custom_attributes", default: {}
@@ -71,7 +71,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.string "record_type", null: false
     t.bigint "record_id", null: false
     t.bigint "blob_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
@@ -83,7 +83,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.text "metadata"
     t.bigint "byte_size", null: false
     t.string "checksum"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
@@ -144,8 +144,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.float "coordinates_long", default: 0.0
     t.integer "message_id", null: false
     t.integer "account_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "fallback_title"
     t.string "extension"
     t.index ["account_id"], name: "index_attachments_on_account_id"
@@ -166,7 +166,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.string "comment"
     t.string "remote_address"
     t.string "request_uuid"
-    t.datetime "created_at"
+    t.datetime "created_at", precision: nil
     t.index ["associated_type", "associated_id"], name: "associated_index"
     t.index ["auditable_type", "auditable_id", "version"], name: "auditable_index"
     t.index ["created_at"], name: "index_audits_on_created_at"
@@ -202,7 +202,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.integer "campaign_type", default: 0, null: false
     t.integer "campaign_status", default: 0, null: false
     t.jsonb "audience", default: []
-    t.datetime "scheduled_at"
+    t.datetime "scheduled_at", precision: nil
     t.boolean "trigger_only_during_business_hours", default: false
     t.index ["account_id"], name: "index_campaigns_on_account_id"
     t.index ["campaign_status"], name: "index_campaigns_on_campaign_status"
@@ -215,8 +215,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.integer "account_id", null: false
     t.string "short_code"
     t.text "content"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "categories", force: :cascade do |t|
@@ -231,6 +231,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.string "slug", null: false
     t.bigint "parent_category_id"
     t.bigint "associated_category_id"
+    t.string "icon", default: ""
     t.index ["associated_category_id"], name: "index_categories_on_associated_category_id"
     t.index ["locale", "account_id"], name: "index_categories_on_locale_and_account_id"
     t.index ["locale"], name: "index_categories_on_locale"
@@ -263,7 +264,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.string "imap_login", default: ""
     t.string "imap_password", default: ""
     t.boolean "imap_enable_ssl", default: true
-    t.datetime "imap_inbox_synced_at"
+    t.datetime "imap_inbox_synced_at", precision: nil
     t.boolean "smtp_enabled", default: false
     t.string "smtp_address", default: ""
     t.integer "smtp_port", default: 0
@@ -285,8 +286,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.string "user_access_token", null: false
     t.string "page_access_token", null: false
     t.integer "account_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "instagram_id"
     t.index ["page_id", "account_id"], name: "index_channel_facebook_pages_on_page_id_and_account_id", unique: true
     t.index ["page_id"], name: "index_channel_facebook_pages_on_page_id"
@@ -350,8 +351,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
   create_table "channel_web_widgets", id: :serial, force: :cascade do |t|
     t.string "website_url"
     t.integer "account_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "website_token"
     t.string "widget_color", default: "#1f93ff"
     t.string "welcome_title"
@@ -375,7 +376,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "message_templates", default: {}
-    t.datetime "message_templates_last_updated"
+    t.datetime "message_templates_last_updated", precision: nil
     t.index ["phone_number"], name: "index_channel_whatsapp_on_phone_number", unique: true
   end
 
@@ -399,12 +400,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.string "email"
     t.string "phone_number"
     t.integer "account_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.jsonb "additional_attributes", default: {}
     t.string "identifier"
     t.jsonb "custom_attributes", default: {}
-    t.datetime "last_activity_at"
+    t.datetime "last_activity_at", precision: nil
     t.index "lower((email)::text), account_id", name: "index_contacts_on_lower_email_account_id"
     t.index ["account_id", "email", "phone_number", "identifier"], name: "index_contacts_on_nonempty_fields", where: "(((email)::text <> ''::text) OR ((phone_number)::text <> ''::text) OR ((identifier)::text <> ''::text))"
     t.index ["account_id"], name: "index_contacts_on_account_id"
@@ -432,23 +433,23 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.integer "inbox_id", null: false
     t.integer "status", default: 0, null: false
     t.integer "assignee_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "contact_id"
     t.integer "display_id", null: false
-    t.datetime "contact_last_seen_at"
-    t.datetime "agent_last_seen_at"
+    t.datetime "contact_last_seen_at", precision: nil
+    t.datetime "agent_last_seen_at", precision: nil
     t.jsonb "additional_attributes", default: {}
     t.bigint "contact_inbox_id"
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.string "identifier"
-    t.datetime "last_activity_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "last_activity_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.bigint "team_id"
     t.bigint "campaign_id"
-    t.datetime "snoozed_until"
+    t.datetime "snoozed_until", precision: nil
     t.jsonb "custom_attributes", default: {}
-    t.datetime "assignee_last_seen_at"
-    t.datetime "first_reply_created_at"
+    t.datetime "assignee_last_seen_at", precision: nil
+    t.datetime "first_reply_created_at", precision: nil
     t.integer "priority"
     t.bigint "sla_policy_id"
     t.datetime "waiting_since"
@@ -576,8 +577,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
   create_table "inbox_members", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "inbox_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["inbox_id", "user_id"], name: "index_inbox_members_on_inbox_id_and_user_id", unique: true
     t.index ["inbox_id"], name: "index_inbox_members_on_inbox_id"
   end
@@ -586,8 +587,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.integer "channel_id", null: false
     t.integer "account_id", null: false
     t.string "name", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "channel_type"
     t.boolean "enable_auto_assignment", default: true
     t.boolean "greeting_enabled", default: false
@@ -660,7 +661,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.bigint "user_id", null: false
     t.bigint "conversation_id", null: false
     t.bigint "account_id", null: false
-    t.datetime "mentioned_at", null: false
+    t.datetime "mentioned_at", precision: nil, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_mentions_on_account_id"
@@ -675,9 +676,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.integer "inbox_id", null: false
     t.integer "conversation_id", null: false
     t.integer "message_type", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "private", default: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.boolean "private", default: false, null: false
     t.integer "status", default: 0
     t.string "source_id"
     t.integer "content_type", default: 0, null: false
@@ -741,7 +742,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.bigint "primary_actor_id", null: false
     t.string "secondary_actor_type"
     t.bigint "secondary_actor_id"
-    t.datetime "read_at"
+    t.datetime "read_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_notifications_on_account_id"
@@ -820,8 +821,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.float "value_in_business_hours"
-    t.datetime "event_start_time"
-    t.datetime "event_end_time"
+    t.datetime "event_start_time", precision: nil
+    t.datetime "event_end_time", precision: nil
     t.index ["account_id", "name", "created_at"], name: "reporting_events__account_id__name__created_at"
     t.index ["account_id"], name: "index_reporting_events_on_account_id"
     t.index ["conversation_id"], name: "index_reporting_events_on_conversation_id"
@@ -875,7 +876,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.string "tagger_type"
     t.integer "tagger_id"
     t.string "context", limit: 128
-    t.datetime "created_at"
+    t.datetime "created_at", precision: nil
     t.index ["context"], name: "index_taggings_on_context"
     t.index ["tag_id", "taggable_id", "taggable_type", "context", "tagger_id", "tagger_type"], name: "taggings_idx", unique: true
     t.index ["tag_id"], name: "index_taggings_on_tag_id"
@@ -919,8 +920,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.string "name"
     t.string "auth_key"
     t.integer "account_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "time_trackings", force: :cascade do |t|
@@ -940,23 +941,23 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_180936) do
     t.string "uid", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at", precision: nil
+    t.datetime "remember_created_at", precision: nil
     t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
+    t.datetime "current_sign_in_at", precision: nil
+    t.datetime "last_sign_in_at", precision: nil
     t.string "current_sign_in_ip"
     t.string "last_sign_in_ip"
     t.string "confirmation_token"
-    t.datetime "confirmed_at"
-    t.datetime "confirmation_sent_at"
+    t.datetime "confirmed_at", precision: nil
+    t.datetime "confirmation_sent_at", precision: nil
     t.string "unconfirmed_email"
     t.string "name", null: false
     t.string "display_name"
     t.string "email"
     t.json "tokens"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "pubsub_token"
     t.integer "availability", default: 0
     t.jsonb "ui_settings", default: {}

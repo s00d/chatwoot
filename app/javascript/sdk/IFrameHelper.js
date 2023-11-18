@@ -199,8 +199,8 @@ export const IFrameHelper = {
         Cookies.remove(getUserCookieName());
       }
     },
-    onMessage({ data }) {
-      dispatchWindowEvent({ eventName: CHATWOOT_ON_MESSAGE, data });
+    onEvent({ eventIdentifier: eventName, data }) {
+      dispatchWindowEvent({ eventName, data });
     },
     setBubbleLabel(message) {
       setBubbleText(window.$chatwoot.launcherTitle || message.label);
