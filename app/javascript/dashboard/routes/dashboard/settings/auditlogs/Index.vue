@@ -39,10 +39,7 @@
               </td>
               <td class="whitespace-nowrap break-all">
                 {{
-                  messageTimestamp(
-                    auditLogItem.created_at,
-                    'LLL d yyyy, kk:mm'
-                  )
+                  messageTimestamp(auditLogItem.created_at, 'LLL d yyyy, kk:mm')
                 }}
               </td>
               <td class="w-[8.75rem]">
