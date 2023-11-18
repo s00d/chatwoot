@@ -207,6 +207,12 @@ ru:
       made_with: Сделано с
     header:
       go_to_homepage: Перейти на основной сайт
+      appearance:
+        system: Системная
+        light: Светлая
+        dark: Темная
+      featured_articles: Избранные статьи
+      uncategorized: Без категории
   slack_unfurl:
     fields:
       name: Имя
