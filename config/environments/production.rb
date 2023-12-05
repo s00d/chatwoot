@@ -86,13 +86,14 @@ Rails.application.configure do
       1,
       ENV.fetch('LOG_SIZE', '1024').to_i.megabytes
     )
-    config.logger.level = Logger::DEBUG
   end
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
   config.action_mailer.perform_caching = false
+
+  config.action_mailer.smtp_settings = { openssl_verify_mode: OpenSSL::SSL::VERIFY_NONE }
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
@@ -105,9 +106,6 @@ Rails.application.configure do
   # :postmark for Postmark
   # :sendgrid for Sendgrid
   config.action_mailbox.ingress = ENV.fetch('RAILS_INBOUND_EMAIL_SERVICE', 'relay').to_sym
-
-  config.action_mailbox.logger = ActiveSupport::Logger.new('log/mailer.log')
-  config.action_mailbox.logger.level = Logger::DEBUG
 
   Rails.application.routes.default_url_options = { host: ENV['FRONTEND_URL'] }
 end
