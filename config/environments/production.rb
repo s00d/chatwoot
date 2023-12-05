@@ -86,6 +86,7 @@ Rails.application.configure do
       1,
       ENV.fetch('LOG_SIZE', '1024').to_i.megabytes
     )
+    config.logger.level = Logger::DEBUG
   end
 
   # Do not dump schema after migrations.
