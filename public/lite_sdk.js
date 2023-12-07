@@ -150,7 +150,7 @@
           try {
             // console.log(newDiv);
             // newDiv.classList.add('wootm-widget-hidden');
-            // document.body.removeChild(newDiv);
+            document.body.removeChild(newDiv);
           } catch (e) {}
         });
       };
