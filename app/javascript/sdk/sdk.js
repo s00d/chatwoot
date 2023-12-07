@@ -96,6 +96,12 @@ export const SDK_CSS = `
   align-items: center;
 }
 
+@media (max-width: 768px) {
+  .woot-widget-bubble.woot-widget--expanded {
+    height: 42px !important;
+  }
+}
+
 .woot-widget-bubble.woot-widget--expanded div {
   align-items: center;
   color: #fff;
@@ -107,6 +113,12 @@ export const SDK_CSS = `
   padding-right: 20px;
   width: auto !important;
 }
+@media (max-width: 768px) {
+  .woot-widget-bubble.woot-widget--expanded div {
+    font-size: 14px;
+    padding-right: 14px;
+  }
+}
 
 .woot-widget-bubble.woot-widget--expanded.woot-widget-bubble-color--lighter div{
   color: var(--s-700);
@@ -117,7 +129,11 @@ export const SDK_CSS = `
   margin: 14px 8px 14px 16px;
   width: 20px;
 }
-
+@media (max-width: 768px) {
+  .woot-widget-bubble.woot-widget--expanded svg {
+    margin: 14px 8px 14px 14px;
+  }
+}
 .woot-widget-bubble.woot-elements--left {
   left: 20px;
 }
