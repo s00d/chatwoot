@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta charset="UTF-8">
 
     <script>
       (function(d, t) {
@@ -14,23 +15,27 @@
         s.parentNode.insertBefore(g, s);
         g.onload = function() {
           window.chatwootLITESDK.BASE_URL = BASE_URL;
-          window.chatwootLITESDK.websiteToken = 'xxGAB9pCB15NAyZMbhdhWVB4';
+          window.chatwootLITESDK.websiteToken = 'W5kTcMb6L7yzsQb2P2uj4rRj';
+          window.chatwootLITESDK.locale = 'ru';
           window.chatwootLITESDK.run();
         };
-      })(document, 'script');
 
-      window.addEventListener('chatwoot:ready', function() {
         window.chatwootSettings = {
           hideMessageBubble: false,
           showPopoutButton: true,
           useBrowserLanguage: false,
-          position: 'left', // This can be left or right
+          position: 'right', // This can be left or right
           locale: 'ru', // Language to be set
-          type: 'standard', // [standard, expanded_bubble, full_screen]
+          type: 'expanded_bubble', // [standard, expanded_bubble, full_screen]
           darkMode: 'auto', // [light, auto]
+          launcherTitle: 'Пообщайтесь с нами',
         };
 
         window.$chatwoot.setLocale('ru');
+      })(document, 'script');
+
+      window.addEventListener('chatwoot:ready', function() {
+
 
         const name = 'test user';
         window.$chatwoot.setUser('1', {

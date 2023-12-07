@@ -1,32 +1,57 @@
 (function init() {
   var styles = `
-.woot-widget-bubble {
+.wootm-widget-bubble {
     background: #1f93ff;
     border-radius: 100px;
     border-width: 0px;
-    bottom: 20px;
+    bottom: 24px;
     box-shadow: 0 8px 24px rgb(0 0 0 / 16%) !important;
     cursor: pointer;
-    height: 64px;
+    height: 48px;
     padding: 0px;
     position: fixed;
     user-select: none;
-    width: 64px;
+    width: auto;
     z-index: 1000 !important;
+    display: flex;
 }
-.woot-widget-bubble:hover {
+.wootm-widget-hidden {
+  display:none;
+}
+.wootm-widget-bubble:hover {
   background: #1f93ff;
   box-shadow: 0 8px 32px rgb(0 0 0 / 40%) !important;
 }
-.woot-widget-bubble.woot-elements--right {
+.wootm-widget-bubble.wootm-elements--right {
   right: 20px;
 }
-.woot-widget-bubble img {
+.wootm-widget-bubble.wootm-elements--left {
+  left: 20px;
+}
+.wootm-widget-bubble img {
   all: revert;
-  height: 24px;
-  margin: 20px;
-  width: 24px;
-}`;
+  height: 20px;
+  margin: 14px;
+  width: 20px;
+  margin-right: 10px;
+}
+.wootm-desktop-text {
+  display: none
+}
+.wootm-desktop-text {
+    display: block;
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+    align-self: center;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    justify-content: center;
+    padding-right: 20px;
+    width: auto !important;
+  }
+`;
 
   function storage_get(key) {
     if (!localStorage) return null;
@@ -63,9 +88,23 @@
   // eslint-disable-next-line vars-on-top
   var newDiv = document.createElement('div');
   newDiv.innerHTML =
-    '<button class="woot-widget-bubble woot-elements--right" style="background: rgb(33, 150, 243);">' +
+    '<button class="wootm-widget-bubble wootm-desktop wootm-elements--right wootm-widget--expanded" style="background: rgb(33, 150, 243);">' +
     '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAAUVBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////8IN+deAAAAGnRSTlMAAwgJEBk0TVheY2R5eo+ut8jb5OXs8fX2+cjRDTIAAADsSURBVHgBldZbkoMgFIThRgQv8SKKgGf/C51UnJqaRI30/9zfe+NQUQ3TvG7bOk9DVeCmshmj/CuOTYnrdBfkUOg0zlOtl9OWVuEk4+QyZ3DIevmSt/ioTvK1VH/s5bY3YdM9SBZ/mUUyWgx+U06ycgp7D8msxSvtc4HXL9BLdj2elSEfhBJAI0QNgJEBI1BEBsQClVBVGDgwYOLAhJkDM1YOrNg4sLFAsLJgZsHEgoEFFQt0JAFGFjQsKAMJ0LFAexKgZYFyJIDxJIBNJEDNAtSJBLCeBDCOBFAPzwFA94ED+zmhwDO9358r8ANtIsMXi7qVAwAAAABJRU5ErkJggg==" alt="bubble-icon">' +
+    `<span class="wootm-desktop-text">Chat with us</span>` +
     '</button>';
+
+  window.addEventListener('load', function() {
+    const locale =
+      window.chatwootLITESDK && window.chatwootLITESDK.locale
+        ? window.chatwootLITESDK.locale
+        : 'en';
+    const text = locale === 'en' ? 'Chat with us' : 'Пообщайтесь с нами';
+
+    const wootDesktopText = document.querySelector('.wootm-desktop-text');
+    if (wootDesktopText) {
+      wootDesktopText.textContent = text;
+    }
+  });
 
   // eslint-disable-next-line vars-on-top
   function open(isOpen = true) {
@@ -95,6 +134,8 @@
             window.$chatwoot.toggle('open');
           }
           try {
+            // console.log(newDiv);
+            // newDiv.classList.add('wootm-widget-hidden');
             document.body.removeChild(newDiv);
           } catch (e) {}
         });
@@ -111,6 +152,7 @@
   window.chatwootLITESDK = {
     BASE_URL: '//',
     websiteToken: '',
+    locale: 'en',
     run: function run(force = false) {
       if (force) {
         open(true);
