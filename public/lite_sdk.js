@@ -15,6 +15,12 @@
     z-index: 1000 !important;
     display: flex;
 }
+@media (max-width: 768px) {
+  .wootm-widget-bubble {
+    height: 42px;
+  }
+}
+
 .wootm-widget-hidden {
   display:none;
 }
@@ -31,26 +37,35 @@
 .wootm-widget-bubble img {
   all: revert;
   height: 20px;
-  margin: 14px;
+  margin: 14px 8px 14px 16px;
   width: 20px;
-  margin-right: 10px;
+}
+@media (max-width: 768px) {
+  .wootm-widget-bubble img {
+    margin: 11px 8px 11px 14px;
+  }
 }
 .wootm-desktop-text {
   display: none
 }
 .wootm-desktop-text {
-    display: block;
-    color: #fff;
-    font-size: 12px;
-    text-align: center;
-    align-self: center;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, Arial, sans-serif;
-    font-size: 16px;
-    font-weight: 500;
-    justify-content: center;
-    padding-right: 20px;
-    width: auto !important;
+  display: block;
+  color: #fff;
+  text-align: center;
+  align-self: center;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  justify-content: center;
+  padding-right: 20px;
+  width: auto !important;
+}
+@media (max-width: 768px) {
+  .wootm-desktop-text {
+    font-size: 14px;
+    padding-right: 14px;
   }
+}
 `;
 
   function storage_get(key) {
@@ -135,7 +150,7 @@
           try {
             // console.log(newDiv);
             // newDiv.classList.add('wootm-widget-hidden');
-            document.body.removeChild(newDiv);
+            // document.body.removeChild(newDiv);
           } catch (e) {}
         });
       };
