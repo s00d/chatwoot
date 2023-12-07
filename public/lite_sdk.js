@@ -98,8 +98,7 @@
       window.chatwootLITESDK && window.chatwootLITESDK.locale
         ? window.chatwootLITESDK.locale
         : 'en';
-    const text = locale === 'en' ? 'Chat with us' : 'Пообщайтесь с нами';
-
+    const text = locale === 'ru' ? 'Поддержка' : 'Support';
     const wootDesktopText = document.querySelector('.wootm-desktop-text');
     if (wootDesktopText) {
       wootDesktopText.textContent = text;
