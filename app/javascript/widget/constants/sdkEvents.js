@@ -8,3 +8,4 @@ export const CHATWOOT_CLOSE = 'chatwoot:close';
 export const CHATWOOT_ON_START_CONVERSATION = 'chatwoot:on-start-conversation';
 export const CHATWOOT_READY = 'chatwoot:ready';
 export const CHATWOOT_READY_2 = 'chatwoot:ready2';
+export const CHATWOOT_INIT = 'chatwoot:init';

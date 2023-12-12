@@ -27,12 +27,12 @@ import {
   CHATWOOT_CLOSE,
   CHATWOOT_CLOSE_2,
   CHATWOOT_ERROR,
-  CHATWOOT_ON_MESSAGE,
   CHATWOOT_LOADED,
   CHATWOOT_OPEN,
   CHATWOOT_OPEN_2,
   CHATWOOT_READY,
   CHATWOOT_READY_2,
+  CHATWOOT_INIT,
 } from '../widget/constants/sdkEvents';
 import { SET_USER_ERROR } from '../widget/constants/errorTypes';
 import { getUserCookieName, setCookieWithDomain } from './cookieHelpers';
@@ -191,6 +191,8 @@ export const IFrameHelper = {
         dispatchWindowEvent({ eventName: CHATWOOT_READY });
         dispatchWindowEvent({ eventName: CHATWOOT_READY_2 });
       }
+
+      dispatchWindowEvent({ eventName: CHATWOOT_INIT });
     },
     error: ({ errorType, data }) => {
       dispatchWindowEvent({ eventName: CHATWOOT_ERROR, data: data });
