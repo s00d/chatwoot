@@ -148,8 +148,6 @@
             window.$chatwoot.toggle('open');
           }
           try {
-            // console.log(newDiv);
-            // newDiv.classList.add('wootm-widget-hidden');
             document.body.removeChild(newDiv);
           } catch (e) {}
         });

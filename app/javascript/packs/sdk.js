@@ -178,6 +178,23 @@ const runSDK = ({ baseUrl, websiteToken }) => {
         });
       });
     },
+
+    resetOld() {
+      if (window.$chatwoot.isOpen) {
+        IFrameHelper.events.toggleBubble();
+      }
+
+      Cookies.remove('cw_conversation');
+      Cookies.remove(getUserCookieName());
+
+      const iframe = IFrameHelper.getAppFrame();
+      iframe.src = IFrameHelper.getUrl({
+        baseUrl: window.$chatwoot.baseUrl,
+        websiteToken: window.$chatwoot.websiteToken,
+      });
+
+      window.$chatwoot.resetTriggered = true;
+    },
   };
 
   IFrameHelper.createFrame({
