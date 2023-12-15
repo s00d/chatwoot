@@ -96,6 +96,8 @@ class ActionCableConnector extends BaseActionCableConnector {
   // eslint-disable-next-line class-methods-use-this
   onContactMerge = data => {
     const { pubsub_token: pubsubToken } = data;
+
+    console.log(111, ActionCableConnector);
     ActionCableConnector.refreshConnector(pubsubToken);
   };
 
@@ -135,6 +137,10 @@ class ActionCableConnector extends BaseActionCableConnector {
     this.CancelTyping = setTimeout(() => {
       this.onTypingOff();
     }, 30000);
+  };
+
+  updateToken = pubsubToken => {
+    this.refreshConnection(pubsubToken);
   };
 }
 
