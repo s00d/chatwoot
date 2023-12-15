@@ -96,8 +96,6 @@ class ActionCableConnector extends BaseActionCableConnector {
   // eslint-disable-next-line class-methods-use-this
   onContactMerge = data => {
     const { pubsub_token: pubsubToken } = data;
-
-    console.log(111, ActionCableConnector);
     ActionCableConnector.refreshConnector(pubsubToken);
   };
 
