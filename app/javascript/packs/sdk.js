@@ -30,6 +30,7 @@ const runSDK = ({ baseUrl, websiteToken }) => {
     baseUrl,
     baseDomain,
     hasLoaded: false,
+    resetSession: false,
     hideMessageBubble: chatwootSettings.hideMessageBubble || false,
     isOpen: false,
     position: chatwootSettings.position === 'left' ? 'left' : 'right',
@@ -223,6 +224,7 @@ const runSDK = ({ baseUrl, websiteToken }) => {
   IFrameHelper.createFrame({
     baseUrl,
     websiteToken,
+    resetSession: window.$chatwoot.resetSession,
   });
 };
 

@@ -11,7 +11,6 @@ const initialState = {
     accounts: [],
     email: null,
     name: null,
-    pubsub_token: null,
   },
   uiFlags: {
     isFetching: true,
@@ -26,10 +25,6 @@ export const getters = {
 
   getCurrentUserID($state) {
     return $state.currentUser.id;
-  },
-
-  getCurrentUserToken($state) {
-    return $state.currentUser.pubsub_token;
   },
 
   getUISettings($state) {

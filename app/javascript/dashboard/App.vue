@@ -60,7 +60,6 @@ export default {
     return {
       showAddAccountModal: false,
       latestChatwootVersion: null,
-      lastToken: null,
     };
   },
 
@@ -68,7 +67,6 @@ export default {
     ...mapGetters({
       getAccount: 'accounts/getAccount',
       currentUser: 'getCurrentUser',
-      pubsubToken: 'getCurrentUserToken',
       globalConfig: 'globalConfig/get',
       authUIFlags: 'getAuthUIFlags',
       accountUIFlags: 'accounts/getUIFlags',
@@ -88,11 +86,6 @@ export default {
     },
     currentAccountId() {
       if (this.currentAccountId) {
-        this.initializeAccount();
-      }
-    },
-    pubsubToken() {
-      if (this.pubsubToken && this.lastToken !== this.pubsubToken) {
         this.initializeAccount();
       }
     },
@@ -125,7 +118,6 @@ export default {
       this.updateRTLDirectionView(locale);
       this.latestChatwootVersion = latestChatwootVersion;
       vueActionCable.init(pubsubToken);
-      this.lastToken = pubsubToken;
 
       verifyServiceWorkerExistence(registration =>
         registration.pushManager.getSubscription().then(subscription => {

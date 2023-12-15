@@ -61,9 +61,14 @@ export const IFrameHelper = {
   getUrl({ baseUrl, websiteToken }) {
     return `${baseUrl}/widget?website_token=${websiteToken}`;
   },
-  createFrame: ({ baseUrl, websiteToken }) => {
+  createFrame: ({ baseUrl, websiteToken, resetSession }) => {
     if (IFrameHelper.getAppFrame()) {
       return;
+    }
+
+    if (resetSession) {
+      Cookies.remove('cw_conversation');
+      Cookies.remove(getUserCookieName());
     }
 
     loadCSS();
