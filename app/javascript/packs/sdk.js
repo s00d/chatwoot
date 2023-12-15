@@ -30,7 +30,6 @@ const runSDK = ({ baseUrl, websiteToken }) => {
     baseUrl,
     baseDomain,
     hasLoaded: false,
-    resetSession: false,
     hideMessageBubble: chatwootSettings.hideMessageBubble || false,
     isOpen: false,
     position: chatwootSettings.position === 'left' ? 'left' : 'right',
@@ -87,6 +86,8 @@ const runSDK = ({ baseUrl, websiteToken }) => {
       const userCookieName = getUserCookieName();
       const existingCookieValue = Cookies.get(userCookieName);
       const hashToBeStored = computeHashForUserData({ identifier, user });
+
+      console.log(userCookieName, identifier);
       if (hashToBeStored === existingCookieValue) {
         return;
       }
@@ -98,6 +99,10 @@ const runSDK = ({ baseUrl, websiteToken }) => {
       setCookieWithDomain(userCookieName, hashToBeStored, {
         baseDomain,
       });
+    },
+
+    reloadChat() {
+      document.getElementById('chatwoot_live_chat_widget').contentWindow.location.reload();
     },
 
     setUserForce(identifier, user) {
@@ -224,7 +229,6 @@ const runSDK = ({ baseUrl, websiteToken }) => {
   IFrameHelper.createFrame({
     baseUrl,
     websiteToken,
-    resetSession: window.$chatwoot.resetSession,
   });
 };
 

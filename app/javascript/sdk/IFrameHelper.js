@@ -61,14 +61,9 @@ export const IFrameHelper = {
   getUrl({ baseUrl, websiteToken }) {
     return `${baseUrl}/widget?website_token=${websiteToken}`;
   },
-  createFrame: ({ baseUrl, websiteToken, resetSession }) => {
+  createFrame: ({ baseUrl, websiteToken }) => {
     if (IFrameHelper.getAppFrame()) {
       return;
-    }
-
-    if (resetSession) {
-      Cookies.remove('cw_conversation');
-      Cookies.remove(getUserCookieName());
     }
 
     loadCSS();
@@ -103,6 +98,7 @@ export const IFrameHelper = {
   getAppFrame: () => document.getElementById('chatwoot_live_chat_widget'),
   getBubbleHolder: () => document.getElementsByClassName('woot--bubble-holder'),
   sendMessage: (key, value) => {
+    console.log(key, value);
     const element = IFrameHelper.getAppFrame();
     element.contentWindow.postMessage(
       `chatwoot-widget:${JSON.stringify({ event: key, ...value })}`,
