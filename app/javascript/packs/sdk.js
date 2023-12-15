@@ -99,6 +99,29 @@ const runSDK = ({ baseUrl, websiteToken }) => {
       });
     },
 
+    setUserForce(identifier, user) {
+      if (typeof identifier !== 'string' && typeof identifier !== 'number') {
+        throw new Error('Identifier should be a string or a number');
+      }
+
+      if (!hasUserKeys(user)) {
+        throw new Error(
+          'User object should have one of the keys [avatar_url, email, name]'
+        );
+      }
+
+      const userCookieName = getUserCookieName();
+      const hashToBeStored = computeHashForUserData({ identifier, user });
+
+      window.$chatwoot.identifier = identifier;
+      window.$chatwoot.user = user;
+      IFrameHelper.sendMessage('set-user', { identifier, user });
+
+      setCookieWithDomain(userCookieName, hashToBeStored, {
+        baseDomain,
+      });
+    },
+
     setCustomAttributes(customAttributes = {}) {
       if (!customAttributes || !Object.keys(customAttributes).length) {
         throw new Error('Custom attributes should have atleast one key');
