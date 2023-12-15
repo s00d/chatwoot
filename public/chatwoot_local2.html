@@ -31,8 +31,6 @@
     }
   })(document,"script");
 
-  const reload = true;
-
   window.addEventListener('chatwoot:ready', function() {
     console.log('chatwoot:ready', window.$chatwoot);
     setTimeout(() => {
@@ -40,11 +38,6 @@
         email: 'jane@example.com',
         name: 'Jane Doe',
       });
-      if(reload) {
-        reload = false
-        window.$chatwoot.reloadChat();
-      }
-
 
       setTimeout(function () {
         function getRandomInt(max) {
@@ -59,10 +52,6 @@
           name: name2,
           avatar_url: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(name2),
         });
-        if(reload) {
-          reload = false
-          window.$chatwoot.reloadChat();
-        }
       }, 10000);
     }, 300)
   })

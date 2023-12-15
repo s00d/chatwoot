@@ -145,13 +145,6 @@ export const IFrameHelper = {
       iframe.setAttribute('style', `height: ${updatedIframeHeight} !important`);
   },
 
-  reloadIframe() {
-    const iframe = IFrameHelper.getAppFrame();
-
-    const parentElement = iframe.parentElement;
-    parentElement.removeChild(iframe);
-  },
-
   setupAudioListeners: () => {
     const { baseUrl = '' } = window.$chatwoot;
     getAlertAudio(baseUrl, { type: 'widget', alertTone: 'ding' }).then(() =>

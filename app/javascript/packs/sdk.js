@@ -100,10 +100,6 @@ const runSDK = ({ baseUrl, websiteToken }) => {
       });
     },
 
-    reloadChat() {
-      IFrameHelper.reloadIframe();
-    },
-
     setUserForce(identifier, user) {
       if (typeof identifier !== 'string' && typeof identifier !== 'number') {
         throw new Error('Identifier should be a string or a number');
