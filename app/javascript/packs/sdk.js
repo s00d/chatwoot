@@ -87,7 +87,6 @@ const runSDK = ({ baseUrl, websiteToken }) => {
       const existingCookieValue = Cookies.get(userCookieName);
       const hashToBeStored = computeHashForUserData({ identifier, user });
 
-      console.log(userCookieName, identifier);
       if (hashToBeStored === existingCookieValue) {
         return;
       }
@@ -102,7 +101,7 @@ const runSDK = ({ baseUrl, websiteToken }) => {
     },
 
     reloadChat() {
-      document.getElementById('chatwoot_live_chat_widget').contentWindow.location.reload();
+      IFrameHelper.reloadIframe();
     },
 
     setUserForce(identifier, user) {

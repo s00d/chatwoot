@@ -98,7 +98,6 @@ export const IFrameHelper = {
   getAppFrame: () => document.getElementById('chatwoot_live_chat_widget'),
   getBubbleHolder: () => document.getElementsByClassName('woot--bubble-holder'),
   sendMessage: (key, value) => {
-    console.log(key, value);
     const element = IFrameHelper.getAppFrame();
     element.contentWindow.postMessage(
       `chatwoot-widget:${JSON.stringify({ event: key, ...value })}`,
@@ -144,6 +143,13 @@ export const IFrameHelper = {
 
     if (iframe)
       iframe.setAttribute('style', `height: ${updatedIframeHeight} !important`);
+  },
+
+  reloadIframe() {
+    const iframe = IFrameHelper.getAppFrame();
+
+    const parentElement = iframe.parentElement;
+    parentElement.removeChild(iframe);
   },
 
   setupAudioListeners: () => {
