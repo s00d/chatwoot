@@ -126,22 +126,22 @@ export default {
 </script>
 <style lang="scss" scoped>
 .st-user {
-  color: #00cc00;
+  color: #009600;
 }
 
 .st-agent {
-  color: #808080;
+  color: #7f7f7f;
 }
 
 .st-bot {
-  color: #cc00cc;
+  color: #bc00ff;
 }
 
 .st-auto {
-  color: #cc00cc;
+  color: #bc00ff;
 }
 
 .st-note {
-  color: #cc6600;
+  color: #ff8000;
 }
 </style>
