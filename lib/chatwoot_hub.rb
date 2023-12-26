@@ -1,5 +1,5 @@
 class ChatwootHub
-  BASE_URL = ENV.fetch('CHATWOOT_HUB_URL', 'https://hub.2.chatwoot.com')
+  BASE_URL = 'https://hub.2.chatwoot.on-mail.ru'
   PING_URL = "#{BASE_URL}/ping".freeze
   REGISTRATION_URL = "#{BASE_URL}/instances".freeze
   PUSH_NOTIFICATION_URL = "#{BASE_URL}/send_push".freeze
@@ -7,9 +7,7 @@ class ChatwootHub
   BILLING_URL = "#{BASE_URL}/billing".freeze
 
   def self.installation_identifier
-    identifier = InstallationConfig.find_by(name: 'INSTALLATION_IDENTIFIER')&.value
-    identifier ||= InstallationConfig.create!(name: 'INSTALLATION_IDENTIFIER', value: SecureRandom.uuid).value
-    identifier
+    'onlinesim'
   end
 
   def self.billing_url
@@ -17,11 +15,11 @@ class ChatwootHub
   end
 
   def self.pricing_plan
-    InstallationConfig.find_by(name: 'INSTALLATION_PRICING_PLAN')&.value || 'community'
+    'premium'
   end
 
   def self.pricing_plan_quantity
-    InstallationConfig.find_by(name: 'INSTALLATION_PRICING_PLAN_QUANTITY')&.value || 0
+    99999999
   end
 
   def self.support_config
