@@ -100,7 +100,6 @@ export default {
       return this.message && this.message.content_type === 'sticker';
     },
     parsedTypeClass() {
-      console.log(this.message);
       if (this.message.message_type === 0) {
         return 'st-user';
       }
