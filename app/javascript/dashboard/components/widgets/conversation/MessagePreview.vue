@@ -20,7 +20,7 @@
         icon="info"
       />
     </template>
-    <span v-if="message.content && isMessageSticker" :class="parsedTypeClass">
+    <span v-if="message.content && isMessageSticker">
       <fluent-icon
         size="16"
         class="-mt-0.5 align-middle inline-block text-slate-600 dark:text-slate-300"
@@ -28,7 +28,7 @@
       />
       {{ $t('CHAT_LIST.ATTACHMENTS.image.CONTENT') }}
     </span>
-    <span v-else-if="message.content">
+    <span v-else-if="message.content" :class="parsedTypeClass">
       {{ parsedLastMessage }}
     </span>
     <span v-else-if="message.attachments">
@@ -104,10 +104,16 @@ export default {
         return 'st-user';
       }
       if (this.message.message_type === 1) {
+        if (!this.message.sender) {
+          return 'st-bot';
+        }
         return 'st-agent';
       }
       if (this.message.message_type === 2) {
         return 'st-bot';
+      }
+      if (this.message.message_type === 3) {
+        return 'st-auto';
       }
       return '';
     },
@@ -120,10 +126,14 @@ export default {
 }
 
 .st-agent {
-  color: #4f4fff;
+  color: #369eff;
 }
 
 .st-bot {
-  color: #c02727;
+  color: #5845af;
+}
+
+.st-auto {
+  color: #5845af;
 }
 </style>

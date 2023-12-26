@@ -1,31 +1,31 @@
 {
-  "application.css": "/packs/css/application-0b39edff.css",
-  "application.js": "/packs/js/application-e6668bea22ba3c7191a7.js",
-  "application.js.map": "/packs/js/application-e6668bea22ba3c7191a7.js.map",
-  "auto-track.js": "/packs/js/auto-track-3fcc04b4bcf9058dfa98.chunk.js",
-  "auto-track.js.map": "/packs/js/auto-track-3fcc04b4bcf9058dfa98.chunk.js.map",
+  "application.css": "/packs/css/application-5f133a88.css",
+  "application.js": "/packs/js/application-6ab14cb8d55e80394ff8.js",
+  "application.js.map": "/packs/js/application-6ab14cb8d55e80394ff8.js.map",
+  "auto-track.js": "/packs/js/auto-track-124d293eb299498eaa78.chunk.js",
+  "auto-track.js.map": "/packs/js/auto-track-124d293eb299498eaa78.chunk.js.map",
   "encoderWorker.min.js": "/packs/encoderWorker.min.js",
   "entrypoints": {
     "application": {
       "css": [
-        "/packs/css/application-0b39edff.css"
+        "/packs/css/application-5f133a88.css"
       ],
       "js": [
-        "/packs/js/application-e6668bea22ba3c7191a7.js"
+        "/packs/js/application-6ab14cb8d55e80394ff8.js"
       ],
       "js.map": [
-        "/packs/js/application-e6668bea22ba3c7191a7.js.map"
+        "/packs/js/application-6ab14cb8d55e80394ff8.js.map"
       ]
     },
     "portal": {
       "css": [
-        "/packs/css/portal-df4c54c2.css"
+        "/packs/css/portal-ae763cfc.css"
       ],
       "js": [
-        "/packs/js/portal-e6668bea22ba3c7191a7.js"
+        "/packs/js/portal-6ab14cb8d55e80394ff8.js"
       ],
       "js.map": [
-        "/packs/js/portal-e6668bea22ba3c7191a7.js.map"
+        "/packs/js/portal-6ab14cb8d55e80394ff8.js.map"
       ]
     },
     "sdk": {
@@ -37,70 +37,67 @@
       ]
     },
     "superadmin_pages": {
-      "css": [
-        "/packs/css/superadmin_pages-75d1426d.css"
-      ],
       "js": [
-        "/packs/js/superadmin_pages-e6668bea22ba3c7191a7.js"
+        "/packs/js/superadmin_pages-6ab14cb8d55e80394ff8.js"
       ],
       "js.map": [
-        "/packs/js/superadmin_pages-e6668bea22ba3c7191a7.js.map"
+        "/packs/js/superadmin_pages-6ab14cb8d55e80394ff8.js.map"
       ]
     },
     "superadmin": {
       "css": [
-        "/packs/css/superadmin-5360f1ce.css"
+        "/packs/css/superadmin-04e889e7.css"
       ],
       "js": [
-        "/packs/js/superadmin-e6668bea22ba3c7191a7.js"
+        "/packs/js/superadmin-6ab14cb8d55e80394ff8.js"
       ],
       "js.map": [
-        "/packs/js/superadmin-e6668bea22ba3c7191a7.js.map"
+        "/packs/js/superadmin-6ab14cb8d55e80394ff8.js.map"
       ]
     },
     "survey": {
       "css": [
-        "/packs/css/survey-19182ee7.css"
+        "/packs/css/survey-471b89a7.css"
       ],
       "js": [
-        "/packs/js/survey-e6668bea22ba3c7191a7.js"
+        "/packs/js/survey-6ab14cb8d55e80394ff8.js"
       ],
       "js.map": [
-        "/packs/js/survey-e6668bea22ba3c7191a7.js.map"
+        "/packs/js/survey-6ab14cb8d55e80394ff8.js.map"
       ]
     },
     "v3app": {
       "css": [
-        "/packs/css/v3app-1c94e9fa.css"
+        "/packs/css/v3app-961975b5.css"
       ],
       "js": [
-        "/packs/js/v3app-e6668bea22ba3c7191a7.js"
+        "/packs/js/v3app-6ab14cb8d55e80394ff8.js"
       ],
       "js.map": [
-        "/packs/js/v3app-e6668bea22ba3c7191a7.js.map"
+        "/packs/js/v3app-6ab14cb8d55e80394ff8.js.map"
       ]
     },
     "widget": {
       "css": [
-        "/packs/css/widget-8252c551.css"
+        "/packs/css/widget-51c410cd.css"
       ],
       "js": [
-        "/packs/js/widget-e6668bea22ba3c7191a7.js"
+        "/packs/js/widget-6ab14cb8d55e80394ff8.js"
       ],
       "js.map": [
-        "/packs/js/widget-e6668bea22ba3c7191a7.js.map"
+        "/packs/js/widget-6ab14cb8d55e80394ff8.js.map"
       ]
     }
   },
-  "legacyVideos.js": "/packs/js/legacyVideos-329c798c22b632913bca.chunk.js",
-  "legacyVideos.js.map": "/packs/js/legacyVideos-329c798c22b632913bca.chunk.js.map",
+  "legacyVideos.js": "/packs/js/legacyVideos-a711c653f34e3ec3d8bd.chunk.js",
+  "legacyVideos.js.map": "/packs/js/legacyVideos-a711c653f34e3ec3d8bd.chunk.js.map",
   "media/dashboard/assets/images/bubble-logo.svg": "/packs/media/dashboard/assets/images/bubble-logo-eec5daaebf0c7009bba7568fd9b9ad4a.svg",
   "media/dashboard/assets/images/channels/facebook_login.png": "/packs/media/dashboard/assets/images/channels/facebook_login-7692d6c379288885d619b1e80bb214a4.png",
   "media/dashboard/assets/images/chatwoot_bot.png": "/packs/media/dashboard/assets/images/chatwoot_bot-905112376e6493b37e2cecea8f9dc50c.png",
   "media/dashboard/assets/images/flag.svg": "/packs/media/dashboard/assets/images/flag-2fe41f128623199c8388d77dfc4cff4e.svg",
   "media/dashboard/assets/images/no-chat-dark.svg": "/packs/media/dashboard/assets/images/no-chat-dark-47cacd0972a4cba7686816851ffeeeb6.svg",
   "media/dashboard/assets/images/no-chat.svg": "/packs/media/dashboard/assets/images/no-chat-462edd1de1359c96d365ae4d4c1f3380.svg",
-  "media/dashboard/assets/images/typing.gif": "/packs/media/dashboard/assets/images/typing-6027d21b24f45e3377a729a55158f948.gif",
+  "media/dashboard/assets/images/typing.gif": "/packs/media/dashboard/assets/images/typing-929e3aeb589b7668d0b4ff57f73e17e3.gif",
   "media/font/iconfont.eot?t=1607666235845": "/packs/media/font/iconfont-b7feab36.eot",
   "media/font/iconfont.svg?t=1607666235845": "/packs/media/font/iconfont-5f9cfce9.svg",
   "media/font/iconfont.ttf?t=1607666235845": "/packs/media/font/iconfont-2c6ef557.ttf",
@@ -128,36 +125,35 @@
   "media/shared/assets/fonts/PlusJakartaSans/PlusJakartaSans-Medium.woff2": "/packs/media/shared/assets/fonts/PlusJakartaSans/PlusJakartaSans-Medium-f82e29a32033740d46163703c7f605ed.woff2",
   "media/shared/assets/fonts/PlusJakartaSans/PlusJakartaSans-Regular.woff2": "/packs/media/shared/assets/fonts/PlusJakartaSans/PlusJakartaSans-Regular-f1de7180e1b2fc4818d8790657a3ab08.woff2",
   "media/shared/assets/fonts/PlusJakartaSans/PlusJakartaSans-SemiBold.woff2": "/packs/media/shared/assets/fonts/PlusJakartaSans/PlusJakartaSans-SemiBold-c855407ebc8dc7dfb3e53d41eed2d1a2.woff2",
-  "media/widget/assets/images/typing.gif": "/packs/media/widget/assets/images/typing-6027d21b24f45e3377a729a55158f948.gif",
-  "middleware.js": "/packs/js/middleware-7959151074e9c60176b4.chunk.js",
-  "middleware.js.map": "/packs/js/middleware-7959151074e9c60176b4.chunk.js.map",
-  "portal.css": "/packs/css/portal-df4c54c2.css",
-  "portal.js": "/packs/js/portal-e6668bea22ba3c7191a7.js",
-  "portal.js.map": "/packs/js/portal-e6668bea22ba3c7191a7.js.map",
-  "queryString.js": "/packs/js/queryString-d4c07b9022bd5e7ca972.chunk.js",
-  "queryString.js.map": "/packs/js/queryString-d4c07b9022bd5e7ca972.chunk.js.map",
-  "remoteMiddleware.js": "/packs/js/remoteMiddleware-88d75431de22547c03e3.chunk.js",
-  "remoteMiddleware.js.map": "/packs/js/remoteMiddleware-88d75431de22547c03e3.chunk.js.map",
-  "schemaFilter.js": "/packs/js/schemaFilter-642d30810427c69f2858.chunk.js",
-  "schemaFilter.js.map": "/packs/js/schemaFilter-642d30810427c69f2858.chunk.js.map",
+  "media/widget/assets/images/typing.gif": "/packs/media/widget/assets/images/typing-929e3aeb589b7668d0b4ff57f73e17e3.gif",
+  "middleware.js": "/packs/js/middleware-aed3eb1052bd6104feb9.chunk.js",
+  "middleware.js.map": "/packs/js/middleware-aed3eb1052bd6104feb9.chunk.js.map",
+  "portal.css": "/packs/css/portal-ae763cfc.css",
+  "portal.js": "/packs/js/portal-6ab14cb8d55e80394ff8.js",
+  "portal.js.map": "/packs/js/portal-6ab14cb8d55e80394ff8.js.map",
+  "queryString.js": "/packs/js/queryString-32c8cc8a823ca4993b84.chunk.js",
+  "queryString.js.map": "/packs/js/queryString-32c8cc8a823ca4993b84.chunk.js.map",
+  "remoteMiddleware.js": "/packs/js/remoteMiddleware-89e526926e2a31c7aa72.chunk.js",
+  "remoteMiddleware.js.map": "/packs/js/remoteMiddleware-89e526926e2a31c7aa72.chunk.js.map",
+  "schemaFilter.js": "/packs/js/schemaFilter-fa402a9d1a49c5075b44.chunk.js",
+  "schemaFilter.js.map": "/packs/js/schemaFilter-fa402a9d1a49c5075b44.chunk.js.map",
   "sdk.js": "/packs/js/sdk.js",
   "sdk.js.map": "/packs/js/sdk.js.map",
-  "superadmin.css": "/packs/css/superadmin-5360f1ce.css",
-  "superadmin.js": "/packs/js/superadmin-e6668bea22ba3c7191a7.js",
-  "superadmin.js.map": "/packs/js/superadmin-e6668bea22ba3c7191a7.js.map",
-  "superadmin_pages.css": "/packs/css/superadmin_pages-75d1426d.css",
-  "superadmin_pages.js": "/packs/js/superadmin_pages-e6668bea22ba3c7191a7.js",
-  "superadmin_pages.js.map": "/packs/js/superadmin_pages-e6668bea22ba3c7191a7.js.map",
-  "survey.css": "/packs/css/survey-19182ee7.css",
-  "survey.js": "/packs/js/survey-e6668bea22ba3c7191a7.js",
-  "survey.js.map": "/packs/js/survey-e6668bea22ba3c7191a7.js.map",
-  "v3app.css": "/packs/css/v3app-1c94e9fa.css",
-  "v3app.js": "/packs/js/v3app-e6668bea22ba3c7191a7.js",
-  "v3app.js.map": "/packs/js/v3app-e6668bea22ba3c7191a7.js.map",
-  "vendors~ajs-destination.js": "/packs/js/vendors~ajs-destination-bba345f30cf85010dee6.chunk.js",
-  "vendors~ajs-destination.js.map": "/packs/js/vendors~ajs-destination-bba345f30cf85010dee6.chunk.js.map",
+  "superadmin.css": "/packs/css/superadmin-04e889e7.css",
+  "superadmin.js": "/packs/js/superadmin-6ab14cb8d55e80394ff8.js",
+  "superadmin.js.map": "/packs/js/superadmin-6ab14cb8d55e80394ff8.js.map",
+  "superadmin_pages.js": "/packs/js/superadmin_pages-6ab14cb8d55e80394ff8.js",
+  "superadmin_pages.js.map": "/packs/js/superadmin_pages-6ab14cb8d55e80394ff8.js.map",
+  "survey.css": "/packs/css/survey-471b89a7.css",
+  "survey.js": "/packs/js/survey-6ab14cb8d55e80394ff8.js",
+  "survey.js.map": "/packs/js/survey-6ab14cb8d55e80394ff8.js.map",
+  "v3app.css": "/packs/css/v3app-961975b5.css",
+  "v3app.js": "/packs/js/v3app-6ab14cb8d55e80394ff8.js",
+  "v3app.js.map": "/packs/js/v3app-6ab14cb8d55e80394ff8.js.map",
+  "vendors~ajs-destination.js": "/packs/js/vendors~ajs-destination-cf52fd4afde79f446a61.chunk.js",
+  "vendors~ajs-destination.js.map": "/packs/js/vendors~ajs-destination-cf52fd4afde79f446a61.chunk.js.map",
   "waveWorker.min.js": "/packs/waveWorker.min.js",
-  "widget.css": "/packs/css/widget-8252c551.css",
-  "widget.js": "/packs/js/widget-e6668bea22ba3c7191a7.js",
-  "widget.js.map": "/packs/js/widget-e6668bea22ba3c7191a7.js.map"
+  "widget.css": "/packs/css/widget-51c410cd.css",
+  "widget.js": "/packs/js/widget-6ab14cb8d55e80394ff8.js",
+  "widget.js.map": "/packs/js/widget-6ab14cb8d55e80394ff8.js.map"
 }

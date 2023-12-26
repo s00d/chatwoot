@@ -1,0 +1,2 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[113],{3394:function(t,e,l){"use strict";l.r(e);var o={components:{WootReports:l(2715).a}},n=l(6),s=Object(n.a)(o,(function(){return(0,this._self._c)("woot-reports",{key:"label-reports",attrs:{type:"label","getter-key":"labels/getLabels","action-key":"labels/get","download-button-label":this.$t("LABEL_REPORTS.DOWNLOAD_LABEL_REPORTS")}})}),[],!1,null,null,null);e.default=s.exports}}]);
+//# sourceMappingURL=113-cb30a7ba2895be089390.chunk.js.map

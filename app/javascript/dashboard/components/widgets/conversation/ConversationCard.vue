@@ -387,16 +387,4 @@ export default {
     }
   }
 }
-
-.st-user {
-  color: #00a100;
-}
-
-.st-agent {
-  color: #4f4fff;
-}
-
-.st-bot {
-  color: #c02727;
-}
 </style>

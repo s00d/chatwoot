@@ -3320,7 +3320,7 @@ __metadata:
     "@vue/vue2-jest": 29
     activestorage: ^5.2.6
     autoprefixer: ^10.4.14
-    axios: ^0.21.2
+    axios: ^1.6.0
     babel-core: ^7.0.0-bridge.0
     babel-helper-vue-jsx-merge-props: ^2.0.3
     babel-jest: 29
@@ -3329,6 +3329,7 @@ __metadata:
     babel-plugin-transform-vue-jsx: ^3.7.0
     babel-preset-vue: ^2.0.2
     chart.js: ~2.9.4
+    color2k: ^2.0.2
     company-email-validator: ^1.0.8
     core-js: 3.11.0
     cypress: ^13.4.0
@@ -3394,6 +3395,7 @@ __metadata:
     vue-router: ~3.5.2
     vue-template-compiler: ^2.7.0
     vue-upload-component: 2.8.22
+    vue-virtual-scroll-list: ^2.3.5
     vue2-datepicker: ^3.9.1
     vuedraggable: ^2.24.3
     vuelidate: 0.7.7
@@ -9244,12 +9246,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^0.21.2":
-  version: 0.21.2
-  resolution: "axios@npm:0.21.2"
+"axios@npm:^1.6.0":
+  version: 1.6.2
+  resolution: "axios@npm:1.6.2"
   dependencies:
-    follow-redirects: ^1.14.0
-  checksum: 41299c21f77323e7c56ea49d2d5ed25407d24bb145a4ce3441a8db17359ae56554f9495dca6e15d343a9530e106212a684c75a4db3bedfbe19f6414a8d94378e
+    follow-redirects: ^1.15.0
+    form-data: ^4.0.0
+    proxy-from-env: ^1.1.0
+  checksum: 4a7429e2b784be0f2902ca2680964391eae7236faa3967715f30ea45464b98ae3f1c6f631303b13dfe721b17126b01f486c7644b9ef276bfc63112db9fd379f8
   languageName: node
   linkType: hard
 
@@ -10789,6 +10793,13 @@ __metadata:
   bin:
     color-support: bin.js
   checksum: 9b7356817670b9a13a26ca5af1c21615463b500783b739b7634a0c2047c16cef4b2865d7576875c31c3cddf9dd621fa19285e628f20198b233a5cfdda6d0793b
+  languageName: node
+  linkType: hard
+
+"color2k@npm:^2.0.2":
+  version: 2.0.3
+  resolution: "color2k@npm:2.0.3"
+  checksum: 0748e16e43c1740045af61f44de5d181f3f7a2a9cb0d5cccdccee23d04e3f107f02aaafebb7ca3335cca1d11849c6321aba702eb2f893e993a77f65761de7661
   languageName: node
   linkType: hard
 
@@ -13951,13 +13962,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.0":
+"follow-redirects@npm:^1.0.0":
   version: 1.14.8
   resolution: "follow-redirects@npm:1.14.8"
   peerDependenciesMeta:
     debug:
       optional: true
   checksum: 40c67899c2e3149a27e8b6498a338ff27f39fe138fde8d7f0756cb44b073ba0bfec3d52af28f20c5bdd67263d564d0d8d7b5efefd431de95c18c42f7b4aef457
+  languageName: node
+  linkType: hard
+
+"follow-redirects@npm:^1.15.0":
+  version: 1.15.3
+  resolution: "follow-redirects@npm:1.15.3"
+  peerDependenciesMeta:
+    debug:
+      optional: true
+  checksum: 584da22ec5420c837bd096559ebfb8fe69d82512d5585004e36a3b4a6ef6d5905780e0c74508c7b72f907d1fa2b7bd339e613859e9c304d0dc96af2027fd0231
   languageName: node
   linkType: hard
 
@@ -22107,6 +22128,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"proxy-from-env@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "proxy-from-env@npm:1.1.0"
+  checksum: ed7fcc2ba0a33404958e34d95d18638249a68c430e30fcb6c478497d72739ba64ce9810a24f53a7d921d0c065e5b78e3822759800698167256b04659366ca4d4
+  languageName: node
+  linkType: hard
+
 "prr@npm:~1.0.1":
   version: 1.0.1
   resolution: "prr@npm:1.0.1"
@@ -26566,6 +26594,13 @@ __metadata:
   version: 2.8.22
   resolution: "vue-upload-component@npm:2.8.22"
   checksum: c61166f36db1398ff8f95d2bfc0ebb6351f82f5db792c63b71d85a12efeb0873fd0daf05ff47673562805a915ab83dc06ecf07490c4d3b29d5a11a7f9180242e
+  languageName: node
+  linkType: hard
+
+"vue-virtual-scroll-list@npm:^2.3.5":
+  version: 2.3.5
+  resolution: "vue-virtual-scroll-list@npm:2.3.5"
+  checksum: bcf131dcacabbb6443dd622d4f205d51b47d4e1557e225e3813211b82f2261e6ecf00d6e7712d9b1b2146585b566cef838944d6bc32fc73c7b7a6dedca63c5e0
   languageName: node
   linkType: hard
 
