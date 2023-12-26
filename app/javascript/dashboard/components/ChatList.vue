@@ -523,6 +523,9 @@ export default {
     activeAssigneeTab(val) {
       LocalStorage.set('activeAssigneeTab', val);
     },
+    teamId() {
+      this.updateVirtualListProps('teamId', this.teamId);
+    },
     activeTeam() {
       this.resetAndFetchData();
     },
@@ -555,15 +558,6 @@ export default {
     this.$store.dispatch('setChatStatusFilter', this.activeStatus);
     this.$store.dispatch('setChatSortFilter', this.activeSortBy);
     this.resetAndFetchData();
-
-    this.virtualListExtraProps = {
-      label: this.label,
-      teamId: this.teamId,
-      foldersId: this.foldersId,
-      conversationType: this.conversationType,
-      showAssignee: false,
-      isConversationSelected: this.isConversationSelected,
-    };
 
     if (this.hasActiveFolders) {
       this.$store.dispatch('campaigns/get');
