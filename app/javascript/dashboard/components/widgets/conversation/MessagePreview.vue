@@ -100,10 +100,14 @@ export default {
       return this.message && this.message.content_type === 'sticker';
     },
     parsedTypeClass() {
+      console.log(this.message);
       if (this.message.message_type === 0) {
         return 'st-user';
       }
       if (this.message.message_type === 1) {
+        if (this.message.private) {
+          return 'st-note';
+        }
         if (!this.message.sender) {
           return 'st-bot';
         }
@@ -122,18 +126,22 @@ export default {
 </script>
 <style lang="scss" scoped>
 .st-user {
-  color: #00a100;
+  color: #00cc00;
 }
 
 .st-agent {
-  color: #369eff;
+  color: #808080;
 }
 
 .st-bot {
-  color: #5845af;
+  color: #cc00cc;
 }
 
 .st-auto {
-  color: #5845af;
+  color: #cc00cc;
+}
+
+.st-note {
+  color: #cc6600;
 }
 </style>
