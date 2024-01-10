@@ -5,7 +5,7 @@ module Avatarable
   include Rails.application.routes.url_helpers
 
   included do
-    has_one_attached :avatar
+    has_one_attached :avatar, service: :avatars
     validate :acceptable_avatar, if: -> { avatar.changed? }
     after_save :fetch_avatar_from_gravatar
   end

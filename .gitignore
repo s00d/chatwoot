@@ -47,6 +47,7 @@ buildreports
 coverage
 
 /storage
+/avatars
 
 # ignore packages
 node_modules
