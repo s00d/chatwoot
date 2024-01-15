@@ -172,7 +172,7 @@
       }
       var time = Math.floor(Date.now() / 1000);
       var worked_date = storage_get('chatwoot_opened_date');
-      if (worked_date && time - worked_date < 3600) {
+      if (worked_date && time - worked_date < 14400) {
         open(false);
       } else {
         storage_del('chatwoot_opened_date');
