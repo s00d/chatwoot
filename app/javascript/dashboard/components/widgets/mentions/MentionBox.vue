@@ -1,7 +1,7 @@
 <template>
   <div
     ref="mentionsListContainer"
-    class="bg-white dark:bg-slate-800 rounded-md overflow-auto absolute w-full z-20 pb-0 shadow-md left-0 bottom-full max-h-[9.75rem] border border-solid border-slate-100 dark:border-slate-700 mention--box"
+    class="bg-white dark:bg-slate-800 rounded-md overflow-auto absolute w-full z-20 pb-0 shadow-md left-0 bottom-full max-h-[20rem] border border-solid border-slate-100 dark:border-slate-700 mention--box"
   >
     <ul class="vertical dropdown menu">
       <li>
@@ -15,9 +15,9 @@
         @mouseover="onHover(index)"
       >
         <button
-          class="flex group flex-col gap-0.5 overflow-hidden cursor-pointer items-start py-2.5 px-2.5 justify-center w-full h-full text-left hover:bg-woot-50 dark:hover:bg-woot-800 border-b border-solid border-slate-100 dark:border-slate-700"
+          class="flex group flex-col gap-0.5 overflow-hidden cursor-pointer items-start py-2.5 px-2.5 justify-center w-full h-full text-left hover:bg-woot-50 dark:hover:bg-woot-700 border-b border-solid border-slate-100 dark:border-slate-700"
           :class="{
-            ' bg-woot-25 dark:bg-woot-800': index === selectedIndex,
+            ' bg-woot-25 dark:bg-woot-800': index === selectedIndex
           }"
           @click="onListItemSelection(index)"
         >
@@ -60,6 +60,7 @@ export default {
   data() {
     return {
       selectedIndex: 0,
+      hoverIndex: -1,
     };
   },
   watch: {
