@@ -26,3 +26,8 @@ remove_stale_contact_inboxes_job.rb:
   cron: '30 22 * * *'
   class: 'Internal::RemoveStaleContactInboxesJob'
   queue: scheduled_jobs
+
+#remove_stale_active_storage_files_job:
+#  cron: '0 0 * * *' # Запуск в полночь каждый день
+#  class: 'RemoveStaleActiveStorageFilesJob'
+#  queue: scheduled_jobs

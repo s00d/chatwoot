@@ -15,6 +15,7 @@ Dotenv::Railtie.load
 require 'ddtrace' if ENV.fetch('DD_TRACE_AGENT_URL', false).present?
 require 'elastic-apm' if ENV.fetch('ELASTIC_APM_SECRET_TOKEN', false).present?
 require 'scout_apm' if ENV.fetch('SCOUT_KEY', false).present?
+require_relative '../app/middleware/active_storage_errors_handler'
 
 if ENV.fetch('NEW_RELIC_LICENSE_KEY', false).present?
   require 'newrelic-sidekiq-metrics'
@@ -52,6 +53,8 @@ module Chatwoot
     # https://discuss.rubyonrails.org/t/cve-2022-32224-possible-rce-escalation-bug-with-serialized-columns-in-active-record/81017
     # FIX ME : fixes breakage of installation config. we need to migrate.
     config.active_record.yaml_column_permitted_classes = [ActiveSupport::HashWithIndifferentAccess]
+
+    config.middleware.use ActiveStorageErrorsHandler
   end
 
   def self.config
