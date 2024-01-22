@@ -1,5 +1,6 @@
 <template>
   <mention-box
+    v-if="items.length"
     :items="items"
     @mention-select="handleMentionClick"
     @close="$emit('close')"
