@@ -1,0 +1,2 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[116],{3396:function(t,s,l){"use strict";l.r(s);var e={computed:{items:function(){return this.$t("TEAMS_SETTINGS.EDIT_FLOW.WIZARD")}}},u=l(6),a=Object(u.a)(e,(function(){var t=this,s=t._self._c;return s("div",{staticClass:"overflow-auto p-4 max-w-full my-auto flex flex-wrap h-full"},[s("woot-wizard",{staticClass:"small-3 columns",attrs:{items:t.items}}),t._v(" "),s("router-view")],1)}),[],!1,null,null,null);s.default=a.exports}}]);
+//# sourceMappingURL=116-e0c2a3959e3e133b52f9.chunk.js.map
