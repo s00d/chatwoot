@@ -1,5 +1,5 @@
 <template>
-  <div class="py-3 px-4">
+  <div v-show="!isHidden" class="py-3 px-4">
     <div class="flex items-center mb-1">
       <h4 class="text-block-title flex items-center m-0 w-full error">
         <div v-if="isAttributeTypeCheckbox" class="checkbox-wrap">
@@ -149,6 +149,9 @@ export default {
   },
 
   computed: {
+    isHidden() {
+      return this.label === 'accountId' || this.label === 'hash_id';
+    },
     displayValue() {
       if (this.isAttributeTypeDate) {
         return new Date(this.value || new Date()).toLocaleDateString();
