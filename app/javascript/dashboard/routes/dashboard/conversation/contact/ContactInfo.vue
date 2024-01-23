@@ -65,14 +65,7 @@
             :title="$t('CONTACT_PANEL.EMAIL_ADDRESS')"
             show-copy
           />
-          <contact-info-row
-            :href="contact.phone_number ? `tel:${contact.phone_number}` : ''"
-            :value="contact.phone_number"
-            icon="call"
-            emoji="📞"
-            :title="$t('CONTACT_PANEL.PHONE_NUMBER')"
-            show-copy
-          />
+
           <contact-info-row
             v-if="contact.identifier"
             :value="contact.identifier"
@@ -80,12 +73,7 @@
             emoji="🪪"
             :title="$t('CONTACT_PANEL.IDENTIFIER')"
           />
-          <contact-info-row
-            :value="additionalAttributes.company_name"
-            icon="building-bank"
-            emoji="🏢"
-            :title="$t('CONTACT_PANEL.COMPANY')"
-          />
+
           <contact-info-row
             v-if="location || additionalAttributes.location"
             :value="location || additionalAttributes.location"
