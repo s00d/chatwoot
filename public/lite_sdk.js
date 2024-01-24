@@ -170,12 +170,8 @@
           ? window.chatwootLITESDK.locale
           : 'en';
 
-      console.log(222, window.chatwootLITESDK);
-      console.log(222, locale);
       const text = locale === 'ru' ? 'Поддержка' : 'Support';
-      console.log(222, text);
       const wootDesktopText = document.querySelector('.wootm-desktop-text');
-      console.log(222, wootDesktopText);
       if (wootDesktopText) {
         wootDesktopText.textContent = text;
       }
