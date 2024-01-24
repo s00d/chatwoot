@@ -1,7 +1,7 @@
 (function init() {
   var styles = `
 .wootm-widget-bubble {
-    background: #1677ff;
+    background: #056BFF;
     border-radius: 100px;
     border-width: 0px;
     bottom: 24px;
@@ -25,7 +25,7 @@
   display:none;
 }
 .wootm-widget-bubble:hover {
-  background: #1677ff;
+  background: #056BFF;
   box-shadow: 0 8px 32px rgb(0 0 0 / 40%) !important;
 }
 .wootm-widget-bubble.wootm-elements--right {
@@ -55,14 +55,13 @@
   align-self: center;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, Arial, sans-serif;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   justify-content: center;
   padding-right: 20px;
   width: auto !important;
 }
 @media (max-width: 768px) {
   .wootm-desktop-text {
-    font-size: 14px;
     padding-right: 14px;
   }
 }
@@ -103,22 +102,10 @@
   // eslint-disable-next-line vars-on-top
   var newDiv = document.createElement('div');
   newDiv.innerHTML =
-    '<button class="wootm-widget-bubble wootm-desktop wootm-elements--right wootm-widget--expanded" style="background: #1677ff;">' +
+    '<button class="wootm-widget-bubble wootm-desktop wootm-elements--right wootm-widget--expanded" style="background: #056BFF;">' +
     '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAAUVBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////8IN+deAAAAGnRSTlMAAwgJEBk0TVheY2R5eo+ut8jb5OXs8fX2+cjRDTIAAADsSURBVHgBldZbkoMgFIThRgQv8SKKgGf/C51UnJqaRI30/9zfe+NQUQ3TvG7bOk9DVeCmshmj/CuOTYnrdBfkUOg0zlOtl9OWVuEk4+QyZ3DIevmSt/ioTvK1VH/s5bY3YdM9SBZ/mUUyWgx+U06ycgp7D8msxSvtc4HXL9BLdj2elSEfhBJAI0QNgJEBI1BEBsQClVBVGDgwYOLAhJkDM1YOrNg4sLFAsLJgZsHEgoEFFQt0JAFGFjQsKAMJ0LFAexKgZYFyJIDxJIBNJEDNAtSJBLCeBDCOBFAPzwFA94ED+zmhwDO9358r8ANtIsMXi7qVAwAAAABJRU5ErkJggg==" alt="bubble-icon">' +
     `<span class="wootm-desktop-text">Support</span>` +
     '</button>';
-
-  window.addEventListener('load', function() {
-    const locale =
-      window.chatwootLITESDK && window.chatwootLITESDK.locale
-        ? window.chatwootLITESDK.locale
-        : 'en';
-    const text = locale === 'ru' ? 'Поддержка' : 'Support';
-    const wootDesktopText = document.querySelector('.wootm-desktop-text');
-    if (wootDesktopText) {
-      wootDesktopText.textContent = text;
-    }
-  });
 
   // eslint-disable-next-line vars-on-top
   function open(isOpen = true) {
@@ -176,6 +163,16 @@
         open(false);
       } else {
         storage_del('chatwoot_opened_date');
+      }
+
+      const locale =
+        window.chatwootLITESDK && window.chatwootLITESDK.locale
+          ? window.chatwootLITESDK.locale
+          : 'en';
+      const text = locale === 'ru' ? 'Поддержка' : 'Support';
+      const wootDesktopText = document.querySelector('.wootm-desktop-text');
+      if (wootDesktopText) {
+        wootDesktopText.textContent = text;
       }
     },
   };
