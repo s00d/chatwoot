@@ -18,7 +18,7 @@
 @media (max-width: 768px) {
   .wootm-widget-bubble {
     height: 42px;
-    font-size: 16px;
+    font-size: 14px;
   }
 }
 
