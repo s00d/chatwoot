@@ -137,6 +137,7 @@
         :data-component="itemComponent"
         :extra-props="virtualListExtraProps"
         class="w-full overflow-auto h-full"
+        style="scroll-behavior: smooth"
         footer-tag="div"
       >
         <template #footer>
