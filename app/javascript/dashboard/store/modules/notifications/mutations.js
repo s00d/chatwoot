@@ -58,6 +58,14 @@ export const mutations = {
       ...($state.records[notification.id] || {}),
       ...notification,
     });
+
+    // Ensure the limit of 10 notifications
+    const notificationIds = Object.keys($state.records);
+    if (notificationIds.length > 10) {
+      // Remove the oldest notification
+      Vue.delete($state.records, notificationIds[0]);
+    }
+
     Vue.set($state.meta, 'unreadCount', unreadCount);
     Vue.set($state.meta, 'count', count);
   },
