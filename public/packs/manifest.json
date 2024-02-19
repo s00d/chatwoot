@@ -1,31 +1,33 @@
 {
-  "application.css": "/packs/css/application-900a54b5.css",
-  "application.js": "/packs/js/application-7de98d3a77b933b512c5.js",
-  "application.js.map": "/packs/js/application-7de98d3a77b933b512c5.js.map",
-  "auto-track.js": "/packs/js/auto-track-e63e0e6da269a37472b2.chunk.js",
-  "auto-track.js.map": "/packs/js/auto-track-e63e0e6da269a37472b2.chunk.js.map",
+  "ajs-destination.js": "/packs/js/ajs-destination-0c0bbac3c98ce72e7b6a.chunk.js",
+  "ajs-destination.js.map": "/packs/js/ajs-destination-0c0bbac3c98ce72e7b6a.chunk.js.map",
+  "application.css": "/packs/css/application-0ca00563.css",
+  "application.js": "/packs/js/application-c7c58828e538587592ab.js",
+  "application.js.map": "/packs/js/application-c7c58828e538587592ab.js.map",
+  "auto-track.js": "/packs/js/auto-track-ecc8520fa695cb2960f0.chunk.js",
+  "auto-track.js.map": "/packs/js/auto-track-ecc8520fa695cb2960f0.chunk.js.map",
   "encoderWorker.min.js": "/packs/encoderWorker.min.js",
   "entrypoints": {
     "application": {
       "css": [
-        "/packs/css/application-900a54b5.css"
+        "/packs/css/application-0ca00563.css"
       ],
       "js": [
-        "/packs/js/application-7de98d3a77b933b512c5.js"
+        "/packs/js/application-c7c58828e538587592ab.js"
       ],
       "js.map": [
-        "/packs/js/application-7de98d3a77b933b512c5.js.map"
+        "/packs/js/application-c7c58828e538587592ab.js.map"
       ]
     },
     "portal": {
       "css": [
-        "/packs/css/portal-f9e712c0.css"
+        "/packs/css/portal-30e36f90.css"
       ],
       "js": [
-        "/packs/js/portal-7de98d3a77b933b512c5.js"
+        "/packs/js/portal-c7c58828e538587592ab.js"
       ],
       "js.map": [
-        "/packs/js/portal-7de98d3a77b933b512c5.js.map"
+        "/packs/js/portal-c7c58828e538587592ab.js.map"
       ]
     },
     "sdk": {
@@ -38,59 +40,59 @@
     },
     "superadmin_pages": {
       "js": [
-        "/packs/js/superadmin_pages-7de98d3a77b933b512c5.js"
+        "/packs/js/superadmin_pages-c7c58828e538587592ab.js"
       ],
       "js.map": [
-        "/packs/js/superadmin_pages-7de98d3a77b933b512c5.js.map"
+        "/packs/js/superadmin_pages-c7c58828e538587592ab.js.map"
       ]
     },
     "superadmin": {
       "css": [
-        "/packs/css/superadmin-35728f8b.css"
+        "/packs/css/superadmin-5c141198.css"
       ],
       "js": [
-        "/packs/js/superadmin-7de98d3a77b933b512c5.js"
+        "/packs/js/superadmin-c7c58828e538587592ab.js"
       ],
       "js.map": [
-        "/packs/js/superadmin-7de98d3a77b933b512c5.js.map"
+        "/packs/js/superadmin-c7c58828e538587592ab.js.map"
       ]
     },
     "survey": {
       "css": [
-        "/packs/css/survey-2fe797e4.css"
+        "/packs/css/survey-d9a92f8e.css"
       ],
       "js": [
-        "/packs/js/survey-7de98d3a77b933b512c5.js"
+        "/packs/js/survey-c7c58828e538587592ab.js"
       ],
       "js.map": [
-        "/packs/js/survey-7de98d3a77b933b512c5.js.map"
+        "/packs/js/survey-c7c58828e538587592ab.js.map"
       ]
     },
     "v3app": {
       "css": [
-        "/packs/css/v3app-a3c9d8d5.css"
+        "/packs/css/v3app-03ec5ea3.css"
       ],
       "js": [
-        "/packs/js/v3app-7de98d3a77b933b512c5.js"
+        "/packs/js/v3app-c7c58828e538587592ab.js"
       ],
       "js.map": [
-        "/packs/js/v3app-7de98d3a77b933b512c5.js.map"
+        "/packs/js/v3app-c7c58828e538587592ab.js.map"
       ]
     },
     "widget": {
       "css": [
-        "/packs/css/widget-a3a41f7b.css"
+        "/packs/css/widget-3805d8fe.css"
       ],
       "js": [
-        "/packs/js/widget-7de98d3a77b933b512c5.js"
+        "/packs/js/widget-c7c58828e538587592ab.js"
       ],
       "js.map": [
-        "/packs/js/widget-7de98d3a77b933b512c5.js.map"
+        "/packs/js/widget-c7c58828e538587592ab.js.map"
       ]
     }
   },
-  "legacyVideos.js": "/packs/js/legacyVideos-c9a16782798e761d53df.chunk.js",
-  "legacyVideos.js.map": "/packs/js/legacyVideos-c9a16782798e761d53df.chunk.js.map",
+  "legacyVideos.js": "/packs/js/legacyVideos-531f967ac8ad46aa6197.chunk.js",
+  "legacyVideos.js.map": "/packs/js/legacyVideos-531f967ac8ad46aa6197.chunk.js.map",
   "media/dashboard/assets/images/bubble-logo.svg": "/packs/media/dashboard/assets/images/bubble-logo-eec5daaebf0c7009bba7568fd9b9ad4a.svg",
   "media/dashboard/assets/images/channels/facebook_login.png": "/packs/media/dashboard/assets/images/channels/facebook_login-7692d6c379288885d619b1e80bb214a4.png",
   "media/dashboard/assets/images/chatwoot_bot.png": "/packs/media/dashboard/assets/images/chatwoot_bot-905112376e6493b37e2cecea8f9dc50c.png",
@@ -126,34 +128,32 @@
   "media/shared/assets/fonts/PlusJakartaSans/PlusJakartaSans-Regular.woff2": "/packs/media/shared/assets/fonts/PlusJakartaSans/PlusJakartaSans-Regular-f1de7180e1b2fc4818d8790657a3ab08.woff2",
   "media/shared/assets/fonts/PlusJakartaSans/PlusJakartaSans-SemiBold.woff2": "/packs/media/shared/assets/fonts/PlusJakartaSans/PlusJakartaSans-SemiBold-c855407ebc8dc7dfb3e53d41eed2d1a2.woff2",
   "media/widget/assets/images/typing.gif": "/packs/media/widget/assets/images/typing-929e3aeb589b7668d0b4ff57f73e17e3.gif",
-  "middleware.js": "/packs/js/middleware-8b3a8ae5e3c4b148bf1a.chunk.js",
-  "middleware.js.map": "/packs/js/middleware-8b3a8ae5e3c4b148bf1a.chunk.js.map",
-  "portal.css": "/packs/css/portal-f9e712c0.css",
-  "portal.js": "/packs/js/portal-7de98d3a77b933b512c5.js",
-  "portal.js.map": "/packs/js/portal-7de98d3a77b933b512c5.js.map",
-  "queryString.js": "/packs/js/queryString-e9566d729ee4569a9d0d.chunk.js",
-  "queryString.js.map": "/packs/js/queryString-e9566d729ee4569a9d0d.chunk.js.map",
-  "remoteMiddleware.js": "/packs/js/remoteMiddleware-362e24cd11853d84b1bf.chunk.js",
-  "remoteMiddleware.js.map": "/packs/js/remoteMiddleware-362e24cd11853d84b1bf.chunk.js.map",
-  "schemaFilter.js": "/packs/js/schemaFilter-16d01ba39d5a4385c88f.chunk.js",
-  "schemaFilter.js.map": "/packs/js/schemaFilter-16d01ba39d5a4385c88f.chunk.js.map",
+  "portal.css": "/packs/css/portal-30e36f90.css",
+  "portal.js": "/packs/js/portal-c7c58828e538587592ab.js",
+  "portal.js.map": "/packs/js/portal-c7c58828e538587592ab.js.map",
+  "queryString.js": "/packs/js/queryString-7f511a887d0499df99ff.chunk.js",
+  "queryString.js.map": "/packs/js/queryString-7f511a887d0499df99ff.chunk.js.map",
+  "remoteMiddleware.js": "/packs/js/remoteMiddleware-c772a30ea186a0b155f2.chunk.js",
+  "remoteMiddleware.js.map": "/packs/js/remoteMiddleware-c772a30ea186a0b155f2.chunk.js.map",
+  "schemaFilter.js": "/packs/js/schemaFilter-b39050badd3e33f1acf5.chunk.js",
+  "schemaFilter.js.map": "/packs/js/schemaFilter-b39050badd3e33f1acf5.chunk.js.map",
   "sdk.js": "/packs/js/sdk.js",
   "sdk.js.map": "/packs/js/sdk.js.map",
-  "superadmin.css": "/packs/css/superadmin-35728f8b.css",
-  "superadmin.js": "/packs/js/superadmin-7de98d3a77b933b512c5.js",
-  "superadmin.js.map": "/packs/js/superadmin-7de98d3a77b933b512c5.js.map",
-  "superadmin_pages.js": "/packs/js/superadmin_pages-7de98d3a77b933b512c5.js",
-  "superadmin_pages.js.map": "/packs/js/superadmin_pages-7de98d3a77b933b512c5.js.map",
-  "survey.css": "/packs/css/survey-2fe797e4.css",
-  "survey.js": "/packs/js/survey-7de98d3a77b933b512c5.js",
-  "survey.js.map": "/packs/js/survey-7de98d3a77b933b512c5.js.map",
-  "v3app.css": "/packs/css/v3app-a3c9d8d5.css",
-  "v3app.js": "/packs/js/v3app-7de98d3a77b933b512c5.js",
-  "v3app.js.map": "/packs/js/v3app-7de98d3a77b933b512c5.js.map",
-  "vendors~ajs-destination.js": "/packs/js/vendors~ajs-destination-71de552791d4157a0314.chunk.js",
-  "vendors~ajs-destination.js.map": "/packs/js/vendors~ajs-destination-71de552791d4157a0314.chunk.js.map",
+  "superadmin.css": "/packs/css/superadmin-5c141198.css",
+  "superadmin.js": "/packs/js/superadmin-c7c58828e538587592ab.js",
+  "superadmin.js.map": "/packs/js/superadmin-c7c58828e538587592ab.js.map",
+  "superadmin_pages.js": "/packs/js/superadmin_pages-c7c58828e538587592ab.js",
+  "superadmin_pages.js.map": "/packs/js/superadmin_pages-c7c58828e538587592ab.js.map",
+  "survey.css": "/packs/css/survey-d9a92f8e.css",
+  "survey.js": "/packs/js/survey-c7c58828e538587592ab.js",
+  "survey.js.map": "/packs/js/survey-c7c58828e538587592ab.js.map",
+  "v3app.css": "/packs/css/v3app-03ec5ea3.css",
+  "v3app.js": "/packs/js/v3app-c7c58828e538587592ab.js",
+  "v3app.js.map": "/packs/js/v3app-c7c58828e538587592ab.js.map",
+  "vendors~tsub-middleware.js": "/packs/js/vendors~tsub-middleware-73a6881a94063a075706.chunk.js",
+  "vendors~tsub-middleware.js.map": "/packs/js/vendors~tsub-middleware-73a6881a94063a075706.chunk.js.map",
   "waveWorker.min.js": "/packs/waveWorker.min.js",
-  "widget.css": "/packs/css/widget-a3a41f7b.css",
-  "widget.js": "/packs/js/widget-7de98d3a77b933b512c5.js",
-  "widget.js.map": "/packs/js/widget-7de98d3a77b933b512c5.js.map"
+  "widget.css": "/packs/css/widget-3805d8fe.css",
+  "widget.js": "/packs/js/widget-c7c58828e538587592ab.js",
+  "widget.js.map": "/packs/js/widget-c7c58828e538587592ab.js.map"
 }

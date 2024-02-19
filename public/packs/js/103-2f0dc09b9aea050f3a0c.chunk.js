@@ -1,2 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[103],{3406:function(n,t,i){"use strict";i.r(t);var o=i(6),e=Object(o.a)({},(function(){return(0,this._self._c)("div",[this._v("Component to list articles in a category in a portal")])}),[],!1,null,null,null);t.default=e.exports}}]);
-//# sourceMappingURL=103-2f0dc09b9aea050f3a0c.chunk.js.map
