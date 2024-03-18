@@ -6,15 +6,7 @@
   >
     <!-- Using v-show instead of v-if to avoid flickering as v-if removes dom elements.  -->
     <slot>
-      <img
-        v-show="shouldShowImage"
-        :src="src"
-        :class="thumbnailClass"
-        @load="onImgLoad"
-        @error="onImgError"
-      />
       <Avatar
-        v-show="!shouldShowImage"
         :username="userNameWithoutEmoji"
         :class="thumbnailClass"
         :size="avatarSize"
