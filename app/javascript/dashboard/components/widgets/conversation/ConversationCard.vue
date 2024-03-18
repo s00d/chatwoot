@@ -28,6 +28,7 @@
       class="columns"
       :username="currentContact.name"
       :status="currentContact.availability_status"
+      :has-image="false"
       size="40px"
     />
     <div
