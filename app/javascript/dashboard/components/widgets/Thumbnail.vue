@@ -7,14 +7,14 @@
     <!-- Using v-show instead of v-if to avoid flickering as v-if removes dom elements.  -->
     <slot>
       <img
-        v-if="hasImage && shouldShowImage"
+        v-show="shouldShowImage"
         :src="src"
         :class="thumbnailClass"
         @load="onImgLoad"
         @error="onImgError"
       />
       <Avatar
-        v-else
+        v-show="!shouldShowImage"
         :username="userNameWithoutEmoji"
         :class="thumbnailClass"
         :size="avatarSize"
@@ -73,10 +73,6 @@ export default {
     hasBorder: {
       type: Boolean,
       default: false,
-    },
-    hasImage: {
-      type: Boolean,
-      default: true,
     },
     shouldShowStatusAlways: {
       type: Boolean,
@@ -144,7 +140,7 @@ export default {
       return `user-thumbnail-box ${boxClass}`;
     },
     shouldShowImage() {
-      if (!this.src) {
+      if (!this.src || this.src === '') {
         return false;
       }
       if (this.hasImageLoaded) {

@@ -23,7 +23,6 @@
     </label>
     <thumbnail
       v-if="bulkActionCheck"
-      :src="currentContact.thumbnail"
       :badge="inboxBadge"
       class="columns"
       :username="currentContact.name"
