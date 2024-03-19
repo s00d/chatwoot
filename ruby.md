@@ -49,3 +49,7 @@ So, we should install openssl from rvm, then install old ruby with this openssl
 
 $ rvm pkg install openssl
 $ rvm install 2.3.1 --with-openssl-dir=$HOME/.rvm/usr
+
+
+
+rvm install 3.2.2 --with-openssl-dir=$(brew --prefix openssl@1.1)
