@@ -53,3 +53,6 @@ $ rvm install 2.3.1 --with-openssl-dir=$HOME/.rvm/usr
 
 
 rvm install 3.2.2 --with-openssl-dir=$(brew --prefix openssl@1.1)
+
+RAILS_ENV=development bundle exec rails runner "Features::ResponseBotService.new.enable_vector_extension"
+RAILS_ENV=development bundle exec rails runner "Features::ResponseBotService.new.enable_in_installation"
