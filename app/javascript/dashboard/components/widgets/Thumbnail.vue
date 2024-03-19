@@ -140,7 +140,7 @@ export default {
       return `user-thumbnail-box ${boxClass}`;
     },
     shouldShowImage() {
-      if (!this.src) {
+      if (!this.src || this.src === '') {
         return false;
       }
       if (this.hasImageLoaded) {
