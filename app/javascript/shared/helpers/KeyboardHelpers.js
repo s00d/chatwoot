@@ -66,6 +66,14 @@ export const hasPressedAltAndEKey = e => {
   return e.altKey && e.keyCode === 69;
 };
 
+export const hasPressedAltAndUpKey = e => {
+  return e.altKey && e.keyCode === 38;
+};
+
+export const hasPressedAltAndDownKey = e => {
+  return e.altKey && e.keyCode === 40;
+};
+
 export const hasPressedCommandPlusAltAndEKey = e => {
   return e.metaKey && e.altKey && e.keyCode === 69;
 };
