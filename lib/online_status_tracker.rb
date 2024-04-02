@@ -65,7 +65,7 @@ class OnlineStatusTracker
     range_start = (Time.zone.now - PRESENCE_DURATION).to_i
     user_ids = ::Redis::Alfred.zrangebyscore(presence_key(account_id, 'User'), range_start, '+inf')
     # since we are dealing with redis items as string, casting to string
-    user_ids += account.account_users.where(auto_offline: false)&.map(&:user_id)&.map(&:to_s)
+    user_ids += account.account_users.where(auto_offline: false).pluck(:user_id).map(&:to_s)
     user_ids.uniq
   end
 end
