@@ -36,11 +36,11 @@ module Redis::Alfred
     end
 
     def hincrby(key, value, count = 1)
-      $alfred.hincrby(key, value, count)
+      $alfred.with { |conn| conn.hincrby(key, value, count) }
     end
 
     def hdercby(key, value, count = 1)
-      $alfred.hincrby(key, value, -count)
+      $alfred.with { |conn| conn.hincrby(key, value, -count) }
     end
 
     # list operations
@@ -82,7 +82,7 @@ module Redis::Alfred
     end
 
     def hdel(key, field)
-      $alfred.hdel(key, field)
+      $alfred.with { |conn| conn.hdel(key, field) }
     end
 
     # get values of multiple keys from redis hash
