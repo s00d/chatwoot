@@ -25,7 +25,7 @@ class ActionCableConnector extends BaseActionCableConnector {
       'notification.created': this.onNotificationCreated,
       'notification.deleted': this.onNotificationDeleted,
       'first.reply.created': this.onFirstReplyCreated,
-      'conversation.read': this.onConversationRead,
+      // 'conversation.read': this.onConversationRead,
       'conversation.updated': this.onConversationUpdated,
       'account.cache_invalidated': this.onCacheInvalidate,
     };
