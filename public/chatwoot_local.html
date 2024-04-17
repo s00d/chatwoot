@@ -15,7 +15,7 @@
         s.parentNode.insertBefore(g, s);
         g.onload = function() {
           window.chatwootLITESDK.BASE_URL = BASE_URL;
-          window.chatwootLITESDK.websiteToken = 'GofbFDn8uPe4ZqxwUmfh384r';
+          window.chatwootLITESDK.websiteToken = 'u7cXPD5AbdMhQuQcmcue9LEv';
           window.chatwootLITESDK.locale = 'ru';
           window.chatwootLITESDK.run();
         };
@@ -30,29 +30,29 @@
           darkMode: 'auto', // [light, auto]
           launcherTitle: 'Поддержка',
         };
-
-        window.$chatwoot.setLocale('ru');
       })(document, 'script');
 
       window.addEventListener('chatwoot:ready', function() {
 
 
         const name = 'test user';
-        window.$chatwoot.setUser('1', {
-          email: 'test@onlinesim.ru',
+
+        window.$chatwoot.setLocale('ru');
+        window.$chatwoot.setUser('200', {
+          email: 'test111@onlinesim.ru',
           name: name,
           avatar_url: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(name),
         });
 
         window.$chatwoot.setCustomAttributes({
-          accountId: 1,
+          accountId: 200,
           pricingPlan: 'paid',
           profile: `https://onlinesim.ru/v2/pages/profile?hash_id=aaaaaaaaaaaaa`,
           cabinet: false,
           auth: true,
           domain: window.location.host,
           hash_id: 'aaaaaaaaaaaaa',
-          balance: 0,
+          balance: 10,
           spent: 0,
           income: 0,
         });
