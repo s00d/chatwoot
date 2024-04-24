@@ -58,6 +58,27 @@
             <hotkey custom-class="w-9 key"> E </hotkey>
           </div>
         </div>
+
+        <div class="flex justify-between items-center min-w-[25rem]">
+          <h5 class="text-sm text-slate-800 dark:text-slate-100">next</h5>
+          <div class="flex items-center mb-1 ml-2 gap-2">
+            <hotkey custom-class="min-h-[28px] min-w-[60px] normal-case key">
+              {{ $t('KEYBOARD_SHORTCUTS.KEYS.ALT_OR_OPTION_KEY') }}
+            </hotkey>
+            <hotkey custom-class="w-9 key"> ↓ </hotkey>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center min-w-[25rem]">
+          <h5 class="text-sm text-slate-800 dark:text-slate-100">preview</h5>
+          <div class="flex items-center mb-1 ml-2 gap-2">
+            <hotkey custom-class="min-h-[28px] min-w-[60px] normal-case key">
+              {{ $t('KEYBOARD_SHORTCUTS.KEYS.ALT_OR_OPTION_KEY') }}
+            </hotkey>
+            <hotkey custom-class="w-9 key"> ↑ </hotkey>
+          </div>
+        </div>
+
         <div
           v-for="shortcutKey in shortcutKeys"
           :key="shortcutKey.id"
