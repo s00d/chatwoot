@@ -43,10 +43,6 @@
         "NAME": "Handoff Count",
         "DESC": "( Total )"
       },
-      "RESOLUTION_WORK_TIME": {
-        "NAME": "Work time",
-        "DESC": "( Minutes )"
-      },
       "REPLY_TIME": {
         "NAME": "Customer waiting time",
         "TOOLTIP_TEXT": "Waiting time is %{metricValue} (based on %{conversationCount} replies)"

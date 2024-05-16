@@ -32,14 +32,14 @@ module AssignmentHandler
       ASSIGNEE_CHANGED => -> { saved_change_to_assignee_id? },
       TEAM_CHANGED => -> { saved_change_to_team_id? }
     }.each do |event, condition|
-      condition.call && dispatcher_dispatch(event)
+      condition.call && dispatcher_dispatch(event, previous_changes)
     end
   end
 
   def process_assignment_changes
+    process_assignment_activities
     Rails.logger.info 'process_assignment_changes off'
     # process_assignment_activities
-    # process_participant_assignment
   end
 
   def process_assignment_activities
@@ -50,11 +50,5 @@ module AssignmentHandler
       Rails.logger.info 'saved_change_to_assignee_id off'
       # create_assignee_change_activity(user_name)
     end
-  end
-
-  def process_participant_assignment
-    return unless saved_change_to_assignee_id? && assignee_id.present?
-
-    conversation_participants.find_or_create_by!(user_id: assignee_id)
   end
 end

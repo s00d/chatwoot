@@ -54,8 +54,4 @@ module Events::Types
   # agent events
   AGENT_ADDED = 'agent.added'
   AGENT_REMOVED = 'agent.removed'
-
-  # time_trackings events
-  TIME_TRACKING_ADDED = 'time_trackings.added'
-  TIME_TRACKING_REMOVED = 'time_trackings.removed'
 end
