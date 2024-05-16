@@ -1,2 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[23],{3312:function(n,t,e){"use strict";e.r(t),e.d(t,"loadLegacyVideoPlugins",(function(){return u}));var i=e(4);function u(n){return Object(i.b)(this,void 0,void 0,(function(){var t;return Object(i.d)(this,(function(i){switch(i.label){case 0:return[4,e.e(102).then(e.t.bind(null,3304,7))];case 1:return t=i.sent(),n._plugins=t,[2]}}))}))}}}]);
-//# sourceMappingURL=legacyVideos-93987ba188fd6f1765b8.chunk.js.map
