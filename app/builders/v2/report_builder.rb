@@ -40,7 +40,6 @@ class V2::ReportBuilder
       incoming_messages_count: incoming_messages.count,
       outgoing_messages_count: outgoing_messages.count,
       avg_first_response_time: avg_first_response_time_summary,
-      resolutions_work_time: resolutions_work_time.values.sum,
       avg_resolution_time: avg_resolution_time_summary,
       resolutions_count: resolutions.count,
       reply_time: reply_time_summary

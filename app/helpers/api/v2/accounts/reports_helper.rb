@@ -2,9 +2,7 @@ module Api::V2::Accounts::ReportsHelper
   def generate_agents_report
     Current.account.users.map do |agent|
       agent_report = report_builder({ type: :agent, id: agent.id }).summary
-      work_second = time_to_minutes(agent_report[:resolutions_work_time])
-      work_str = time_to_date(agent_report[:resolutions_work_time])
-      [agent.name] + generate_readable_report_metrics(agent_report) + [work_second] + [work_str]
+      [agent.name] + generate_readable_report_metrics(agent_report)
     end
   end
 
@@ -56,19 +54,5 @@ module Api::V2::Accounts::ReportsHelper
       Reports::TimeFormatPresenter.new(report_metric[:reply_time]).format,
       report_metric[:resolutions_count]
     ]
-  end
-
-  def time_to_minutes(time_in_seconds)
-    (time_in_seconds / 60).to_i
-  end
-
-  def time_to_date(time_in_seconds)
-    hh = time_in_seconds / 3600
-    hh = "0#{hh}" if hh < 10
-    mm = time_in_seconds / 60 % 60
-    mm = "0#{mm}" if mm < 10
-    ss = time_in_seconds % 60
-    ss = "0#{ss}" if ss < 10
-    format('%<hh>s:%<mm>s:%<ss>s', hh: hh.to_s, mm: mm.to_s, ss: ss.to_s)
   end
 end

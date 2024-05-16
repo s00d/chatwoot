@@ -77,8 +77,6 @@ ru:
       avg_resolution_time: Среднее время завершения
       resolution_count: Количество завершенных
       avg_customer_waiting_time: Avg customer waiting time
-      time_work: время работы (в минутах)
-      time_work_hours: время работы (HH:MM:SS)
     inbox_csv:
       inbox_name: Имя источника
       inbox_type: Тип входящего сообщения

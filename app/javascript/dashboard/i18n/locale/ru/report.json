@@ -43,10 +43,6 @@
         "NAME": "Количество передач",
         "DESC": "( Всего )"
       },
-      "RESOLUTION_WORK_TIME": {
-        "NAME": "Время работы",
-        "DESC": "( Минуты )"
-      },
       "REPLY_TIME": {
         "NAME": "Время ожидания клиента",
         "TOOLTIP_TEXT": "Waiting time is %{metricValue} (based on %{conversationCount} replies)"

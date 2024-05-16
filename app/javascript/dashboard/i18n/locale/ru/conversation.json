@@ -56,7 +56,6 @@
     },
     "HEADER": {
       "RESOLVE_ACTION": "Завершить",
-      "RESOLVE_ALL_ACTION": "Завершить dct",
       "REOPEN_ACTION": "Открыть заново",
       "OPEN_ACTION": "Открыть",
       "OPEN": "Открыть",

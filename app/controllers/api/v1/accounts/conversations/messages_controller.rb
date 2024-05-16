@@ -3,14 +3,6 @@ class Api::V1::Accounts::Conversations::MessagesController < Api::V1::Accounts::
     @messages = message_finder.perform
   end
 
-  def create
-    user = Current.user || @resource
-    mb = Messages::MessageBuilder.new(user, @conversation, params)
-    @message = mb.perform
-  rescue StandardError => e
-    render_could_not_create_error(e.message)
-  end
-
   def edit
     return if message.sender_id != @user.id
 
@@ -18,6 +10,14 @@ class Api::V1::Accounts::Conversations::MessagesController < Api::V1::Accounts::
       message.update!(content: params[:content])
       message.save!
     end
+  end
+
+  def create
+    user = Current.user || @resource
+    mb = Messages::MessageBuilder.new(user, @conversation, params)
+    @message = mb.perform
+  rescue StandardError => e
+    render_could_not_create_error(e.message)
   end
 
   def destroy
