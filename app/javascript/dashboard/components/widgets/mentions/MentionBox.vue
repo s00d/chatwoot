@@ -88,9 +88,7 @@ export default {
     },
   },
   methods: {
-    handleKeyboardEvent(e) {
-      this.processKeyDownEvent(e);
-    },
+    adjustScroll() {},
     onHover(index) {
       this.selectedIndex = index;
     },

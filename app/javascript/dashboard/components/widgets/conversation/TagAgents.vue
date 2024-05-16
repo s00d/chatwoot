@@ -75,15 +75,10 @@ export default {
   },
 
   methods: {
-    getTopSpacing() {
-      if (this.items.length <= 9) {
-        return -(this.items.length * 5 + 1.7);
-      }
-      return -40;
-    },
-    handleKeyboardEvent(e) {
-      this.processKeyDownEvent(e);
-      this.$el.scrollTop = 50 * this.selectedIndex;
+    adjustScroll() {
+      this.$nextTick(() => {
+        this.$el.scrollTop = 50 * this.selectedIndex;
+      });
     },
     onHover(index) {
       this.selectedIndex = index;
