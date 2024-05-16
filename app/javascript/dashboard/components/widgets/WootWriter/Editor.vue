@@ -79,8 +79,6 @@ const MAXIMUM_FILE_UPLOAD_SIZE = 4; // in MB
 import {
   hasPressedEnterAndNotCmdOrShift,
   hasPressedCommandAndEnter,
-  hasPressedAltAndUpKey,
-  hasPressedAltAndDownKey,
 } from 'shared/helpers/KeyboardHelpers';
 import keyboardEventListenerMixins from 'shared/mixins/keyboardEventListenerMixins';
 import uiSettingsMixin from 'dashboard/mixins/uiSettings';
@@ -556,6 +554,52 @@ export default {
     },
     getKeyboardEvents() {
       return {
+        'Alt+ArrowUp': {
+          action: () => {
+            const allConversations = document.querySelectorAll(
+              '.conversations-list .conversation'
+            );
+
+            const activeConversation = document.querySelector(
+              'div.conversations-list div.conversation.active'
+            );
+            const activeConversationIndex = [...allConversations].indexOf(
+              activeConversation
+            );
+
+            const lastConversationIndex = allConversations.length - 1;
+            if (activeConversationIndex > 0) {
+              allConversations[activeConversationIndex - 1].click();
+            } else if (allConversations.length > 1) {
+              allConversations[lastConversationIndex].click();
+              document.querySelector('.conversations-list div').scrollTop = document.querySelector('.conversations-list div').scrollHeight;
+            }
+          },
+          allowOnFocusedInput: true,
+        },
+        'Alt+ArrowDown': {
+          action: () => {
+            const allConversations = document.querySelectorAll(
+              '.conversations-list .conversation'
+            );
+
+            const activeConversation = document.querySelector(
+              'div.conversations-list div.conversation.active'
+            );
+            const activeConversationIndex = [...allConversations].indexOf(
+              activeConversation
+            );
+
+            const lastConversationIndex = allConversations.length - 1;
+            if (activeConversationIndex < lastConversationIndex) {
+              allConversations[activeConversationIndex + 1].click();
+            } else if (allConversations.length > 1) {
+              allConversations[0].click();
+              document.querySelector('.conversations-list div').scrollTop = 0;
+            }
+          },
+          allowOnFocusedInput: true,
+        },
         'Alt+KeyP': {
           action: () => {
             this.focusEditorInputField();
@@ -718,53 +762,6 @@ export default {
       }
       if (this.isCmdPlusEnterToSendEnabled()) {
         this.handleLineBreakWhenCmdAndEnterToSendEnabled(event);
-      }
-
-      if (hasPressedAltAndUpKey(event)) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        const allConversations = document.querySelectorAll(
-          '.conversations-list .conversation'
-        );
-
-        const activeConversation = document.querySelector(
-          'div.conversations-list div.conversation.active'
-        );
-        const activeConversationIndex = [...allConversations].indexOf(
-          activeConversation
-        );
-
-        const lastConversationIndex = allConversations.length - 1;
-        if (activeConversationIndex > 0) {
-          allConversations[activeConversationIndex - 1].click();
-        } else if (allConversations.length > 1) {
-          allConversations[lastConversationIndex].click();
-          document.querySelector('.conversations-list').scrollTop = document.querySelector('.conversations-list').scrollHeight;
-        }
-      }
-      if (hasPressedAltAndDownKey(event)) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        const allConversations = document.querySelectorAll(
-          '.conversations-list .conversation'
-        );
-
-        const activeConversation = document.querySelector(
-          'div.conversations-list div.conversation.active'
-        );
-        const activeConversationIndex = [...allConversations].indexOf(
-          activeConversation
-        );
-
-        const lastConversationIndex = allConversations.length - 1;
-        if (activeConversationIndex < lastConversationIndex) {
-          allConversations[activeConversationIndex + 1].click();
-        } else if (allConversations.length > 1) {
-          allConversations[0].click();
-          document.querySelector('.conversations-list').scrollTop = 0;
-        }
       }
     },
     onBlur() {
