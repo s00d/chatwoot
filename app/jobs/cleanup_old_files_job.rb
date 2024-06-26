@@ -10,12 +10,16 @@ class CleanupOldFilesJob < ApplicationJob
 
     Attachment.where('created_at < ?', expiration_date).find_in_batches(batch_size: BATCH_SIZE) do |attachments_batch|
       attachments_batch.each do |attachment|
-        logger.info "Would delete file: #{attachment.file.filename} (#{attachment.file.byte_size} bytes)"
+        begin
+          logger.info "Would delete file: #{attachment.file.filename} (#{attachment.file.byte_size} bytes)"
 
-        # Update the associated message
-        message = attachment.message
-        message.update!(content: 'This message has been auto cleanup', content_attributes: { deleted: true })
-        message.attachments.destroy_all
+          # Update the associated message
+          message = attachment.message
+          message.update!(content: 'This message has been auto cleanup', content_attributes: { deleted: true })
+          message.attachments.destroy_all
+        rescue => e
+          logger.warn "Failed to process attachment ID #{attachment.id}: #{e.message}"
+        end
       end
     end
 
