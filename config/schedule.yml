@@ -38,6 +38,6 @@ cleanup_old_files:
   queue: scheduled_jobs
 
 cleanup_old_files_afternoon:
-  cron: "10 07 * * *" # Every day at 07:10
+  cron: "16 07 * * *" # Every day at 07:10
   class: "CleanupOldFilesJob"
   queue: scheduled_jobs
