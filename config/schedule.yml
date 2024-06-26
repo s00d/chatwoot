@@ -28,6 +28,16 @@ remove_stale_contact_inboxes_job.rb:
   queue: scheduled_jobs
 
 #remove_stale_active_storage_files_job:
-#  cron: '0 0 * * *' # Запуск в полночь каждый день
+#  cron: '0 0 * * *'
 #  class: 'RemoveStaleActiveStorageFilesJob'
 #  queue: scheduled_jobs
+
+cleanup_old_files:
+  cron: "0 4 * * *" # Every day at 4:00
+  class: "CleanupOldFilesJob"
+  queue: scheduled_jobs
+
+cleanup_old_files_afternoon:
+  cron: "10 07 * * *" # Every day at 07:10
+  class: "CleanupOldFilesJob"
+  queue: scheduled_jobs
