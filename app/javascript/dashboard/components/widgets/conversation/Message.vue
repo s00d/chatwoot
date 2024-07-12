@@ -1,5 +1,9 @@
 <template>
-  <li v-if="shouldRenderMessage" :id="`message${data.id}`" :class="alignBubble">
+  <li
+    v-if="shouldRenderMessage"
+    :id="`message${data.id}`"
+    :class="[alignBubble, 'group']"
+  >
     <div :class="wrapClass">
       <div
         v-if="isFailed && !hasOneDayPassed && !isAnEmailInbox"
@@ -121,7 +125,10 @@
         </a>
       </div>
     </div>
-    <div v-if="shouldShowContextMenu" class="context-menu-wrap">
+    <div
+      v-if="shouldShowContextMenu"
+      class="context-menu-wrap invisible group-hover:visible"
+    >
       <context-menu
         v-if="isBubble && !isMessageDeleted"
         :context-menu-position="contextMenuPosition"
@@ -256,7 +263,16 @@ export default {
         html_content: { full: fullHTMLContent } = {},
         text_content: { full: fullTextContent } = {},
       } = this.contentAttributes.email || {};
-      return fullHTMLContent || fullTextContent || '';
+
+      if (fullHTMLContent) {
+        return fullHTMLContent;
+      }
+
+      if (fullTextContent) {
+        return fullTextContent.replace(/\n/g, '<br>');
+      }
+
+      return '';
     },
     displayQuotedButton() {
       if (this.data.content.includes('>')) {
@@ -487,11 +503,11 @@ export default {
   },
   mounted() {
     this.hasMediaLoadError = false;
-    bus.$on(BUS_EVENTS.ON_MESSAGE_LIST_SCROLL, this.closeContextMenu);
+    this.$emitter.on(BUS_EVENTS.ON_MESSAGE_LIST_SCROLL, this.closeContextMenu);
     this.setupHighlightTimer();
   },
   beforeDestroy() {
-    bus.$off(BUS_EVENTS.ON_MESSAGE_LIST_SCROLL, this.closeContextMenu);
+    this.$emitter.off(BUS_EVENTS.ON_MESSAGE_LIST_SCROLL, this.closeContextMenu);
     clearTimeout(this.higlightTimeout);
   },
   methods: {
@@ -545,7 +561,7 @@ export default {
       const { conversation_id: conversationId, id: replyTo } = this.data;
 
       LocalStorage.updateJsonStore(replyStorageKey, conversationId, replyTo);
-      bus.$emit(BUS_EVENTS.TOGGLE_REPLY_TO_MESSAGE, this.data);
+      this.$emitter.emit(BUS_EVENTS.TOGGLE_REPLY_TO_MESSAGE, this.data);
     },
     setupHighlightTimer() {
       if (Number(this.$route.query.messageId) !== Number(this.data.id)) {

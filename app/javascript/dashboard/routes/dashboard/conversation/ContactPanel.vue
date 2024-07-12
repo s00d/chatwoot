@@ -147,7 +147,6 @@ import CustomAttributes from './customAttributes/CustomAttributes.vue';
 import draggable from 'vuedraggable';
 import uiSettingsMixin from 'dashboard/mixins/uiSettings';
 import MacrosList from './Macros/List.vue';
-
 export default {
   components: {
     AccordionItem,
