@@ -29,16 +29,15 @@ $ rvm list
 # No rvm rubies installed yet. Try 'rvm help install'.
 8. Install some ruby version such as 2.7.1 (for an old version, such as 2.3.1 please check Tip topic below 😉)
 
-$ rvm install 3.2.2 --with-openssl-dir=`brew --prefix openssl`
-$ rvm install "$(< .ruby-version)" --with-openssl-dir=`brew --prefix openssl`
+$ rvm install 3.3.3 --with-openssl-dir=`brew --prefix openssl`
 9. After installation, check which ruby version available.
 
 $ rvm list
-ruby-3.2.2 [ x86_64 ]
+ruby-3.3.3 [ x86_64 ]
 # Default ruby not set. Try 'rvm alias create default <ruby>'.
 10. Create default ruby version
 
-$ rvm alias create default 3.2.2
+$ rvm alias create default 3.3.3
 $ rvm automount
 11. That’s it! Enjoys 🎉
 
@@ -50,11 +49,10 @@ So, we should install openssl from rvm, then install old ruby with this openssl
 
 $ rvm pkg install openssl
 $ rvm install 2.3.1 --with-openssl-dir=$HOME/.rvm/usr
-$ rvm install "$(< .ruby-version)" --with-openssl-dir=`brew --prefix openssl`
 
 
-rvm install 3.2.2 --with-openssl-dir=$(brew --prefix openssl@1.1)
-rvm install "$(< .ruby-version)" --with-openssl-dir=`brew --prefix openssl`
+
+rvm install 3.3.3 --with-openssl-dir=$(brew --prefix openssl@1.1)
 
 RAILS_ENV=development bundle exec rails runner "Features::ResponseBotService.new.enable_vector_extension"
 RAILS_ENV=development bundle exec rails runner "Features::ResponseBotService.new.enable_in_installation"
