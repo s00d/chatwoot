@@ -1,33 +1,33 @@
 {
-  "ajs-destination.js": "/packs/js/ajs-destination-e8e0aabbee94af35e6fa.chunk.js",
-  "ajs-destination.js.map": "/packs/js/ajs-destination-e8e0aabbee94af35e6fa.chunk.js.map",
-  "application.css": "/packs/css/application-aa41db9d.css",
-  "application.js": "/packs/js/application-12819e27b2d90982bc79.js",
-  "application.js.map": "/packs/js/application-12819e27b2d90982bc79.js.map",
-  "auto-track.js": "/packs/js/auto-track-d68ee69e442f0864f6cc.chunk.js",
-  "auto-track.js.map": "/packs/js/auto-track-d68ee69e442f0864f6cc.chunk.js.map",
+  "ajs-destination.js": "/packs/js/ajs-destination-3ddc769d1983c0b39eb2.chunk.js",
+  "ajs-destination.js.map": "/packs/js/ajs-destination-3ddc769d1983c0b39eb2.chunk.js.map",
+  "application.css": "/packs/css/application-c1e19055.css",
+  "application.js": "/packs/js/application-18745b0b797c91d2241d.js",
+  "application.js.map": "/packs/js/application-18745b0b797c91d2241d.js.map",
+  "auto-track.js": "/packs/js/auto-track-4136506d8f2dd0147b8c.chunk.js",
+  "auto-track.js.map": "/packs/js/auto-track-4136506d8f2dd0147b8c.chunk.js.map",
   "encoderWorker.min.js": "/packs/encoderWorker.min.js",
   "entrypoints": {
     "application": {
       "css": [
-        "/packs/css/application-aa41db9d.css"
+        "/packs/css/application-c1e19055.css"
       ],
       "js": [
-        "/packs/js/application-12819e27b2d90982bc79.js"
+        "/packs/js/application-18745b0b797c91d2241d.js"
       ],
       "js.map": [
-        "/packs/js/application-12819e27b2d90982bc79.js.map"
+        "/packs/js/application-18745b0b797c91d2241d.js.map"
       ]
     },
     "portal": {
       "css": [
-        "/packs/css/portal-2b767f08.css"
+        "/packs/css/portal-d7172daf.css"
       ],
       "js": [
-        "/packs/js/portal-12819e27b2d90982bc79.js"
+        "/packs/js/portal-18745b0b797c91d2241d.js"
       ],
       "js.map": [
-        "/packs/js/portal-12819e27b2d90982bc79.js.map"
+        "/packs/js/portal-18745b0b797c91d2241d.js.map"
       ]
     },
     "sdk": {
@@ -40,59 +40,59 @@
     },
     "superadmin_pages": {
       "js": [
-        "/packs/js/superadmin_pages-12819e27b2d90982bc79.js"
+        "/packs/js/superadmin_pages-18745b0b797c91d2241d.js"
       ],
       "js.map": [
-        "/packs/js/superadmin_pages-12819e27b2d90982bc79.js.map"
+        "/packs/js/superadmin_pages-18745b0b797c91d2241d.js.map"
       ]
     },
     "superadmin": {
       "css": [
-        "/packs/css/superadmin-629db69d.css"
+        "/packs/css/superadmin-dd69ffe1.css"
       ],
       "js": [
-        "/packs/js/superadmin-12819e27b2d90982bc79.js"
+        "/packs/js/superadmin-18745b0b797c91d2241d.js"
       ],
       "js.map": [
-        "/packs/js/superadmin-12819e27b2d90982bc79.js.map"
+        "/packs/js/superadmin-18745b0b797c91d2241d.js.map"
       ]
     },
     "survey": {
       "css": [
-        "/packs/css/survey-224afa71.css"
+        "/packs/css/survey-d8577983.css"
       ],
       "js": [
-        "/packs/js/survey-12819e27b2d90982bc79.js"
+        "/packs/js/survey-18745b0b797c91d2241d.js"
       ],
       "js.map": [
-        "/packs/js/survey-12819e27b2d90982bc79.js.map"
+        "/packs/js/survey-18745b0b797c91d2241d.js.map"
       ]
     },
     "v3app": {
       "css": [
-        "/packs/css/v3app-62046551.css"
+        "/packs/css/v3app-611a8311.css"
       ],
       "js": [
-        "/packs/js/v3app-12819e27b2d90982bc79.js"
+        "/packs/js/v3app-18745b0b797c91d2241d.js"
       ],
       "js.map": [
-        "/packs/js/v3app-12819e27b2d90982bc79.js.map"
+        "/packs/js/v3app-18745b0b797c91d2241d.js.map"
       ]
     },
     "widget": {
       "css": [
-        "/packs/css/widget-4994f74c.css"
+        "/packs/css/widget-35c5e3f0.css"
       ],
       "js": [
-        "/packs/js/widget-12819e27b2d90982bc79.js"
+        "/packs/js/widget-18745b0b797c91d2241d.js"
       ],
       "js.map": [
-        "/packs/js/widget-12819e27b2d90982bc79.js.map"
+        "/packs/js/widget-18745b0b797c91d2241d.js.map"
       ]
     }
   },
-  "legacyVideos.js": "/packs/js/legacyVideos-cf5f68215f3a13585819.chunk.js",
-  "legacyVideos.js.map": "/packs/js/legacyVideos-cf5f68215f3a13585819.chunk.js.map",
+  "legacyVideos.js": "/packs/js/legacyVideos-eff3f7a40a4b16e9021d.chunk.js",
+  "legacyVideos.js.map": "/packs/js/legacyVideos-eff3f7a40a4b16e9021d.chunk.js.map",
   "media/dashboard/assets/images/bubble-logo.svg": "/packs/media/dashboard/assets/images/bubble-logo-eec5daaebf0c7009bba7568fd9b9ad4a.svg",
   "media/dashboard/assets/images/channels/facebook_login.png": "/packs/media/dashboard/assets/images/channels/facebook_login-7692d6c379288885d619b1e80bb214a4.png",
   "media/dashboard/assets/images/chatwoot_bot.png": "/packs/media/dashboard/assets/images/chatwoot_bot-905112376e6493b37e2cecea8f9dc50c.png",
@@ -138,32 +138,32 @@
   "media/shared/assets/fonts/PlusJakartaSans/PlusJakartaSans-SemiBold.woff2": "/packs/media/shared/assets/fonts/PlusJakartaSans/PlusJakartaSans-SemiBold-c855407ebc8dc7dfb3e53d41eed2d1a2.woff2",
   "media/superadmin_pages/components/playground/assets/typing.gif": "/packs/media/superadmin_pages/components/playground/assets/typing-929e3aeb589b7668d0b4ff57f73e17e3.gif",
   "media/widget/assets/images/typing.gif": "/packs/media/widget/assets/images/typing-929e3aeb589b7668d0b4ff57f73e17e3.gif",
-  "portal.css": "/packs/css/portal-2b767f08.css",
-  "portal.js": "/packs/js/portal-12819e27b2d90982bc79.js",
-  "portal.js.map": "/packs/js/portal-12819e27b2d90982bc79.js.map",
-  "queryString.js": "/packs/js/queryString-08dc5e32770f08c11355.chunk.js",
-  "queryString.js.map": "/packs/js/queryString-08dc5e32770f08c11355.chunk.js.map",
-  "remoteMiddleware.js": "/packs/js/remoteMiddleware-e81eb613fba3b4a994d9.chunk.js",
-  "remoteMiddleware.js.map": "/packs/js/remoteMiddleware-e81eb613fba3b4a994d9.chunk.js.map",
-  "schemaFilter.js": "/packs/js/schemaFilter-baa095d16cec31a49ee8.chunk.js",
-  "schemaFilter.js.map": "/packs/js/schemaFilter-baa095d16cec31a49ee8.chunk.js.map",
+  "portal.css": "/packs/css/portal-d7172daf.css",
+  "portal.js": "/packs/js/portal-18745b0b797c91d2241d.js",
+  "portal.js.map": "/packs/js/portal-18745b0b797c91d2241d.js.map",
+  "queryString.js": "/packs/js/queryString-c355f2baaad9ab99f116.chunk.js",
+  "queryString.js.map": "/packs/js/queryString-c355f2baaad9ab99f116.chunk.js.map",
+  "remoteMiddleware.js": "/packs/js/remoteMiddleware-a1917ef41a645af8f4bb.chunk.js",
+  "remoteMiddleware.js.map": "/packs/js/remoteMiddleware-a1917ef41a645af8f4bb.chunk.js.map",
+  "schemaFilter.js": "/packs/js/schemaFilter-4f7b5464b414b92c7dd4.chunk.js",
+  "schemaFilter.js.map": "/packs/js/schemaFilter-4f7b5464b414b92c7dd4.chunk.js.map",
   "sdk.js": "/packs/js/sdk.js",
   "sdk.js.map": "/packs/js/sdk.js.map",
-  "superadmin.css": "/packs/css/superadmin-629db69d.css",
-  "superadmin.js": "/packs/js/superadmin-12819e27b2d90982bc79.js",
-  "superadmin.js.map": "/packs/js/superadmin-12819e27b2d90982bc79.js.map",
-  "superadmin_pages.js": "/packs/js/superadmin_pages-12819e27b2d90982bc79.js",
-  "superadmin_pages.js.map": "/packs/js/superadmin_pages-12819e27b2d90982bc79.js.map",
-  "survey.css": "/packs/css/survey-224afa71.css",
-  "survey.js": "/packs/js/survey-12819e27b2d90982bc79.js",
-  "survey.js.map": "/packs/js/survey-12819e27b2d90982bc79.js.map",
-  "v3app.css": "/packs/css/v3app-62046551.css",
-  "v3app.js": "/packs/js/v3app-12819e27b2d90982bc79.js",
-  "v3app.js.map": "/packs/js/v3app-12819e27b2d90982bc79.js.map",
-  "vendors~tsub-middleware.js": "/packs/js/vendors~tsub-middleware-45e536272cfdb5ca788e.chunk.js",
-  "vendors~tsub-middleware.js.map": "/packs/js/vendors~tsub-middleware-45e536272cfdb5ca788e.chunk.js.map",
+  "superadmin.css": "/packs/css/superadmin-dd69ffe1.css",
+  "superadmin.js": "/packs/js/superadmin-18745b0b797c91d2241d.js",
+  "superadmin.js.map": "/packs/js/superadmin-18745b0b797c91d2241d.js.map",
+  "superadmin_pages.js": "/packs/js/superadmin_pages-18745b0b797c91d2241d.js",
+  "superadmin_pages.js.map": "/packs/js/superadmin_pages-18745b0b797c91d2241d.js.map",
+  "survey.css": "/packs/css/survey-d8577983.css",
+  "survey.js": "/packs/js/survey-18745b0b797c91d2241d.js",
+  "survey.js.map": "/packs/js/survey-18745b0b797c91d2241d.js.map",
+  "v3app.css": "/packs/css/v3app-611a8311.css",
+  "v3app.js": "/packs/js/v3app-18745b0b797c91d2241d.js",
+  "v3app.js.map": "/packs/js/v3app-18745b0b797c91d2241d.js.map",
+  "vendors~tsub-middleware.js": "/packs/js/vendors~tsub-middleware-3bd2863ff308a0a64251.chunk.js",
+  "vendors~tsub-middleware.js.map": "/packs/js/vendors~tsub-middleware-3bd2863ff308a0a64251.chunk.js.map",
   "waveWorker.min.js": "/packs/waveWorker.min.js",
-  "widget.css": "/packs/css/widget-4994f74c.css",
-  "widget.js": "/packs/js/widget-12819e27b2d90982bc79.js",
-  "widget.js.map": "/packs/js/widget-12819e27b2d90982bc79.js.map"
+  "widget.css": "/packs/css/widget-35c5e3f0.css",
+  "widget.js": "/packs/js/widget-18745b0b797c91d2241d.js",
+  "widget.js.map": "/packs/js/widget-18745b0b797c91d2241d.js.map"
 }
