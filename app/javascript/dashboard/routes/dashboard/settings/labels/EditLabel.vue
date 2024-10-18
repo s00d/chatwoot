@@ -103,7 +103,12 @@ export default {
         </label>
       </div>
       <div class="flex items-center w-full gap-2">
-        <input v-model="showOnSidebar" type="checkbox" :value="true" />
+        <input
+          id="conversation_creation"
+          v-model="showOnSidebar"
+          type="checkbox"
+          :value="true"
+        />
         <label for="conversation_creation">
           {{ $t('LABEL_MGMT.FORM.SHOW_ON_SIDEBAR.LABEL') }}
         </label>

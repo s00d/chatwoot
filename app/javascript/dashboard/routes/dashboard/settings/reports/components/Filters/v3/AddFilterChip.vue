@@ -45,7 +45,7 @@ const hideSubMenu = () => {
   hoveredItemId.value = null;
 };
 
-const isHovered = id => hoveredItemId.value === id;
+let isHovered = id => hoveredItemId.value === id;
 
 const toggleDropdown = () => emit('toggleDropdown');
 const addFilter = item => {

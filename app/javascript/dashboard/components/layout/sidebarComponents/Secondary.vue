@@ -8,15 +8,14 @@ import {
   getUserPermissions,
   hasPermissions,
 } from '../../../helper/permissionsHelper';
-import uiSettingsMixin from 'dashboard/mixins/uiSettings';
 import { routesWithPermissions } from '../../../routes';
+import { useUISettings } from 'dashboard/composables/useUISettings';
 
 export default {
   components: {
     AccountContext,
     SecondaryNavItem,
   },
-  mixins: [uiSettingsMixin],
   props: {
     accountId: {
       type: Number,
@@ -52,10 +51,20 @@ export default {
     },
   },
   emits: ['addLabel', 'toggleAccounts'],
+  setup() {
+    const { isContactSidebarItemOpen } = useUISettings();
+
+    return {
+      isContactSidebarItemOpen,
+    };
+  },
   computed: {
     ...mapGetters({
       isFeatureEnabledonAccount: 'accounts/isFeatureEnabledonAccount',
     }),
+    hasSecondaryMenu() {
+      return this.menuConfig.menuItems && this.menuConfig.menuItems.length;
+    },
     contactCustomViews() {
       return this.customViews.filter(view => view.filter_type === 'contact');
     },
@@ -257,7 +266,7 @@ export default {
       v-if="!isContactSidebarItemOpen('is_secondary_menu_open')"
       @toggle-accounts="toggleAccountModal"
     />
-    <transition-
+    <transition-group
       v-if="!isContactSidebarItemOpen('is_secondary_menu_open')"
       name="menu-list"
       tag="ul"
@@ -284,7 +293,6 @@ export default {
     width: 1rem;
   }
 }
-
 
 .sidebar-toggle__wrap {
   display: flex;

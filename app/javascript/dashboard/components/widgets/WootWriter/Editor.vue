@@ -228,6 +228,12 @@ const plugins = computed(() => {
       isAllowed: () => !props.isPrivate,
     }),
     createSuggestionPlugin({
+      trigger: '\\\\',
+      showMenu: showCannedMenu,
+      searchTerm: cannedSearchTerm,
+      isAllowed: () => !props.isPrivate,
+    }),
+    createSuggestionPlugin({
       trigger: '{{',
       showMenu: showVariables,
       searchTerm: variableSearchTerm,
@@ -592,8 +598,8 @@ function createEditorView() {
 }
 
 function closeMention() {
-  mentionSearchKey.value = ''
-  showUserMentions.value = false
+  mentionSearchKey.value = '';
+  showUserMentions.value = false;
 }
 
 watch(

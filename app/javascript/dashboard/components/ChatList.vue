@@ -17,7 +17,6 @@ import {
   useFunctionGetter,
 } from 'dashboard/composables/store.js';
 
-
 // [VITE] [TODO] We are using vue-virtual-scroll for now, since that seemed the simplest way to migrate
 // from the current one. But we should consider using tanstack virtual in the future
 // https://tanstack.com/virtual/latest/docs/framework/vue/examples/variable
@@ -268,15 +267,6 @@ const conversationFilters = computed(() => {
     labels: props.label ? [props.label] : undefined,
     teamId: props.teamId || undefined,
     conversationType: props.conversationType || undefined,
-
-    inboxId: this.conversationInbox ? this.conversationInbox : undefined,
-    assigneeType: this.activeAssigneeTab,
-    status: this.activeStatus,
-    sortBy: this.activeSortBy,
-    page: this.conversationListPagination,
-    labels: this.label ? [this.label] : undefined,
-    teamId: this.teamId || undefined,
-    conversationType: this.conversationType || undefined,
   };
 });
 
@@ -729,7 +719,7 @@ provide('markAsUnread', markAsUnread);
 provide('assignPriority', assignPriority);
 provide('isConversationSelected', isConversationSelected);
 
-watch(activeAssigneeTab, (val) => {
+watch(activeAssigneeTab, val => {
   LocalStorage.set('activeAssigneeTab', val);
 });
 

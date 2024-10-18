@@ -66,15 +66,13 @@ export const mutations = {
     $state.records[notification.id] = {
       ...($state.records[notification.id] || {}),
       ...notification,
-    }
-
+    };
     // Ensure the limit of 10 notifications
     const notificationIds = Object.keys($state.records);
     if (notificationIds.length > 10) {
       // Remove the oldest notification
       delete $state.records[notificationIds[0]];
     }
-
     $state.meta.unreadCount = unreadCount;
     $state.meta.count = count;
   },

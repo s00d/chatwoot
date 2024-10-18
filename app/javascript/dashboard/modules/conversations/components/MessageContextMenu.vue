@@ -39,7 +39,7 @@ export default {
       default: () => ({}),
     },
   },
-  emits: ['open', 'close', 'replyTo'],
+  emits: ['open', 'close', 'replyTo', 'edit'],
   setup() {
     const { getPlainText } = useMessageFormatter();
     return {
@@ -93,6 +93,7 @@ export default {
     async handleEdit() {
       this.$emit('edit');
 
+      // eslint-disable-next-line no-alert
       let content = prompt('New message', this.messageContent);
 
       const { conversation_id: conversationId, id: messageId } = this.message;
@@ -271,7 +272,7 @@ export default {
           v-if="enabledOptions['edit']"
           :option="{
             icon: 'edit',
-            label: this.$t('CONVERSATION.CONTEXT_MENU.EDIT'),
+            label: $t('CONVERSATION.CONTEXT_MENU.EDIT'),
           }"
           variant="icon"
           @click="handleEdit"
