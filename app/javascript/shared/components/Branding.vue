@@ -1,11 +1,3 @@
-<template>
-  <div
-    v-if="globalConfig.brandName && !disableBranding"
-    class="px-0 py-3 flex justify-center"
-  />
-  <div v-else class="p-3" />
-</template>
-
 <script>
 import globalConfigMixin from 'shared/mixins/globalConfigMixin';
 
@@ -52,8 +44,16 @@ export default {
 };
 </script>
 
+<template>
+  <div
+    v-if="globalConfig.brandName && !disableBranding"
+    class="px-0 py-3 flex justify-center"
+  />
+  <div v-else class="p-3" />
+</template>
+
 <style scoped lang="scss">
-@import '~widget/assets/scss/variables.scss';
+@import 'widget/assets/scss/variables.scss';
 
 .branding--image {
   margin-right: $space-smaller;

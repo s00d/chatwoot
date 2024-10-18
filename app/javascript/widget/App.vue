@@ -1,26 +1,3 @@
-<template>
-  <div
-    v-if="!conversationSize && isFetchingList"
-    class="flex flex-1 items-center h-full bg-black-25 justify-center"
-    :class="{ dark: prefersDarkMode }"
-  >
-    <spinner size="" />
-  </div>
-  <div
-    v-else
-    class="flex flex-col justify-end h-full"
-    :class="{
-      'is-mobile': isMobile,
-      'is-widget-right': isRightAligned,
-      'is-bubble-hidden': hideMessageBubble,
-      'is-flat-design': isWidgetStyleFlat,
-      dark: prefersDarkMode,
-    }"
-  >
-    <router-view />
-  </div>
-</template>
-
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import { setHeader } from 'widget/helpers/axios';
@@ -41,7 +18,7 @@ import {
   ON_CAMPAIGN_MESSAGE_CLICK,
   ON_UNREAD_MESSAGE_CLICK,
 } from './constants/widgetBusEvents';
-import darkModeMixin from 'widget/mixins/darkModeMixin';
+import { useDarkMode } from 'widget/composables/useDarkMode';
 import { SDK_SET_BUBBLE_VISIBILITY } from '../shared/constants/sharedFrameEvents';
 import { BUS_EVENTS } from '../shared/constants/busEvents';
 import { emitter } from 'shared/helpers/mitt';
@@ -51,7 +28,11 @@ export default {
   components: {
     Spinner,
   },
-  mixins: [availabilityMixin, configMixin, routerMixin, darkModeMixin],
+  mixins: [availabilityMixin, configMixin, routerMixin],
+  setup() {
+    const { prefersDarkMode } = useDarkMode();
+    return { prefersDarkMode };
+  },
   data() {
     return {
       isMobile: false,
@@ -61,10 +42,7 @@ export default {
   computed: {
     ...mapGetters({
       activeCampaign: 'campaign/getActiveCampaign',
-      campaigns: 'campaign/getCampaigns',
       conversationSize: 'conversation/getConversationSize',
-      currentUser: 'contacts/getCurrentUser',
-      hasFetched: 'agent/getHasFetched',
       hideMessageBubble: 'appConfig/getHideMessageBubble',
       isFetchingList: 'conversation/getIsFetchingList',
       isRightAligned: 'appConfig/isRightAligned',
@@ -118,7 +96,7 @@ export default {
       'setBubbleVisibility',
       'setColorScheme',
     ]),
-    ...mapActions('conversation', ['fetchOldConversations', 'setUserLastSeen']),
+    ...mapActions('conversation', ['fetchOldConversations']),
     ...mapActions('campaign', [
       'initCampaigns',
       'executeCampaign',
@@ -360,6 +338,29 @@ export default {
 };
 </script>
 
+<template>
+  <div
+    v-if="!conversationSize && isFetchingList"
+    class="flex items-center justify-center flex-1 h-full bg-black-25"
+    :class="{ dark: prefersDarkMode }"
+  >
+    <Spinner size="" />
+  </div>
+  <div
+    v-else
+    class="flex flex-col justify-end h-full"
+    :class="{
+      'is-mobile': isMobile,
+      'is-widget-right': isRightAligned,
+      'is-bubble-hidden': hideMessageBubble,
+      'is-flat-design': isWidgetStyleFlat,
+      dark: prefersDarkMode,
+    }"
+  >
+    <router-view />
+  </div>
+</template>
+
 <style lang="scss">
-@import '~widget/assets/scss/woot.scss';
+@import 'widget/assets/scss/woot.scss';
 </style>

@@ -1,51 +1,14 @@
-<template>
-  <div
-    v-if="hasSecondaryMenu"
-    class="h-full secondary-menu overflow-auto w-40 flex flex-col bg-white dark:bg-slate-900 border-r dark:border-slate-800/50 rtl:border-r-0 rtl:border-l border-slate-50 text-sm px-2 pb-8"
-    :class="{ min: isContactSidebarItemOpen('is_secondary_menu_open') }"
-  >
-    <account-context
-      v-if="!isContactSidebarItemOpen('is_secondary_menu_open')"
-      @toggle-accounts="toggleAccountModal" />
-    <transition-group
-      v-if="!isContactSidebarItemOpen('is_secondary_menu_open')"
-      name="menu-list"
-      tag="ul"
-      class="pt-2 list-none ml-0 mb-0"
-    >
-      <secondary-nav-item
-        v-for="menuItem in accessibleMenuItems"
-        :key="menuItem.toState"
-        :menu-item="menuItem"
-      />
-      <secondary-nav-item
-        v-for="menuItem in additionalSecondaryMenuItems[menuConfig.parentNav]"
-        :key="menuItem.key"
-        :menu-item="menuItem"
-        @add-label="showAddLabelPopup"
-      />
-    </transition-group>
-
-    <div class="sidebar-toggle__wrap">
-      <woot-button
-        variant="smooth"
-        size="tiny"
-        color-scheme="secondary"
-        class="sidebar-toggle--button"
-        :icon="isRightOrLeftIcon"
-        @click="value => toggleSidebarUIState('is_secondary_menu_open', value)"
-      />
-    </div>
-  </div>
-</template>
 <script>
 import { frontendURL } from '../../../helper/URLHelper';
 import SecondaryNavItem from './SecondaryNavItem.vue';
 import AccountContext from './AccountContext.vue';
 import { mapGetters } from 'vuex';
 import { FEATURE_FLAGS } from '../../../featureFlags';
+import {
+  getUserPermissions,
+  hasPermissions,
+} from '../../../helper/permissionsHelper';
 import uiSettingsMixin from 'dashboard/mixins/uiSettings';
-import { hasPermissions } from '../../../helper/permissionsHelper';
 import { routesWithPermissions } from '../../../routes';
 
 export default {
@@ -88,20 +51,21 @@ export default {
       default: false,
     },
   },
+  emits: ['addLabel', 'toggleAccounts'],
   computed: {
     ...mapGetters({
       isFeatureEnabledonAccount: 'accounts/isFeatureEnabledonAccount',
     }),
-    hasSecondaryMenu() {
-      return this.menuConfig.menuItems && this.menuConfig.menuItems.length;
-    },
     contactCustomViews() {
       return this.customViews.filter(view => view.filter_type === 'contact');
     },
     accessibleMenuItems() {
       const menuItemsFilteredByPermissions = this.menuConfig.menuItems.filter(
         menuItem => {
-          const { permissions: userPermissions = [] } = this.currentUser;
+          const userPermissions = getUserPermissions(
+            this.currentUser,
+            this.accountId
+          );
           return hasPermissions(
             routesWithPermissions[menuItem.toStateName],
             userPermissions
@@ -271,10 +235,10 @@ export default {
   },
   methods: {
     showAddLabelPopup() {
-      this.$emit('add-label');
+      this.$emit('addLabel');
     },
     toggleAccountModal() {
-      this.$emit('toggle-accounts');
+      this.$emit('toggleAccounts');
     },
     showNewLink(featureFlag) {
       return this.isFeatureEnabledonAccount(this.accountId, featureFlag);
@@ -282,6 +246,38 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div
+    v-if="hasSecondaryMenu"
+    class="flex flex-col w-48 h-full px-2 pb-8 overflow-auto text-sm bg-white border-r dark:bg-slate-900 dark:border-slate-800/50 rtl:border-r-0 rtl:border-l border-slate-50"
+    :class="{ min: isContactSidebarItemOpen('is_secondary_menu_open') }"
+  >
+    <AccountContext
+      v-if="!isContactSidebarItemOpen('is_secondary_menu_open')"
+      @toggle-accounts="toggleAccountModal"
+    />
+    <transition-
+      v-if="!isContactSidebarItemOpen('is_secondary_menu_open')"
+      name="menu-list"
+      tag="ul"
+      class="pt-2 mb-0 ml-0 list-none"
+    >
+      <SecondaryNavItem
+        v-for="menuItem in accessibleMenuItems"
+        :key="menuItem.toState"
+        :menu-item="menuItem"
+      />
+      <SecondaryNavItem
+        v-for="menuItem in additionalSecondaryMenuItems[menuConfig.parentNav]"
+        :key="menuItem.key"
+        :menu-item="menuItem"
+        @add-label="showAddLabelPopup"
+      />
+    </transition-group>
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .secondary-menu {
   &.min {
