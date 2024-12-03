@@ -181,24 +181,11 @@ export default {
           },
         },
         {
-          field: 'dialog',
-          key: 'dialog',
-          sortBy: this.sortConfig.id || '',
-          title: 'dialog',
+          field: 'accountId',
+          key: 'accountId',
+          sortBy: this.sortConfig.accountId || '',
+          title: 'accountId',
           align: this.isRTLView ? 'right' : 'center',
-          renderBodyCell: ({ row }) => {
-            if (row.id) {
-              return (
-                <router-link
-                  to={`/app/accounts/${this.$route.params.accountId}/conversations/${row.id}`}
-                  className="user-name"
-                >
-                  open
-                </router-link>
-              );
-            }
-            return '---';
-          },
         },
         {
           field: 'balance',
@@ -227,20 +214,20 @@ export default {
             return '---';
           },
         },
-        {
-          field: 'phone_number',
-          key: 'phone_number',
-          sortBy: this.sortConfig.phone_number || '',
-          title: this.$t('CONTACTS_PAGE.LIST.TABLE_HEADER.PHONE_NUMBER'),
-          align: this.isRTLView ? 'right' : 'left',
-        },
-        {
-          field: 'company',
-          key: 'company',
-          sortBy: this.sortConfig.company_name || '',
-          title: this.$t('CONTACTS_PAGE.LIST.TABLE_HEADER.COMPANY'),
-          align: this.isRTLView ? 'right' : 'left',
-        },
+        // {
+        //   field: 'phone_number',
+        //   key: 'phone_number',
+        //   sortBy: this.sortConfig.phone_number || '',
+        //   title: this.$t('CONTACTS_PAGE.LIST.TABLE_HEADER.PHONE_NUMBER'),
+        //   align: this.isRTLView ? 'right' : 'left',
+        // },
+        // {
+        //   field: 'company',
+        //   key: 'company',
+        //   sortBy: this.sortConfig.company_name || '',
+        //   title: this.$t('CONTACTS_PAGE.LIST.TABLE_HEADER.COMPANY'),
+        //   align: this.isRTLView ? 'right' : 'left',
+        // },
         {
           field: 'city',
           key: 'city',
@@ -265,36 +252,36 @@ export default {
             return '---';
           },
         },
-        {
-          field: 'profiles',
-          key: 'profiles',
-          title: this.$t('CONTACTS_PAGE.LIST.TABLE_HEADER.SOCIAL_PROFILES'),
-          align: this.isRTLView ? 'right' : 'left',
-          renderBodyCell: ({ row }) => {
-            const { profiles } = row;
-
-            const items = Object.keys(profiles);
-
-            if (!items.length) return '---';
-
-            return (
-              <div class="cell--social-profiles flex gap-0.5 items-center">
-                {items.map(
-                  profile =>
-                    profiles[profile] && (
-                      <a
-                        target="_blank"
-                        rel="noopener noreferrer nofollow"
-                        href={`https://${profile}.com/${profiles[profile]}`}
-                      >
-                        <FluentIcon icon={`brand-${profile}`} />
-                      </a>
-                    )
-                )}
-              </div>
-            );
-          },
-        },
+        // {
+        //   field: 'profiles',
+        //   key: 'profiles',
+        //   title: this.$t('CONTACTS_PAGE.LIST.TABLE_HEADER.SOCIAL_PROFILES'),
+        //   align: this.isRTLView ? 'right' : 'left',
+        //   renderBodyCell: ({ row }) => {
+        //     const { profiles } = row;
+        //
+        //     const items = Object.keys(profiles);
+        //
+        //     if (!items.length) return '---';
+        //
+        //     return (
+        //       <div class="cell--social-profiles flex gap-0.5 items-center">
+        //         {items.map(
+        //           profile =>
+        //             profiles[profile] && (
+        //               <a
+        //                 target="_blank"
+        //                 rel="noopener noreferrer nofollow"
+        //                 href={`https://${profile}.com/${profiles[profile]}`}
+        //               >
+        //                 <FluentIcon icon={`brand-${profile}`} />
+        //               </a>
+        //             )
+        //         )}
+        //       </div>
+        //     );
+        //   },
+        // },
         {
           field: 'last_activity_at',
           key: 'last_activity_at',
