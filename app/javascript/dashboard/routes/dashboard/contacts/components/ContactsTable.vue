@@ -93,6 +93,7 @@ export default {
         // Note: The attributes used here is in snake case
         // as it simplier the sort attribute calculation
         const additional = item.additional_attributes || {};
+        const custom = item.custom_attributes || {};
         const { last_activity_at: lastActivityAt } = item;
         const { created_at: createdAt } = item;
         return {
@@ -104,6 +105,12 @@ export default {
           country: additional.country,
           countryCode: additional.country_code,
           conversationsCount: item.conversations_count || '---',
+          accountId: custom.accountId || '---',
+          balance: custom.balance || '---',
+          income: custom.income || '---',
+          spent: custom.spent || '---',
+          domain: custom.domain || '---',
+          profile_url: custom.profile || '---',
           last_activity_at: lastActivityAt
             ? this.dynamicTime(lastActivityAt)
             : '---',
@@ -170,6 +177,53 @@ export default {
                   </a>
                 </div>
               );
+            return '---';
+          },
+        },
+        {
+          field: 'dialog',
+          key: 'dialog',
+          sortBy: this.sortConfig.id || '',
+          title: 'dialog',
+          align: this.isRTLView ? 'right' : 'center',
+          renderBodyCell: ({ row }) => {
+            if (row.id) {
+              return (
+                <router-link
+                  to={`/app/accounts/${this.$route.params.accountId}/conversations/${row.id}`}
+                  className="user-name"
+                >
+                  open
+                </router-link>
+              );
+            }
+            return '---';
+          },
+        },
+        {
+          field: 'balance',
+          key: 'balance',
+          sortBy: this.sortConfig.balance || '',
+          title: 'balance',
+          align: this.isRTLView ? 'right' : 'center',
+        },
+        {
+          field: 'spent',
+          key: 'spent',
+          sortBy: this.sortConfig.spent || '',
+          title: 'spent',
+          align: this.isRTLView ? 'right' : 'center',
+        },
+        {
+          field: 'link',
+          key: 'link',
+          sortBy: this.sortConfig.profile_url || '',
+          title: 'link',
+          align: this.isRTLView ? 'right' : 'center',
+          renderBodyCell: ({ row }) => {
+            if (row.profile_url) {
+              return <a href={row.profile_url}>open</a>;
+            }
             return '---';
           },
         },
