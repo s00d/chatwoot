@@ -13,6 +13,7 @@
           :chat="conversation"
           :hide-inbox-name="false"
           :hide-thumbnail="true"
+          :show-browser-info="true"
           class="compact"
         />
       </div>

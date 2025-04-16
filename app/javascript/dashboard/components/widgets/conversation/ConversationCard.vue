@@ -55,7 +55,7 @@
         {{ currentContact.name }}
       </h4>
       <p
-        v-if="browserInfo"
+        v-if="showBrowserInfo && browserInfo"
         class="text-slate-500 dark:text-slate-500 text-xs mx-2 mt-1 truncate"
       >
         {{ browserInfo }}
@@ -155,6 +155,10 @@ export default {
     activeLabel: {
       type: String,
       default: '',
+    },
+    showBrowserInfo: {
+      type: Boolean,
+      default: false,
     },
     chat: {
       type: Object,
