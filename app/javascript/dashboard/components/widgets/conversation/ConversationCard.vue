@@ -54,6 +54,13 @@
       >
         {{ currentContact.name }}
       </h4>
+      <p
+        v-if="browserInfo"
+        class="text-slate-500 dark:text-slate-500 text-xs mx-2 mt-1 truncate"
+      >
+        {{ browserInfo }}
+      </p>
+
       <message-preview
         v-if="lastMessageInChat"
         :message="lastMessageInChat"
@@ -260,6 +267,28 @@ export default {
     },
     hasSlaPolicyId() {
       return this.chat?.sla_policy_id;
+    },
+    browserInfo() {
+      const browser = this.chat?.additional_attributes?.browser;
+      if (!browser) return null;
+
+      const {
+        browser_name,
+        browser_version,
+        platform_name,
+        platform_version,
+        device_name,
+      } = browser;
+
+      const platform = platform_name
+        ? `${platform_name}${platform_version ? ' ' + platform_version : ''}`
+        : '';
+
+      const browserText = browser_name
+        ? `${browser_name}${browser_version ? ' ' + browser_version : ''}`
+        : '';
+
+      return [platform, browserText, device_name].filter(Boolean).join(' · ');
     },
   },
   methods: {
