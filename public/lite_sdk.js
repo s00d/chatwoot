@@ -17,7 +17,7 @@
 }
 @media (max-width: 768px) {
   .wootm-widget-bubble {
-    height: 42px;
+    height: 48px;
     font-size: 14px;
   }
 }
@@ -43,11 +43,8 @@
 }
 @media (max-width: 768px) {
   .wootm-widget-bubble img {
-    margin: 11px 8px 11px 14px;
+    margin: 14px;
   }
-}
-.wootm-desktop-text {
-  display: none
 }
 .wootm-desktop-text {
   display: block;
@@ -63,7 +60,7 @@
 }
 @media (max-width: 768px) {
   .wootm-desktop-text {
-    padding-right: 14px;
+    display: none;
   }
 }
 `;
@@ -115,7 +112,7 @@
       var websiteToken = window.chatwootLITESDK.websiteToken;
       var g = d.createElement(t);
       var s = d.getElementsByTagName(t)[0];
-      g.src = BASE_URL + '/packs/js/sdk.js?v3';
+      g.src = BASE_URL + '/packs/js/sdk.js?v4';
       g.defer = true;
       g.async = true;
       s.parentNode.insertBefore(g, s);

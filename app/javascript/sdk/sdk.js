@@ -99,7 +99,7 @@ export const SDK_CSS = `
 
 @media (max-width: 768px) {
   .woot-widget-bubble.woot-widget--expanded {
-    height: 42px !important;
+    height: 48px !important;
   }
 }
 
@@ -118,6 +118,7 @@ export const SDK_CSS = `
   .woot-widget-bubble.woot-widget--expanded div {
     font-size: 14px;
     padding-right: 14px;
+    display: none;
   }
 }
 
@@ -132,7 +133,7 @@ export const SDK_CSS = `
 }
 @media (max-width: 768px) {
   .woot-widget-bubble.woot-widget--expanded svg {
-    margin: 14px 8px 14px 14px;
+    margin: 14px;
   }
 }
 .woot-widget-bubble.woot-elements--left {
