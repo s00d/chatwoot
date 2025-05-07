@@ -27,7 +27,7 @@
 - name: disable_branding
   display_name: Disable Branding
   enabled: false
-  premium: false
+  premium: true
 - name: email_continuity_on_api_channel
   display_name: Email Continuity on API Channel
   enabled: false
@@ -104,11 +104,11 @@
 - name: audit_logs
   display_name: Audit Logs
   enabled: false
-  premium: false
+  premium: true
 - name: response_bot
   display_name: Response Bot
   enabled: false
-  premium: false
+  premium: true
   deprecated: true
 - name: message_reply_to
   display_name: Message Reply To
@@ -126,12 +126,12 @@
 - name: sla
   display_name: SLA
   enabled: false
-  premium: false
+  premium: true
   help_url: https://chwt.app/hc/sla
 - name: help_center_embedding_search
   display_name: Help Center Embedding Search
   enabled: false
-  premium: false
+  premium: true
   chatwoot_internal: true
 - name: linear_integration
   display_name: Linear Integration
@@ -139,11 +139,11 @@
 - name: captain_integration
   display_name: Captain
   enabled: false
-  premium: false
+  premium: true
 - name: custom_roles
   display_name: Custom Roles
   enabled: false
-  premium: false
+  premium: true
 - name: chatwoot_v4
   display_name: Chatwoot V4
   enabled: false

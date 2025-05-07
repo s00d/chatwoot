@@ -121,10 +121,6 @@ class User < ApplicationRecord
     administrator? ? Current.account.inboxes : inboxes.where(account_id: Current.account.id)
   end
 
-  def premium?
-    true
-  end
-
   def serializable_hash(options = nil)
     super(options).merge(confirmed: confirmed?)
   end
