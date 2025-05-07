@@ -77,6 +77,7 @@ composer.lock
 
 #ignore files under .vscode directory
 .vscode
+.cursor
 
 # yalc for local testing
 .yalc
@@ -97,3 +98,6 @@ yarn-debug.log*
 # Vite uses dotenv and suggests to ignore local-only env files. See
 # https://vitejs.dev/guide/env-and-mode.html#env-files
 *.local
+
+# Claude.ai config file
+CLAUDE.md

@@ -51,29 +51,3 @@ export default {
   />
   <div v-else class="p-3" />
 </template>
-
-<style scoped lang="scss">
-@import 'widget/assets/scss/variables.scss';
-
-.branding--image {
-  margin-right: $space-smaller;
-  max-width: $space-slab;
-  max-height: $space-slab;
-}
-
-.branding--link {
-  color: $color-light-gray;
-  cursor: pointer;
-  display: inline-flex;
-  filter: grayscale(1);
-  font-size: $font-size-small;
-  opacity: 0.9;
-  text-decoration: none;
-
-  &:hover {
-    filter: grayscale(0);
-    opacity: 1;
-    color: $color-gray;
-  }
-}
-</style>
