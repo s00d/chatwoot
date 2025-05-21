@@ -28,9 +28,15 @@ export const setCookieWithDomain = (
   value,
   { expires = 365, baseDomain = undefined } = {}
 ) => {
+  // const cookieOptions = {
+  //   expires,
+  //   sameSite: 'Lax',
+  //   domain: baseDomain,
+  // };
   const cookieOptions = {
     expires,
-    sameSite: 'Lax',
+    sameSite: 'None',
+    secure: true,
     domain: baseDomain,
   };
 

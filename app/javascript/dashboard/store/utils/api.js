@@ -11,7 +11,11 @@ import { LOCAL_STORAGE_KEYS } from 'dashboard/constants/localStorage';
 import { LocalStorage } from 'shared/helpers/localStorage';
 import { emitter } from 'shared/helpers/mitt';
 
-Cookies.defaults = { sameSite: 'Lax' };
+// Cookies.defaults = { sameSite: 'Lax' };
+Cookies.defaults = {
+  sameSite: 'none',
+  secure: true,
+};
 
 export const getLoadingStatus = state => state.fetchAPIloadingStatus;
 export const setLoadingStatus = (state, status) => {
