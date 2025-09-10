@@ -95,10 +95,12 @@
   // eslint-disable-next-line vars-on-top
   var styleSheet = document.createElement('style');
   styleSheet.innerText = styles;
+  styleSheet.id = 'cwl-bubble-styles';
   document.head.appendChild(styleSheet);
 
   // eslint-disable-next-line vars-on-top
   var newDiv = document.createElement('div');
+  newDiv.id = 'cwl-bubble-holder';
   newDiv.innerHTML =
     '<button class="wootm-widget-bubble wootm-desktop wootm-elements--right wootm-widget--expanded" style="background: #056BFF;">' +
     '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAAUVBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////8IN+deAAAAGnRSTlMAAwgJEBk0TVheY2R5eo+ut8jb5OXs8fX2+cjRDTIAAADsSURBVHgBldZbkoMgFIThRgQv8SKKgGf/C51UnJqaRI30/9zfe+NQUQ3TvG7bOk9DVeCmshmj/CuOTYnrdBfkUOg0zlOtl9OWVuEk4+QyZ3DIevmSt/ioTvK1VH/s5bY3YdM9SBZ/mUUyWgx+U06ycgp7D8msxSvtc4HXL9BLdj2elSEfhBJAI0QNgJEBI1BEBsQClVBVGDgwYOLAhJkDM1YOrNg4sLFAsLJgZsHEgoEFFQt0JAFGFjQsKAMJ0LFAexKgZYFyJIDxJIBNJEDNAtSJBLCeBDCOBFAPzwFA94ED+zmhwDO9358r8ANtIsMXi7qVAwAAAABJRU5ErkJggg==" alt="bubble-icon">' +
