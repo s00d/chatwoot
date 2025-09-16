@@ -36,17 +36,19 @@ const runSDK = ({ baseUrl, websiteToken }) => {
     });
   }
 
-  // if this is an astro app
-  document.addEventListener('astro:before-swap', event =>
-    restoreWidgetInDOM(event.newDocument.body)
-  );
-
   const chatwootSettings = window.chatwootSettings || {};
   let locale = chatwootSettings.locale;
   let baseDomain = chatwootSettings.baseDomain;
 
   if (chatwootSettings.useBrowserLanguage) {
     locale = window.navigator.language.replace('-', '_');
+  }
+
+  if (chatwootSettings.restoreWidgetBeforeSwap) {
+    // if this is an astro app
+    document.addEventListener('astro:before-swap', event =>
+      restoreWidgetInDOM(event.newDocument.body)
+    );
   }
 
   window.$chatwoot = {
