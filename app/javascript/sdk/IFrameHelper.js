@@ -60,7 +60,7 @@ export const IFrameHelper = {
   getUrl({ baseUrl, websiteToken }) {
     return `${baseUrl}/widget?website_token=${websiteToken}`;
   },
-  createFrame: ({ baseUrl, websiteToken }) => {
+  createFrame: ({ baseUrl, websiteToken, mountSelector }) => {
     if (IFrameHelper.getAppFrame()) {
       return;
     }
@@ -89,7 +89,15 @@ export const IFrameHelper = {
     addClasses(widgetHolder, holderClassName);
     widgetHolder.id = 'cw-widget-holder';
     widgetHolder.appendChild(iframe);
-    body.appendChild(widgetHolder);
+    const mountNode = mountSelector
+      ? document.querySelector(mountSelector)
+      : null;
+    if (mountNode) {
+      addClasses(widgetHolder, 'woot-widget-holder--embedded');
+      mountNode.appendChild(widgetHolder);
+    } else {
+      body.appendChild(widgetHolder);
+    }
     IFrameHelper.initPostMessageCommunication();
     IFrameHelper.initWindowSizeListener();
     IFrameHelper.preventDefaultScroll();

@@ -21,12 +21,30 @@ export const SDK_CSS = `
   border: 1px solid var(--b-100);
 }
 
+.woot-widget-holder.woot-widget-holder--embedded {
+  position: absolute !important;
+  inset: 0 !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  border-radius: 0 !important;
+  z-index: 1 !important;
+}
+
 .woot-widget-holder iframe {
   border: 0;
   color-scheme: normal;
   height: 100% !important;
   width: 100% !important;
   max-height: 100vh !important;
+}
+
+.woot-widget-holder.woot-widget-holder--embedded iframe {
+  max-height: 100% !important;
 }
 
 .woot-widget-holder.has-unread-view {
