@@ -539,7 +539,7 @@ provideMessageContext({
   <div
     v-if="shouldRenderMessage"
     :id="`message${props.id}`"
-    class="flex w-full mb-2 message-bubble-container"
+    class="flex w-full mb-1 message-bubble-container"
     :data-message-id="props.id"
     :class="[
       flexOrientationClass,
@@ -576,8 +576,8 @@ provideMessageContext({
       <div
         class="[grid-area:bubble] flex min-w-0"
         :class="{
-          'ltr:ml-8 rtl:mr-8 justify-end': orientation === ORIENTATION.RIGHT,
-          'ltr:mr-8 rtl:ml-8': orientation === ORIENTATION.LEFT,
+          'ltr:ml-6 rtl:mr-6 justify-end': orientation === ORIENTATION.RIGHT,
+          'ltr:mr-6 rtl:ml-6': orientation === ORIENTATION.LEFT,
         }"
         @contextmenu="openContextMenu($event)"
       >

@@ -78,7 +78,7 @@ const showPagination = computed(() => {
 
 <template>
   <section
-    class="flex w-full h-full gap-4 overflow-hidden justify-evenly bg-n-surface-1"
+    class="flex w-full h-full gap-2 overflow-hidden justify-evenly bg-n-surface-1"
   >
     <div class="flex flex-col w-full h-full transition-all duration-300">
       <ContactListHeaderWrapper
@@ -98,7 +98,7 @@ const showPagination = computed(() => {
         @apply-filter="emit('applyFilter', $event)"
         @clear-filters="emit('clearFilters')"
       />
-      <main class="flex-1 overflow-y-auto px-6">
+      <main class="flex-1 overflow-y-auto px-4">
         <div class="w-full mx-auto max-w-5xl">
           <ContactsActiveFiltersPreview
             v-if="showActiveFiltersPreview"

@@ -18,10 +18,10 @@ export const getHeadingsfromTheArticle = () => {
     const headingText = element.innerText;
     const slug = slugifyWithCounter(headingText);
     element.id = slug;
-    element.className = 'scroll-mt-24 heading';
+    element.className = 'scroll-mt-[5rem] heading';
 
     const permalink = document.createElement('a');
-    permalink.className = 'permalink text-slate-600 ml-3';
+    permalink.className = 'permalink text-n-slate-10 ml-2';
     permalink.href = `#${slug}`;
     permalink.title = headingText;
     permalink.dataset.turbo = 'false';
@@ -78,23 +78,27 @@ export const InitializationHelpers = {
   },
 
   initializeSearch: () => {
-    ['#search-wrap', '#search-wrap-hero'].forEach(selector => {
-      const mountPoint = document.querySelector(selector);
-      if (!mountPoint) return;
-      const size = mountPoint.dataset.size || 'default';
-      const showKbd = !!mountPoint.dataset.kbd;
-      // eslint-disable-next-line vue/one-component-per-file
-      const app = createApp({
-        components: { PublicArticleSearch },
-        data() {
-          return { size, showKbd };
-        },
-        template: '<PublicArticleSearch :size="size" :show-kbd="showKbd" />',
-      });
-      app.use(VueDOMPurifyHTML, domPurifyConfig);
-      app.directive('on-clickaway', onClickaway);
-      app.mount(selector);
-    });
+    ['#search-wrap', '#search-wrap-hero', '#search-wrap-mobile'].forEach(
+      selector => {
+        const mountPoint = document.querySelector(selector);
+        if (!mountPoint) return;
+        const size = mountPoint.dataset.size || 'default';
+        const showKbd = !!mountPoint.dataset.kbd;
+        const flush = mountPoint.dataset.flush === 'true';
+        // eslint-disable-next-line vue/one-component-per-file
+        const app = createApp({
+          components: { PublicArticleSearch },
+          data() {
+            return { size, showKbd, flush };
+          },
+          template:
+            '<PublicArticleSearch :size="size" :show-kbd="showKbd" :flush="flush" />',
+        });
+        app.use(VueDOMPurifyHTML, domPurifyConfig);
+        app.directive('on-clickaway', onClickaway);
+        app.mount(selector);
+      }
+    );
   },
 
   initializeTableOfContents: () => {

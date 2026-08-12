@@ -87,4 +87,21 @@ describe('PublicArticleSearch', () => {
       wrapper.findComponent(SearchSuggestionsStub).props('searchTerm')
     ).toBe('chatwoot');
   });
+
+  it('omits default margins when flush is true', () => {
+    const wrapper = shallowMount(PublicArticleSearch, {
+      props: { flush: true },
+      global: {
+        directives: {
+          onClickaway: () => {},
+        },
+        stubs: {
+          SearchSuggestions: SearchSuggestionsStub,
+          PublicSearchInput: true,
+        },
+      },
+    });
+
+    expect(wrapper.vm.wrapperClass).toBe('relative w-full');
+  });
 });

@@ -136,7 +136,7 @@ const handleAvatarHover = isHovered => {
         'outline-n-weak !bg-n-slate-3 dark:!bg-n-solid-3': isSelected,
       }"
     >
-      <div class="flex items-center justify-start flex-1 gap-4">
+      <div class="flex items-center justify-start flex-1 gap-2">
         <div
           class="relative"
           @mouseenter="handleAvatarHover(true)"
@@ -145,7 +145,7 @@ const handleAvatarHover = isHovered => {
           <Avatar
             :name="name"
             :src="thumbnail"
-            :size="42"
+            :size="36"
             :status="availabilityStatus"
             hide-offline-status
           >
@@ -164,14 +164,14 @@ const handleAvatarHover = isHovered => {
           </Avatar>
         </div>
         <div class="flex flex-col gap-0.5 flex-1">
-          <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
-            <span class="text-base font-medium truncate text-n-slate-12">
+          <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+            <span class="text-sm font-medium truncate text-n-slate-12">
               {{ name }}
             </span>
             <!-- OnlineSIM: company de-emphasized (hidden from list) -->
           </div>
           <div
-            class="flex flex-wrap items-center justify-start gap-x-3 gap-y-1"
+            class="flex flex-wrap items-center justify-start gap-x-2 gap-y-0.5"
           >
             <div v-if="email" class="truncate max-w-72" :title="email">
               <span class="text-sm text-n-slate-11">
@@ -294,7 +294,7 @@ const handleAvatarHover = isHovered => {
           "
         >
           <div class="overflow-hidden">
-            <div class="flex flex-col gap-6 p-6 border-t border-n-strong">
+            <div class="flex flex-col gap-4 p-4 border-t border-n-strong">
               <ContactsForm
                 ref="contactsFormRef"
                 :contact-data="contactData"

@@ -7,6 +7,7 @@
 - Триггер: **только** `workflow_dispatch` (Actions → *Deploy Docker (manual)* → *Run workflow*)
 - Не пушит образ при обычном `git push`
 - Собирает `docker/Dockerfile` (внутри — `assets:precompile`, SDK, lite_sdk)
+- **Build cache**: GitHub Actions cache (`scope=onlinesim-docker`) + BuildKit cache mounts в Dockerfile (gems, pnpm store)
 - Пушит в **GHCR** или **Docker Hub**
 
 ### Как запустить
@@ -65,8 +66,18 @@ docker compose -f docker-compose.onlinesim.yaml up -d
 Локальная сборка **без** registry по-прежнему:
 
 ```bash
+export DOCKER_BUILDKIT=1
 docker compose -f docker-compose.onlinesim.yaml build
 ```
+
+Повторные локальные сборки ускоряются за счёт BuildKit cache mounts в `docker/Dockerfile` (bundle в `/gems`, pnpm store). Для dev compose:
+
+```bash
+export DOCKER_BUILDKIT=1
+docker compose --env-file .env.docker -f docker-compose.yaml -f docker-compose.local.yaml build base
+```
+
+`pnpm i` в образе с `HUSKY=0` — husky не требует `.git` (в логе не будет `fatal: not a git repository`).
 
 ---
 

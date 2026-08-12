@@ -1,27 +1,25 @@
 <%# locals: (portal:, popular_topics: [], recommended: false) %>
-<section class="relative border-b border-solid border-n-weak bg-n-slate-1 dark:bg-n-slate-2 min-h-[50vh] flex items-center">
-  <div class="absolute inset-0 pointer-events-none text-n-portal-faint [background-image:linear-gradient(to_right,currentColor_1px,transparent_1px),linear-gradient(to_bottom,currentColor_1px,transparent_1px)] [background-size:56px_56px] [mask-image:radial-gradient(ellipse_at_50%_30%,black_35%,transparent_80%)] [-webkit-mask-image:radial-gradient(ellipse_at_50%_30%,black_35%,transparent_80%)]" aria-hidden="true"></div>
-
-  <div class="relative w-full px-6 md:px-10 py-12 md:py-16">
+<section class="relative border-b border-solid border-n-weak bg-white dark:bg-n-slate-2">
+  <div class="relative w-full px-4 md:px-6 py-6 md:py-8">
     <div class="max-w-2xl">
-      <h1 class="text-4xl md:text-5xl leading-tight font-620 tracking-tight text-n-slate-12 text-balance">
+      <h1 class="text-2xl md:text-3xl leading-snug font-620 tracking-tight text-n-slate-12 text-balance">
         <%= portal.localized_value('header_text', @locale).presence || 'How can we help?' %>
       </h1>
-      <p class="mt-4 text-lg leading-normal text-n-slate-11 text-pretty">
+      <p class="mt-2 text-sm leading-normal text-n-slate-11 text-pretty">
         <%= I18n.t('public_portal.hero.sub_title') %>
       </p>
 
-      <div class="mt-8 group/herosearch relative z-30">
-        <div id="search-wrap-hero" class="block w-full"></div>
+      <div class="mt-4 relative z-30">
+        <div id="search-wrap-hero" class="block w-full" data-size="default" data-flush="true"></div>
       </div>
 
       <% if popular_topics.any? %>
-        <div class="mt-5 flex items-center gap-2 flex-wrap text-sm">
-          <span class="text-n-slate-10"><%= I18n.t("public_portal.sidebar.#{recommended ? 'recommended_label' : 'popular_label'}") %></span>
+        <div class="mt-3 flex items-center gap-1.5 flex-wrap text-xs">
+          <span class="text-n-slate-10 shrink-0"><%= I18n.t("public_portal.sidebar.#{recommended ? 'recommended_label' : 'popular_label'}") %></span>
           <% popular_topics.each do |category| %>
             <a href="<%= public_portal_category_path(portal.slug, category.locale, category.slug) %>"
-               class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/60 dark:bg-n-slate-1/60 backdrop-blur border border-solid border-n-weak text-n-slate-11 hover:text-n-portal hover:border-n-portal transition">
-              <% if category.icon.present? %><span class="inline-flex items-center text-xs leading-none"><%= render_emoji_or_icon(category.icon, category.icon_color) %></span><% end %>
+               class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-n-alpha-2 border border-solid border-n-weak text-n-slate-11 hover:text-n-portal hover:border-n-portal transition">
+              <% if category.icon.present? %><span class="inline-flex items-center text-[10px] leading-none"><%= render_emoji_or_icon(category.icon, category.icon_color) %></span><% end %>
               <%= category.name %>
             </a>
           <% end %>

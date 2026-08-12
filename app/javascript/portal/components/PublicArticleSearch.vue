@@ -19,6 +19,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    flush: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['input', 'blur'],
   data() {
@@ -53,6 +57,12 @@ export default {
         navigator.platform || navigator.userAgent
       );
       return isMac ? '⌘ K' : 'Ctrl K';
+    },
+    wrapperClass() {
+      return this.flush ? 'relative w-full' : 'relative w-full max-w-5xl my-4';
+    },
+    suggestionsTopClass() {
+      return this.size === 'small' ? 'top-10' : 'top-12';
     },
   },
 
@@ -89,7 +99,7 @@ export default {
       this.isLoading = true;
       this.typingTimer = setTimeout(() => {
         this.fetchArticlesByQuery();
-      }, 1000);
+      }, 300);
     },
     onChange(e) {
       this.$emit('input', e.target.value);
@@ -157,7 +167,7 @@ export default {
 </script>
 
 <template>
-  <div v-on-clickaway="closeSearch" class="relative w-full max-w-5xl my-4">
+  <div v-on-clickaway="closeSearch" :class="wrapperClass">
     <form @submit.prevent="handleSubmit">
       <PublicSearchInput
         ref="searchInput"
@@ -174,7 +184,8 @@ export default {
     </form>
     <div
       v-if="shouldShowSearchBox"
-      class="absolute w-full top-14"
+      class="absolute w-full"
+      :class="suggestionsTopClass"
       @mouseover="openSearch"
     >
       <SearchSuggestions

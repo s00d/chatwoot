@@ -178,7 +178,7 @@ export default {
 </script>
 
 <template>
-  <div class="relative items-center w-full p-4">
+  <div class="relative items-center w-full p-3">
     <div class="flex flex-col w-full gap-2 text-left rtl:text-right">
       <div class="flex flex-row justify-between">
         <Avatar
@@ -192,7 +192,7 @@ export default {
       </div>
 
       <div class="flex flex-col items-start gap-1.5 min-w-0 w-full">
-        <div v-if="showAvatar" class="flex items-center w-full min-w-0 gap-3">
+        <div v-if="showAvatar" class="flex items-center w-full min-w-0 gap-2">
           <InlineInput
             v-if="isEditingName"
             ref="nameInput"

@@ -10,6 +10,7 @@
 | [04-github-actions-and-env.md](04-github-actions-and-env.md) | Ручной GitHub Action + полный список ENV |
 | [.env.production.example](.env.production.example) | Шаблон `.env` для продакшена |
 | [nginx-chatwoot.conf.example](nginx-chatwoot.conf.example) | Пример Nginx |
+| [05-docker-local-dev.md](05-docker-local-dev.md) | Локальный Docker на отдельных портах (nginx не трогаем) |
 | [CUSTOM_VS_V4.16.2.md](CUSTOM_VS_V4.16.2.md) | Кастомы OnlineSIM vs upstream v4.16.2 |
 | [CUSTOM_VS_V3.11.1.md](CUSTOM_VS_V3.11.1.md) | Исторический отчёт кастомов на базе 3.11 |
 | [CUSTOM_VS_V3.11.1.patch](CUSTOM_VS_V3.11.1.patch) | Patch-справочник (3.11) |

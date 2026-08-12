@@ -32,9 +32,9 @@ const emit = defineEmits([
 </script>
 
 <template>
-  <header class="sticky top-0 z-20 px-6">
+  <header class="sticky top-0 z-20 px-4">
     <div
-      class="flex items-start sm:items-center justify-between w-full py-6 gap-2 mx-auto max-w-5xl"
+      class="flex items-start sm:items-center justify-between w-full py-3 gap-2 mx-auto max-w-5xl"
     >
       <span class="text-xl font-medium truncate text-n-slate-12">
         {{ headerTitle }}

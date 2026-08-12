@@ -23,6 +23,16 @@ db_namespace = namespace :db do
         db_namespace['seed'].invoke
       end
 
+      if ActiveRecord::Base.connection.table_exists?('conversations')
+        migration_count = ActiveRecord::Base.connection.select_value('SELECT COUNT(*) FROM schema_migrations').to_i
+        if migration_count < 100
+          abort(
+            "Database looks partially migrated (#{migration_count} schema_migrations rows but core tables exist). " \
+            'Stop app services, recreate the database, then run db:chatwoot_prepare.'
+          )
+        end
+      end
+
       db_namespace['migrate'].invoke
     rescue ActiveRecord::NoDatabaseError
       db_namespace['setup'].invoke

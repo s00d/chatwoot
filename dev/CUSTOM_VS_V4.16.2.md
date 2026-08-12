@@ -67,6 +67,7 @@
 - Canned trigger `\` + `/`
 - Alt+↑/↓ навигация
 - Cap уведомлений ~10
+- **Compact density**: меньшие отступы, font 14px по умолчанию, узкие колонки (`compactUi.js`)
 
 #### Upstream CI workflows
 - Удалены все community/Chatwoot workflows (lint, stale, foss docker, size-limit, heroku deploy check и т.д.)

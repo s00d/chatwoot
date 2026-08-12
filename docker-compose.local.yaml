@@ -1,0 +1,47 @@
+# Local Docker dev — ports that do not clash with host nginx / postgres / redis.
+#
+# IMPORTANT: overrides host .env (POSTGRES_HOST=localhost) with .env.docker (postgres/redis services).
+#
+# Usage:
+#   cp dev/.env.docker.local.example .env.docker
+#   export DOCKER_BUILDKIT=1
+#   docker compose --env-file .env.docker -f docker-compose.yaml -f docker-compose.local.yaml up -d
+#   docker compose --env-file .env.docker -f docker-compose.yaml -f docker-compose.local.yaml run --rm rails bundle exec rails db:chatwoot_prepare
+#
+# UI: http://127.0.0.1:3041 — john@acme.inc / Password1!
+
+services:
+  base:
+    env_file: !override
+      - .env.docker
+
+  rails:
+    env_file: !override
+      - .env.docker
+    ports: !override
+      - '127.0.0.1:3041:3000'
+
+  sidekiq:
+    env_file: !override
+      - .env.docker
+
+  vite:
+    env_file: !override
+      - .env.docker
+    ports: !override
+      - '127.0.0.1:3037:3036'
+
+  postgres:
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports: !override
+      - '127.0.0.1:5433:5432'
+
+  redis:
+    ports: !override
+      - '127.0.0.1:6380:6379'
+
+  mailhog:
+    ports: !override
+      - '127.0.0.1:1026:1025'
+      - '127.0.0.1:8026:8025'

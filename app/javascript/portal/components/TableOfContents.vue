@@ -13,6 +13,9 @@ export default {
     };
   },
   computed: {
+    tocHeader() {
+      return window.portalConfig?.tocHeader || 'On this page';
+    },
     h1Count() {
       return this.rows.filter(el => el.tag === 'h1').length;
     },
@@ -46,7 +49,7 @@ export default {
         if (!this.h1Count && !this.h2Count) {
           return '';
         }
-        return 'ltr:ml-5 rtl:mr-5';
+        return 'ltr:ml-4 rtl:mr-4';
       }
 
       return '';
@@ -81,39 +84,42 @@ export default {
       if (this.isElementActive(el)) {
         return 'border-n-portal transition-colors duration-200';
       }
-      return 'border-slate-100 dark:border-slate-800';
+      return 'border-n-weak';
     },
     elementTextStyles(el) {
       if (this.isElementActive(el)) {
         return 'text-n-portal transition-colors duration-200';
       }
-      return 'text-slate-700 dark:text-slate-100';
+      return 'text-n-slate-11 hover:text-n-slate-12';
     },
   },
 };
 </script>
 
 <template>
-  <div
-    class="hidden lg:block flex-1 py-6 scroll-mt-24 ltr:pl-4 rtl:pr-4 sticky top-24"
-  >
-    <div v-if="rows.length > 0" class="py-2 overflow-auto">
-      <nav class="max-w-2xl">
+  <div class="py-2 scroll-mt-[5rem] ltr:pl-2 rtl:pr-2 sticky top-[3.5rem]">
+    <div v-if="rows.length > 0" class="overflow-auto">
+      <p
+        class="mb-2 text-[11px] font-semibold uppercase tracking-wider text-n-slate-10"
+      >
+        {{ tocHeader }}
+      </p>
+      <nav>
         <ol
           role="list"
-          class="flex flex-col gap-2 text-base ltr:border-l-2 rtl:border-r-2 border-solid border-slate-100 dark:border-slate-800"
+          class="flex flex-col gap-0.5 text-xs ltr:border-l-2 rtl:border-r-2 border-solid border-n-weak"
         >
           <li
             v-for="element in rows"
             :key="element.slug"
-            class="leading-6 ltr:border-l-2 rtl:border-r-2 relative ltr:-left-0.5 rtl:-right-0.5 border-solid"
+            class="leading-5 ltr:border-l-2 rtl:border-r-2 relative ltr:-left-0.5 rtl:-right-0.5 border-solid"
             :class="elementBorderStyles(element)"
           >
-            <p class="py-1 px-3" :class="getClassName(element)">
+            <p class="py-0.5 px-2" :class="getClassName(element)">
               <a
                 :href="`#${element.slug}`"
                 data-turbo="false"
-                class="font-medium text-sm tracking-[0.28px] cursor-pointer"
+                class="font-medium cursor-pointer"
                 :class="elementTextStyles(element)"
               >
                 {{ element.title }}

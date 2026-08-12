@@ -98,7 +98,7 @@ export default {
   <div v-on-clickaway="close" class="relative">
     <button
       type="button"
-      class="flex items-center justify-center w-9 h-9 text-n-slate-11 hover:text-n-slate-12 hover:bg-n-alpha-2 rounded-lg transition"
+      class="flex items-center justify-center w-8 h-8 text-n-slate-11 hover:text-n-slate-12 hover:bg-n-alpha-2 rounded-md transition"
       :aria-label="triggerLabel"
       :aria-expanded="open"
       @click="toggle"

@@ -95,7 +95,7 @@ const selectedModel = computed({
 
 <template>
   <div
-    class="conversation relative cursor-pointer group grid gap-4 items-center px-3 h-12 border-b border-n-slate-3 hover:border-n-surface-1 hover:z-[1] before:content-[none] before:absolute before:-top-px before:inset-x-0 before:h-px before:bg-n-surface-1 before:pointer-events-none hover:before:content-['']"
+    class="conversation relative cursor-pointer group grid gap-2 items-center px-2 h-9 border-b border-n-slate-3 hover:border-n-surface-1 hover:z-[1] before:content-[none] before:absolute before:-top-px before:inset-x-0 before:h-px before:bg-n-surface-1 before:pointer-events-none hover:before:content-['']"
     :class="{
       'active animate-card-select bg-n-alpha-1 dark:bg-n-alpha-3 !border-n-surface-1':
         isActiveChat,
@@ -108,7 +108,7 @@ const selectedModel = computed({
     @contextmenu="$emit('contextmenu', $event)"
   >
     <!-- LEFT SECTION -->
-    <div class="flex items-center gap-2 min-w-0 flex-1">
+    <div class="flex items-center gap-1 min-w-0 flex-1">
       <div class="flex items-center justify-center flex-shrink-0" @click.stop>
         <Checkbox v-model="selectedModel" />
       </div>

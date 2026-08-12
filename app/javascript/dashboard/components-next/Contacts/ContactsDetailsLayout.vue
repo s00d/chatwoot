@@ -78,10 +78,10 @@ const closeMobileSidebar = () => {
     <div
       class="flex flex-col w-full h-full transition-all duration-300 ltr:2xl:ml-56 rtl:2xl:mr-56"
     >
-      <header class="sticky top-0 z-10 px-6 3xl:px-0">
+      <header class="sticky top-0 z-10 px-4 3xl:px-0">
         <div class="w-full mx-auto max-w-[40.625rem]">
           <div
-            class="flex flex-col xs:flex-row items-start xs:items-center justify-between w-full py-7 gap-2"
+            class="flex flex-col xs:flex-row items-start xs:items-center justify-between w-full py-4 gap-2"
           >
             <Breadcrumb
               :items="breadcrumbItems"
@@ -118,8 +118,8 @@ const closeMobileSidebar = () => {
           </div>
         </div>
       </header>
-      <main class="flex-1 px-6 overflow-y-auto 3xl:px-px">
-        <div class="w-full py-4 mx-auto max-w-[40.625rem]">
+      <main class="flex-1 px-4 overflow-y-auto 3xl:px-px">
+        <div class="w-full py-2 mx-auto max-w-[40.625rem]">
           <slot name="default" />
         </div>
       </main>

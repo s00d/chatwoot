@@ -114,7 +114,7 @@ const onCardClick = e => {
 <template>
   <div
     role="button"
-    class="flex w-full gap-3 px-3 py-4 transition-all duration-300 ease-in-out cursor-pointer"
+    class="flex w-full gap-2 px-2 py-2 transition-all duration-300 ease-in-out cursor-pointer"
     @click="onCardClick"
   >
     <Avatar
@@ -126,7 +126,7 @@ const onCardClick = e => {
     />
     <div class="flex flex-col w-full gap-1 min-w-0">
       <div class="flex items-center justify-between h-6 gap-2">
-        <h4 class="text-base font-medium truncate text-n-slate-12">
+        <h4 class="text-sm font-medium truncate text-n-slate-12">
           {{ currentContactName }}
         </h4>
         <div class="flex items-center gap-2">
