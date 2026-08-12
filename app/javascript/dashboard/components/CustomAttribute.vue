@@ -45,6 +45,15 @@ export default {
     };
   },
   computed: {
+    // OnlineSIM: hide internal attributes from UI (still in data)
+    isHidden() {
+      return (
+        this.attributeKey === 'accountId' ||
+        this.attributeKey === 'hash_id' ||
+        this.label === 'accountId' ||
+        this.label === 'hash_id'
+      );
+    },
     displayValue() {
       if (this.isAttributeTypeDate) {
         return this.value
@@ -204,7 +213,7 @@ export default {
 </script>
 
 <template>
-  <div class="px-4 py-3">
+  <div v-if="!isHidden" class="px-4 py-3">
     <div class="flex items-center mb-1">
       <h4 class="flex items-center w-full m-0 text-sm error">
         <div v-if="isAttributeTypeCheckbox" class="flex items-center">

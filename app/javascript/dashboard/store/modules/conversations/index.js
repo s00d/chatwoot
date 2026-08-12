@@ -231,7 +231,8 @@ export const mutations = {
   [types.ADD_CONVERSATION](_state, conversation) {
     const exists = _state.allConversations.some(c => c.id === conversation.id);
     if (!exists) {
-      _state.allConversations.push(conversation);
+      // OnlineSIM: new conversations appear at the top of the list
+      _state.allConversations.unshift(conversation);
     }
   },
 

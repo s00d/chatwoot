@@ -1,4 +1,5 @@
 {
+  "CHAT_HEADER": "Поддержка",
   "COMPONENTS": {
     "FILE_BUBBLE": {
       "DOWNLOAD": "Скачать",
@@ -19,7 +20,7 @@
   },
   "TEAM_AVAILABILITY": {
     "ONLINE": "Мы в сети",
-    "OFFLINE": "В данный момент мы отсутствуем",
+    "OFFLINE": "К сожалению, все операторы не в сети",
     "BACK_AS_SOON_AS_POSSIBLE": "Мы вернемся как можно скорее"
   },
   "REPLY_TIME": {

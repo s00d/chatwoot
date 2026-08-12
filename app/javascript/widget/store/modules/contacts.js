@@ -73,8 +73,11 @@ export const actions = {
         custom_attributes,
       };
       const {
-        data: { widget_auth_token: widgetAuthToken },
+        data: { widget_auth_token: widgetAuthToken, pubsub_token: pubsubToken },
       } = await ContactsAPI.setUser(identifier, user);
+      if (pubsubToken && window.actionCable?.updateToken) {
+        window.actionCable.updateToken(pubsubToken);
+      }
       updateWidgetAuthToken(widgetAuthToken);
       dispatch('get');
       if (identifierHash || widgetAuthToken) {

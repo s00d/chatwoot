@@ -15,12 +15,28 @@ class BaseActionCableConnector {
     const websocketURL = websocketHost ? `${websocketHost}/cable` : undefined;
 
     this.consumer = createConsumer(websocketURL);
-    this.subscription = this.consumer.subscriptions.create(
+    this.app = app;
+    this.presenceInterval = presenceInterval;
+    this.subscription = this.createSubscription(pubsubToken);
+    this.events = {};
+    this.reconnectTimer = null;
+    this.isAValidEvent = () => true;
+    this.triggerPresenceInterval = () => {
+      setTimeout(() => {
+        this.subscription.updatePresence();
+        this.triggerPresenceInterval();
+      }, this.presenceInterval);
+    };
+    this.triggerPresenceInterval();
+  }
+
+  createSubscription(pubsubToken) {
+    return this.consumer.subscriptions.create(
       {
         channel: 'RoomChannel',
         pubsub_token: pubsubToken,
-        account_id: app.$store.getters.getCurrentAccountId,
-        user_id: app.$store.getters.getCurrentUserID,
+        account_id: this.app.$store.getters.getCurrentAccountId,
+        user_id: this.app.$store.getters.getCurrentUserID,
       },
       {
         updatePresence() {
@@ -34,16 +50,12 @@ class BaseActionCableConnector {
         },
       }
     );
-    this.app = app;
-    this.events = {};
-    this.reconnectTimer = null;
-    this.isAValidEvent = () => true;
-    this.triggerPresenceInterval = () => {
-      setTimeout(() => {
-        this.subscription.updatePresence();
-        this.triggerPresenceInterval();
-      }, presenceInterval);
-    };
+  }
+
+  // OnlineSIM: rebind ActionCable after setUser / contact merge
+  refreshConnection(newPubsubToken) {
+    this.disconnect();
+    this.subscription = this.createSubscription(newPubsubToken);
     this.triggerPresenceInterval();
   }
 

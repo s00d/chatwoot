@@ -70,6 +70,31 @@ const showLabelsSection = computed(() => {
   return props.chat.labels?.length > 0 || hasSlaPolicyId.value;
 });
 
+// OnlineSIM: browser / OS / device
+const browserInfo = computed(() => {
+  const browser = props.chat?.additional_attributes?.browser;
+  if (!browser) return null;
+
+  const {
+    browser_name: browserName,
+    browser_version: browserVersion,
+    platform_name: platformName,
+    platform_version: platformVersion,
+    device_name: deviceName,
+  } = browser;
+
+  const platform = platformName
+    ? `${platformName}${platformVersion ? ` ${platformVersion}` : ''}`
+    : '';
+  const browserText = browserName
+    ? `${browserName}${browserVersion ? ` ${browserVersion}` : ''}`
+    : '';
+
+  return (
+    [platform, browserText, deviceName].filter(Boolean).join(' · ') || null
+  );
+});
+
 const messagePreviewClass = computed(() => {
   return [
     hasUnread.value ? 'font-medium text-n-slate-12' : 'text-n-slate-11',
@@ -186,6 +211,12 @@ watch(
       >
         {{ currentContact.name }}
       </h4>
+      <p
+        v-if="browserInfo"
+        class="text-n-slate-10 text-xs mx-2 mt-0.5 truncate"
+      >
+        {{ browserInfo }}
+      </p>
       <VoiceCallStatus
         v-if="voiceCallData.status"
         key="voice-status-row"

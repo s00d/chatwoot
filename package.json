@@ -13,6 +13,7 @@
     "dev": "overmind start -f ./Procfile.dev",
     "ruby:prettier": "bundle exec rubocop -a",
     "build:sdk": "vite build --config vite.lib.config.ts",
+    "minify:lite_sdk": "esbuild public/lite_sdk.js --minify --outfile=public/lite_sdk.min.js",
     "prepare": "husky install",
     "size": "size-limit",
     "story:dev": "histoire dev",

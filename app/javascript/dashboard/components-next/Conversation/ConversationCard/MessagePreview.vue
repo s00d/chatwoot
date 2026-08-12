@@ -71,6 +71,25 @@ const attachmentMessageContent = computed(() => {
 const isMessageSticker = computed(() => {
   return props.message && props.message.content_type === 'sticker';
 });
+
+// OnlineSIM: color preview by message type (adapted to n-* tokens)
+const previewTextClass = computed(() => {
+  const {
+    message_type: messageType,
+    private: isPrivate,
+    sender,
+  } = props.message || {};
+
+  if (messageType === MESSAGE_TYPE.INCOMING) return 'text-n-teal-11';
+  if (messageType === MESSAGE_TYPE.OUTGOING) {
+    if (isPrivate) return 'text-n-amber-11';
+    if (!sender) return 'text-n-iris-11';
+    return 'text-n-slate-11';
+  }
+  if (messageType === MESSAGE_TYPE.ACTIVITY) return 'text-n-slate-10';
+  if (messageType === MESSAGE_TYPE.TEMPLATE) return 'text-n-iris-11';
+  return '';
+});
 </script>
 
 <template>
@@ -102,7 +121,7 @@ const isMessageSticker = computed(() => {
 
     <span
       class="min-w-0 text-body-main"
-      :class="multiLine ? 'line-clamp-2' : 'truncate'"
+      :class="[multiLine ? 'line-clamp-2' : 'truncate', previewTextClass]"
     >
       <!-- Case for previous and conversation conversation card -->
       <template v-if="showMessageType && multiLine">

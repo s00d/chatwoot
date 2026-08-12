@@ -15,6 +15,7 @@ Dotenv::Rails.load
 require 'datadog' if ENV.fetch('DD_TRACE_AGENT_URL', false).present?
 require 'elastic-apm' if ENV.fetch('ELASTIC_APM_SECRET_TOKEN', false).present?
 require 'scout_apm' if ENV.fetch('SCOUT_KEY', false).present?
+require_relative '../app/middleware/active_storage_errors_handler'
 
 if ENV.fetch('NEW_RELIC_LICENSE_KEY', false).present?
   require 'newrelic-sidekiq-metrics'
@@ -69,6 +70,9 @@ module Chatwoot
 
     # Disable PDF/video preview generation as we don't use them
     config.active_storage.previewers = []
+
+    # Missing ActiveStorage blobs should 404 instead of 500 (cleanup leaves dangling refs)
+    config.middleware.use ActiveStorageErrorsHandler
 
     # Active Record Encryption configuration
     # Required for MFA/2FA features - skip if not using encryption

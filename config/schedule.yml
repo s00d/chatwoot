@@ -74,3 +74,15 @@ remove_orphan_conversations_job:
   cron: '0 */12 * * *'
   class: 'Internal::RemoveOrphanConversationsJob'
   queue: housekeeping
+
+# OnlineSIM: soft-delete attachments older than ~160 days (see CleanupOldFilesJob)
+cleanup_old_files:
+  cron: '0 4 * * *'
+  class: 'CleanupOldFilesJob'
+  queue: scheduled_jobs
+
+# Optional aggressive blob wipe — keep disabled by default
+# remove_stale_active_storage_files_job:
+#   cron: '0 0 * * *'
+#   class: 'RemoveStaleActiveStorageFilesJob'
+#   queue: scheduled_jobs

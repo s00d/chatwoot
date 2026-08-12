@@ -11,8 +11,20 @@ export const SHORTCUT_KEYS = [
   {
     id: 1,
     label: 'OPEN_CONVERSATION',
-    displayKeys: [KEYS.ALT, 'J', KEYS.SLASH, KEYS.ALT, 'K'],
-    keySet: ['Alt+KeyJ', 'Alt+KeyK'],
+    displayKeys: [
+      KEYS.ALT,
+      'J',
+      KEYS.SLASH,
+      KEYS.ALT,
+      'K',
+      KEYS.SLASH,
+      KEYS.ALT,
+      KEYS.UP,
+      KEYS.SLASH,
+      KEYS.ALT,
+      KEYS.DOWN,
+    ],
+    keySet: ['Alt+KeyJ', 'Alt+KeyK', 'Alt+ArrowUp', 'Alt+ArrowDown'],
   },
   {
     id: 2,

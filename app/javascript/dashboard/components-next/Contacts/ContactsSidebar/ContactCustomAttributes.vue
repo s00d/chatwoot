@@ -34,8 +34,14 @@ const processContactAttributes = (
     return [];
   }
 
+  // OnlineSIM: keep in data but hide from sidebar list
+  const hiddenKeys = new Set(['accountId', 'hash_id', 'hashId']);
+
   return attributes.reduce((result, attribute) => {
     const { attributeKey } = attribute;
+    if (hiddenKeys.has(attributeKey)) {
+      return result;
+    }
     const meetsCondition = filterCondition(attributeKey, customAttributes);
 
     if (meetsCondition) {

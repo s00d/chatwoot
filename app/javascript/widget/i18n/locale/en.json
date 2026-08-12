@@ -1,4 +1,5 @@
 {
+  "CHAT_HEADER": "Support",
   "COMPONENTS": {
     "FILE_BUBBLE": {
       "DOWNLOAD": "Download",
@@ -19,7 +20,7 @@
   },
   "TEAM_AVAILABILITY": {
     "ONLINE": "We are online",
-    "OFFLINE": "We are away at the moment",
+    "OFFLINE": "Unfortunately, all operators are offline",
     "BACK_AS_SOON_AS_POSSIBLE": "We will be back as soon as possible"
   },
   "REPLY_TIME": {

@@ -359,6 +359,9 @@ GEM
       grpc (~> 1.36)
     gemoji (4.1.0)
     geocoder (1.8.1)
+    get_process_mem (1.0.0)
+      bigdecimal (>= 2.0)
+      ffi (~> 1.0)
     gli (2.22.2)
       ostruct
     globalid (1.2.1)
@@ -403,6 +406,9 @@ GEM
       gapic-common (>= 0.20.0, < 2.a)
       google-cloud-errors (~> 1.0)
     google-protobuf (3.25.7)
+    google-protobuf (3.25.7-arm64-darwin)
+    google-protobuf (3.25.7-x86_64-darwin)
+    google-protobuf (3.25.7-x86_64-linux)
     googleapis-common-protos (1.6.0)
       google-protobuf (>= 3.18, < 5.a)
       googleapis-common-protos-types (~> 1.7)
@@ -697,6 +703,10 @@ GEM
     public_suffix (7.0.5)
     puma (7.2.1)
       nio4r (~> 2.0)
+    puma_worker_killer (1.0.0)
+      bigdecimal (>= 2.0)
+      get_process_mem (>= 0.2)
+      puma (>= 2.7)
     pundit (2.3.0)
       activesupport (>= 3.0.0)
     raabro (1.4.0)
@@ -1146,6 +1156,7 @@ DEPENDENCIES
   procore-sift
   pry-rails
   puma (~> 7.2, >= 7.2.1)
+  puma_worker_killer
   pundit
   rack-attack (>= 6.7.0)
   rack-cors (= 2.0.0)

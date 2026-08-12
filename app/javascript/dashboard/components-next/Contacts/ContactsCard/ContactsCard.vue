@@ -17,6 +17,7 @@ const props = defineProps({
   email: { type: String, default: '' },
   companyId: { type: [Number, String], default: '' },
   additionalAttributes: { type: Object, default: () => ({}) },
+  customAttributes: { type: Object, default: () => ({}) },
   phoneNumber: { type: String, default: '' },
   thumbnail: { type: String, default: '' },
   availabilityStatus: { type: String, default: null },
@@ -84,6 +85,24 @@ const formattedLocation = computed(() => {
     .join(' ');
 });
 
+// OnlineSIM: custom attribute columns for the contacts list
+const customField = key => {
+  const attrs = props.customAttributes || {};
+  const value = attrs[key];
+  if (value === null || value === undefined || value === '') return null;
+  return value;
+};
+
+const accountIdAttr = computed(() => customField('accountId'));
+const balanceAttr = computed(() => customField('balance'));
+const spentAttr = computed(() => customField('spent'));
+const profileAttr = computed(() => customField('profile'));
+
+const isProfileUrl = computed(() => {
+  const value = profileAttr.value;
+  return typeof value === 'string' && /^https?:\/\//i.test(value);
+});
+
 const handleFormUpdate = updatedData => {
   Object.assign(contactData.value, updatedData);
 };
@@ -149,18 +168,7 @@ const handleAvatarHover = isHovered => {
             <span class="text-base font-medium truncate text-n-slate-12">
               {{ name }}
             </span>
-            <span class="inline-flex items-center gap-1">
-              <span
-                v-if="additionalAttributes?.companyName"
-                class="i-ph-building-light size-4 text-n-slate-10 mb-0.5"
-              />
-              <span
-                v-if="additionalAttributes?.companyName"
-                class="text-sm truncate text-n-slate-11"
-              >
-                {{ additionalAttributes.companyName }}
-              </span>
-            </span>
+            <!-- OnlineSIM: company de-emphasized (hidden from list) -->
           </div>
           <div
             class="flex flex-wrap items-center justify-start gap-x-3 gap-y-1"
@@ -170,11 +178,75 @@ const handleAvatarHover = isHovered => {
                 {{ email }}
               </span>
             </div>
-            <div v-if="email" class="w-px h-3 truncate bg-n-slate-6" />
-            <span v-if="phoneNumber" class="text-sm truncate text-n-slate-11">
-              {{ phoneNumber }}
+            <!-- OnlineSIM: phone / social de-emphasized (hidden from list) -->
+            <div
+              v-if="
+                email &&
+                (accountIdAttr ||
+                  balanceAttr ||
+                  spentAttr ||
+                  profileAttr ||
+                  countryDetails)
+              "
+              class="w-px h-3 truncate bg-n-slate-6"
+            />
+            <span
+              v-if="accountIdAttr"
+              class="text-sm truncate text-n-slate-11"
+              :title="accountIdAttr"
+            >
+              {{ accountIdAttr }}
             </span>
-            <div v-if="phoneNumber" class="w-px h-3 truncate bg-n-slate-6" />
+            <div
+              v-if="accountIdAttr && (balanceAttr || spentAttr || profileAttr)"
+              class="w-px h-3 truncate bg-n-slate-6"
+            />
+            <span
+              v-if="balanceAttr"
+              class="text-sm truncate text-n-slate-11"
+              :title="balanceAttr"
+            >
+              {{ balanceAttr }}
+            </span>
+            <div
+              v-if="balanceAttr && (spentAttr || profileAttr)"
+              class="w-px h-3 truncate bg-n-slate-6"
+            />
+            <span
+              v-if="spentAttr"
+              class="text-sm truncate text-n-slate-11"
+              :title="spentAttr"
+            >
+              {{ spentAttr }}
+            </span>
+            <div
+              v-if="spentAttr && profileAttr"
+              class="w-px h-3 truncate bg-n-slate-6"
+            />
+            <a
+              v-if="profileAttr && isProfileUrl"
+              :href="profileAttr"
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+              class="text-sm truncate text-n-brand"
+              :title="profileAttr"
+              @click.stop
+            >
+              {{ profileAttr }}
+            </a>
+            <span
+              v-else-if="profileAttr"
+              class="text-sm truncate text-n-slate-11"
+            >
+              {{ profileAttr }}
+            </span>
+            <div
+              v-if="
+                (accountIdAttr || balanceAttr || spentAttr || profileAttr) &&
+                countryDetails
+              "
+              class="w-px h-3 truncate bg-n-slate-6"
+            />
             <span
               v-if="countryDetails"
               class="inline-flex items-center gap-2 text-sm truncate text-n-slate-11"
@@ -182,7 +254,17 @@ const handleAvatarHover = isHovered => {
               <Flag :country="countryDetails.countryCode" class="size-3.5" />
               {{ formattedLocation }}
             </span>
-            <div v-if="countryDetails" class="w-px h-3 truncate bg-n-slate-6" />
+            <div
+              v-if="
+                email ||
+                accountIdAttr ||
+                balanceAttr ||
+                spentAttr ||
+                profileAttr ||
+                countryDetails
+              "
+              class="w-px h-3 truncate bg-n-slate-6"
+            />
             <Button
               :label="t('CONTACTS_LAYOUT.CARD.VIEW_DETAILS')"
               variant="link"

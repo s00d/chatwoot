@@ -50,6 +50,7 @@ const runSDK = ({ baseUrl, websiteToken }) => {
   const chatwootSettings = window.chatwootSettings || {};
   let locale = chatwootSettings.locale;
   let baseDomain = chatwootSettings.baseDomain;
+  let mountSelector = chatwootSettings.mountSelector;
 
   if (chatwootSettings.useBrowserLanguage) {
     locale = window.navigator.language.replace('-', '_');
@@ -79,6 +80,7 @@ const runSDK = ({ baseUrl, websiteToken }) => {
     enableFileUpload: chatwootSettings.enableFileUpload,
     enableEmojiPicker: chatwootSettings.enableEmojiPicker ?? true,
     enableEndConversation: chatwootSettings.enableEndConversation ?? true,
+    mountSelector,
 
     toggle(state) {
       IFrameHelper.events.toggleBubble(state);
@@ -126,6 +128,29 @@ const runSDK = ({ baseUrl, websiteToken }) => {
       if (hashToBeStored === existingCookieValue) {
         return;
       }
+
+      window.$chatwoot.identifier = identifier;
+      window.$chatwoot.user = user;
+      IFrameHelper.sendMessage('set-user', { identifier, user });
+
+      setCookieWithDomain(userCookieName, hashToBeStored, {
+        baseDomain,
+      });
+    },
+
+    setUserForce(identifier, user) {
+      if (typeof identifier !== 'string' && typeof identifier !== 'number') {
+        throw new Error('Identifier should be a string or a number');
+      }
+
+      if (!hasUserKeys(user)) {
+        throw new Error(
+          'User object should have one of the keys [avatar_url, email, name]'
+        );
+      }
+
+      const userCookieName = getUserCookieName();
+      const hashToBeStored = computeHashForUserData({ identifier, user });
 
       window.$chatwoot.identifier = identifier;
       window.$chatwoot.user = user;
@@ -193,26 +218,34 @@ const runSDK = ({ baseUrl, websiteToken }) => {
     },
 
     reset() {
-      if (window.$chatwoot.isOpen) {
-        IFrameHelper.events.toggleBubble();
-      }
+      return new Promise((resolve, reject) => {
+        if (window.$chatwoot.isOpen) {
+          IFrameHelper.events.toggleBubble();
+        }
 
-      Cookies.remove('cw_conversation');
-      Cookies.remove(getUserCookieName());
+        Cookies.remove('cw_conversation');
+        Cookies.remove(getUserCookieName());
 
-      const iframe = IFrameHelper.getAppFrame();
-      iframe.src = IFrameHelper.getUrl({
-        baseUrl: window.$chatwoot.baseUrl,
-        websiteToken: window.$chatwoot.websiteToken,
+        const iframe = IFrameHelper.getAppFrame();
+        iframe.onload = () => {
+          window.$chatwoot.resetTriggered = true;
+          resolve();
+        };
+        iframe.onerror = () => {
+          reject(new Error('Error loading iframe'));
+        };
+        iframe.src = IFrameHelper.getUrl({
+          baseUrl: window.$chatwoot.baseUrl,
+          websiteToken: window.$chatwoot.websiteToken,
+        });
       });
-
-      window.$chatwoot.resetTriggered = true;
     },
   };
 
   IFrameHelper.createFrame({
     baseUrl,
     websiteToken,
+    mountSelector,
   });
 };
 

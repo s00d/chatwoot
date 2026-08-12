@@ -106,6 +106,24 @@ export default {
       useAlert(this.$t('CONTACT_PANEL.COPY_SUCCESSFUL'));
       this.handleClose();
     },
+    async handleEdit() {
+      this.handleClose();
+      const content = window.prompt(
+        this.$t('CONVERSATION.CONTEXT_MENU.EDIT'),
+        this.messageContent
+      );
+      if (content === null || content === this.messageContent) return;
+
+      try {
+        await this.$store.dispatch('editMessage', {
+          conversationId: this.conversationId,
+          messageId: this.messageId,
+          content,
+        });
+      } catch (error) {
+        useAlert(this.$t('CONVERSATION.FAIL_DELETE_MESSSAGE'));
+      }
+    },
     showCannedResponseModal() {
       useTrack(ACCOUNT_EVENTS.ADDED_TO_CANNED_RESPONSE);
       this.isCannedResponseModalOpen = true;
@@ -253,6 +271,16 @@ export default {
           }"
           variant="icon"
           @click.stop="showCannedResponseModal"
+        />
+        <hr v-if="enabledOptions['edit']" />
+        <MenuItem
+          v-if="enabledOptions['edit']"
+          :option="{
+            icon: 'edit',
+            label: $t('CONVERSATION.CONTEXT_MENU.EDIT'),
+          }"
+          variant="icon"
+          @click.stop="handleEdit"
         />
         <hr v-if="enabledOptions['report']" />
         <MenuItem

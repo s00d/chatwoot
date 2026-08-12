@@ -177,6 +177,10 @@
 
   word-break: break-word;
 
+  blockquote {
+    @apply ltr:border-l-4 rtl:border-r-4 border-n-slate-3 dark:border-n-alpha-2 border-solid my-1 px-0 text-n-slate-11 py-1 ltr:pr-2 rtl:pr-4 ltr:pl-4 rtl:pl-2 block;
+  }
+
   :not([audio]) {
     max-width: 100%;
   }

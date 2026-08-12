@@ -22,7 +22,7 @@ afterEach(() => {
 
 describe('#messageStamp', () => {
   it('returns correct value', () => {
-    expect(messageStamp(1612971343)).toEqual('3:35 PM');
+    expect(messageStamp(1612971343)).toEqual('15:35');
     expect(messageStamp(1612971343, 'LLL d, h:mm a')).toEqual(
       'Feb 10, 3:35 PM'
     );
@@ -34,7 +34,7 @@ describe('#messageTimestamp', () => {
     expect(messageTimestamp(1680777464)).toEqual('Apr 6, 2023');
   });
   it('should return the message date and time in a different format if the message was sent in a different year', () => {
-    expect(messageTimestamp(1612971343)).toEqual('Feb 10 2021, 3:35 PM');
+    expect(messageTimestamp(1612971343)).toEqual('Feb 10 2021, 15:35');
   });
 });
 
@@ -44,7 +44,7 @@ describe('#relativeDayTimestamp', () => {
 
   it('returns the time for timestamps from today', () => {
     const today = toUnix(Date.UTC(2023, 4, 5, 15, 35, 0));
-    expect(relativeDayTimestamp(today, 'Yesterday')).toEqual('3:35 PM');
+    expect(relativeDayTimestamp(today, 'Yesterday')).toEqual('15:35');
   });
 
   it('returns the supplied label for timestamps from yesterday', () => {

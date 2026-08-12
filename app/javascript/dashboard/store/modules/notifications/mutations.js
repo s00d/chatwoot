@@ -58,6 +58,11 @@ export const mutations = {
       ...($state.records[notification.id] || {}),
       ...notification,
     };
+    // OnlineSIM: keep the realtime notification list bounded
+    const notificationIds = Object.keys($state.records);
+    if (notificationIds.length > 10) {
+      delete $state.records[notificationIds[0]];
+    }
     $state.meta.unreadCount = unreadCount;
     $state.meta.count = count;
   },
@@ -67,6 +72,11 @@ export const mutations = {
       ...($state.records[notification.id] || {}),
       ...notification,
     };
+    // OnlineSIM: keep the realtime notification list bounded
+    const notificationIds = Object.keys($state.records);
+    if (notificationIds.length > 10) {
+      delete $state.records[notificationIds[0]];
+    }
     $state.meta.unreadCount = unreadCount;
     $state.meta.count = count;
   },

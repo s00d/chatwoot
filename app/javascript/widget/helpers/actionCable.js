@@ -105,6 +105,16 @@ class ActionCableConnector extends BaseActionCableConnector {
     ActionCableConnector.refreshConnector(pubsubToken);
   };
 
+  updateToken = pubsubToken => {
+    this.refreshConnection(pubsubToken);
+  };
+
+  static refreshConnector = pubsubToken => {
+    if (window.actionCable) {
+      window.actionCable.refreshConnection(pubsubToken);
+    }
+  };
+
   onTypingOn = data => {
     const activeConversationId =
       this.app.$store.getters['conversationAttributes/getConversationParams']

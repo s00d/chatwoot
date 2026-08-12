@@ -44,6 +44,7 @@ const onBackButtonClick = () => {
         <div
           class="flex items-center text-base font-medium leading-4 text-n-slate-12"
         >
+          <span class="ltr:mr-1 rtl:ml-1">{{ $t('CHAT_HEADER') }}</span>
           <span v-dompurify-html="title" class="ltr:mr-1 rtl:ml-1" />
           <div
             :class="`h-2 w-2 rounded-full

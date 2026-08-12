@@ -36,3 +36,12 @@ preload_app!
 
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart
+
+on_worker_boot do
+  ActionCable.server.restart
+end
+
+before_fork do
+  require 'puma_worker_killer'
+  # PumaWorkerKiller.enable_rolling_restart(12 * 3600) # optional rolling restart
+end

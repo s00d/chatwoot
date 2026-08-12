@@ -155,6 +155,7 @@ Rails.application.routes.draw do
                 member do
                   post :translate
                   post :retry
+                  patch :edit_content
                 end
               end
               resources :assignments, only: [:create]

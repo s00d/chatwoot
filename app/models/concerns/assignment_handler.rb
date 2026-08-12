@@ -45,7 +45,8 @@ module AssignmentHandler
     if saved_change_to_team_id?
       create_team_change_activity(user_name)
     elsif saved_change_to_assignee_id?
-      create_assignee_change_activity(user_name)
+      # OnlineSIM: mute assignee-change activity noise (auto-assign on reply)
+      Rails.logger.info('assignment_handler: skipping assignee change activity')
     end
   end
 

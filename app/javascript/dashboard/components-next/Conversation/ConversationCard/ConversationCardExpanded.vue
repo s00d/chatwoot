@@ -48,6 +48,31 @@ const voiceCallData = computed(() => {
 
 const unreadCount = computed(() => props.chat.unread_count);
 
+// OnlineSIM: browser / OS / device (compact row — tooltip)
+const browserInfo = computed(() => {
+  const browser = props.chat?.additional_attributes?.browser;
+  if (!browser) return null;
+
+  const {
+    browser_name: browserName,
+    browser_version: browserVersion,
+    platform_name: platformName,
+    platform_version: platformVersion,
+    device_name: deviceName,
+  } = browser;
+
+  const platform = platformName
+    ? `${platformName}${platformVersion ? ` ${platformVersion}` : ''}`
+    : '';
+  const browserText = browserName
+    ? `${browserName}${browserVersion ? ` ${browserVersion}` : ''}`
+    : '';
+
+  return (
+    [platform, browserText, deviceName].filter(Boolean).join(' · ') || null
+  );
+});
+
 const slaCardLabel = useTemplateRef('slaCardLabel');
 
 const hasSlaPolicyId = computed(
@@ -153,6 +178,10 @@ const selectedModel = computed({
       />
 
       <h4
+        v-tooltip.top="{
+          content: browserInfo || currentContact.name,
+          delay: { show: 500, hide: 0 },
+        }"
         class="text-heading-3 my-0 capitalize truncate text-n-slate-12 font-medium w-32 flex-shrink-0"
       >
         {{ currentContact.name }}

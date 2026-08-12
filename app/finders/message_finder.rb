@@ -33,11 +33,11 @@ class MessageFinder
   end
 
   def messages_after(after_id)
-    messages.reorder('created_at asc').where('id > ?', after_id).limit(100)
+    messages.reorder('created_at asc').where('id > ?', after_id).limit(message_limit(100))
   end
 
   def messages_before(before_id)
-    messages.reorder('created_at desc').where('id < ?', before_id).limit(20).reverse
+    messages.reorder('created_at desc').where('id < ?', before_id).limit(message_limit(20)).reverse
   end
 
   def messages_between(after_id, before_id)
@@ -45,7 +45,14 @@ class MessageFinder
   end
 
   def messages_latest
-    messages.reorder('created_at desc').limit(20).reverse
+    messages.reorder('created_at desc').limit(message_limit(20)).reverse
+  end
+
+  def message_limit(default)
+    limit = @params[:limit].to_i
+    return default if limit <= 0
+
+    [limit, 100].min
   end
 end
 

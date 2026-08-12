@@ -94,4 +94,8 @@ unless Rails.env.production?
   Seeders::MessageSeeder.create_sample_csat_collect_message conversation
 
   CannedResponse.create!(account: account, short_code: 'start', content: 'Hello welcome to chatwoot.')
+  CannedResponse.create!(account: account, short_code: 'ticket', content: '[ticket] > ')
+
+  # OnlineSIM white-label (upstream premium feature)
+  account.enable_features!('disable_branding') if account.respond_to?(:enable_features!)
 end

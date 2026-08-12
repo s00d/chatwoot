@@ -81,8 +81,12 @@ COPY . /app
 RUN mkdir -p /app/log
 
 # generate production assets if production environment
+# Includes: Vite app bundles, packs/js/sdk.js (via build.rake), lite_sdk.min.js
 RUN if [ "$RAILS_ENV" = "production" ]; then \
   SECRET_KEY_BASE=precompile_placeholder RAILS_LOG_TO_STDOUT=enabled bundle exec rake assets:precompile \
+  && test -f /app/public/packs/js/sdk.js \
+  && test -f /app/public/lite_sdk.js \
+  && test -f /app/public/lite_sdk.min.js \
   && rm -rf spec node_modules tmp/cache; \
   fi
 

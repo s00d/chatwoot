@@ -56,6 +56,24 @@ export default {
     isMessageSticker() {
       return this.message && this.message.content_type === 'sticker';
     },
+    // OnlineSIM: color preview by message type
+    previewTextClass() {
+      const {
+        message_type: messageType,
+        private: isPrivate,
+        sender,
+      } = this.message || {};
+
+      if (messageType === MESSAGE_TYPE.INCOMING) return 'text-n-teal-11';
+      if (messageType === MESSAGE_TYPE.OUTGOING) {
+        if (isPrivate) return 'text-n-amber-11';
+        if (!sender) return 'text-n-iris-11';
+        return 'text-n-slate-11';
+      }
+      if (messageType === MESSAGE_TYPE.ACTIVITY) return 'text-n-slate-10';
+      if (messageType === MESSAGE_TYPE.TEMPLATE) return 'text-n-iris-11';
+      return '';
+    },
   },
 };
 </script>
@@ -90,7 +108,7 @@ export default {
       />
       {{ $t('CHAT_LIST.ATTACHMENTS.image.CONTENT') }}
     </span>
-    <span v-else-if="message.content">
+    <span v-else-if="message.content" :class="previewTextClass">
       {{ parsedLastMessage }}
     </span>
     <span v-else-if="message.attachments">

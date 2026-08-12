@@ -248,6 +248,7 @@ function createSuggestionPlugin({
   showMenu,
   searchTerm,
   isAllowed = () => true,
+  transformText = text => text,
 }) {
   return suggestionsPlugin({
     matcher: triggerCharacters(trigger, minChars),
@@ -257,13 +258,13 @@ function createSuggestionPlugin({
       showMenu.value = true;
       range.value = args.range;
       editorView = args.view;
-      if (searchTerm) searchTerm.value = args.text || '';
+      if (searchTerm) searchTerm.value = transformText(args.text || '');
       return false;
     },
     onChange: args => {
       editorView = args.view;
       range.value = args.range;
-      if (searchTerm) searchTerm.value = args.text;
+      if (searchTerm) searchTerm.value = transformText(args.text || '');
       return false;
     },
     onExit: () => {
@@ -300,6 +301,16 @@ const plugins = computed(() => {
       showMenu: showCannedMenu,
       searchTerm: cannedSearchTerm,
       isAllowed: () => !props.isPrivate,
+      // OnlineSIM: strip trigger chars from search (/ and \)
+      transformText: text => (text || '').replace(/^[/\\]+/, ''),
+    }),
+    // OnlineSIM: also allow \ as canned-response trigger
+    createSuggestionPlugin({
+      trigger: '\\',
+      showMenu: showCannedMenu,
+      searchTerm: cannedSearchTerm,
+      isAllowed: () => !props.isPrivate,
+      transformText: text => (text || '').replace(/^[/\\]+/, ''),
     }),
     createSuggestionPlugin({
       trigger: '{{',

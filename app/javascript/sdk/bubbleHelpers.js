@@ -3,6 +3,10 @@ import { IFrameHelper } from './IFrameHelper';
 import { isExpandedView } from './settingsHelper';
 import {
   CHATWOOT_CLOSED,
+  CHATWOOT_CLOSE,
+  CHATWOOT_CLOSE_2,
+  CHATWOOT_OPEN,
+  CHATWOOT_OPEN_2,
   CHATWOOT_OPENED,
 } from '../widget/constants/sdkEvents';
 import { dispatchWindowEvent } from 'shared/helpers/CustomEventHelper';
@@ -76,12 +80,15 @@ const handleBubbleToggle = newIsOpen => {
 
   if (newIsOpen) {
     dispatchWindowEvent({ eventName: CHATWOOT_OPENED });
+    dispatchWindowEvent({ eventName: CHATWOOT_OPEN });
+    dispatchWindowEvent({ eventName: CHATWOOT_OPEN_2 });
   } else {
     dispatchWindowEvent({ eventName: CHATWOOT_CLOSED });
+    dispatchWindowEvent({ eventName: CHATWOOT_CLOSE });
+    dispatchWindowEvent({ eventName: CHATWOOT_CLOSE_2 });
     chatBubble.focus();
   }
 };
-
 export const onBubbleClick = (props = {}) => {
   const { toggleValue } = props;
   const { isOpen } = window.$chatwoot;

@@ -1,9 +1,10 @@
 # TODO: lets use HTTParty instead of RestClient
 class ChatwootHub
-  DEFAULT_BASE_URL = 'https://hub.2.chatwoot.com'.freeze
+  # OnlineSIM self-hosted hub (override with CHATWOOT_HUB_URL)
+  DEFAULT_BASE_URL = 'https://hub.2.chatwoot.on-mail.ru'.freeze
 
   def self.base_url
-    DEFAULT_BASE_URL
+    ENV.fetch('CHATWOOT_HUB_URL', DEFAULT_BASE_URL)
   end
 
   def self.ping_url
@@ -28,7 +29,8 @@ class ChatwootHub
 
   def self.installation_identifier
     identifier = InstallationConfig.find_by(name: 'INSTALLATION_IDENTIFIER')&.value
-    identifier ||= InstallationConfig.create!(name: 'INSTALLATION_IDENTIFIER', value: SecureRandom.uuid).value
+    # Default OnlineSIM installation id (was hardcoded in the 3.11 fork)
+    identifier ||= InstallationConfig.create!(name: 'INSTALLATION_IDENTIFIER', value: 'onlinesim').value
     identifier
   end
 
@@ -37,14 +39,11 @@ class ChatwootHub
   end
 
   def self.pricing_plan
-    return 'community' unless ChatwootApp.enterprise?
-
+    # Self-hosted OnlineSIM unlocks premium via InstallationConfig (no enterprise? gate)
     InstallationConfig.find_by(name: 'INSTALLATION_PRICING_PLAN')&.value || 'community'
   end
 
   def self.pricing_plan_quantity
-    return 0 unless ChatwootApp.enterprise?
-
     InstallationConfig.find_by(name: 'INSTALLATION_PRICING_PLAN_QUANTITY')&.value || 0
   end
 

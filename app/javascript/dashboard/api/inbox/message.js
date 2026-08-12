@@ -114,6 +114,14 @@ class MessageApi extends ApiClient {
       }
     );
   }
+
+  // OnlineSIM: edit message content
+  edit(conversationId, messageId, content) {
+    return axios.patch(
+      `${this.url}/${conversationId}/messages/${messageId}/edit_content`,
+      { content }
+    );
+  }
 }
 
 export default new MessageApi();

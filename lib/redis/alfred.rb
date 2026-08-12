@@ -117,6 +117,18 @@ module Redis::Alfred
       $alfred.with { |conn| conn.hget(key, field) }
     end
 
+    def hincrby(key, field, count = 1)
+      $alfred.with { |conn| conn.hincrby(key, field, count) }
+    end
+
+    def hdercby(key, field, count = 1)
+      $alfred.with { |conn| conn.hincrby(key, field, -count) }
+    end
+
+    def hdel(key, field)
+      $alfred.with { |conn| conn.hdel(key, field) }
+    end
+
     # get values of multiple keys from redis hash
     def hmget(key, fields)
       $alfred.with { |conn| conn.hmget(key, *fields) }

@@ -308,6 +308,7 @@
       "ASSIGN": "Assign"
     },
     "CONTEXT_MENU": {
+      "EDIT": "Edit",
       "COPY": "Copy",
       "REPLY_TO": "Reply to this message",
       "DELETE": "Delete",

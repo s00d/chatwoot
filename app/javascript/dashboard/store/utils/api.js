@@ -13,7 +13,11 @@ import {
   CHATWOOT_SET_USER,
 } from '../../constants/appEvents';
 
-Cookies.defaults = { sameSite: 'Lax' };
+// OnlineSIM: SameSite=None + Secure (embedded / cross-site dashboard sessions)
+Cookies.defaults = {
+  sameSite: 'None',
+  secure: true,
+};
 
 export const getLoadingStatus = state => state.fetchAPIloadingStatus;
 export const setLoadingStatus = (state, status) => {

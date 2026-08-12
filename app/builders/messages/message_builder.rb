@@ -28,11 +28,24 @@ class Messages::MessageBuilder
     # When the message has no quoted content, it will just be rendered as a regular message
     # The frontend is equipped to handle this case
     process_email_content
+    process_assignee
     @message.save!
     @message
   end
 
   private
+
+  # OnlineSIM: assign conversation to the agent who replied (skip system user id 4)
+  SYSTEM_USER_ID = 4
+
+  def process_assignee
+    return if @user.nil?
+    return unless @message_type.to_s == 'outgoing'
+    return if @conversation.assignee_id == @user.id
+    return if @user.id == SYSTEM_USER_ID
+
+    @conversation.update!(assignee_id: @user.id)
+  end
 
   # Extracts content attributes from the given params.
   # - Converts ActionController::Parameters to a regular hash if needed.

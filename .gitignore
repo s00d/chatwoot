@@ -57,6 +57,8 @@ buildreports
 coverage
 
 /storage
+/avatars
+Envoy.blade.php
 
 # ignore packages
 node_modules
@@ -85,6 +87,8 @@ yarn-debug.log*
 
 # Vite Ruby
 /public/vite*
+# Minified lite SDK is produced at image/build time (source: public/lite_sdk.js)
+/public/lite_sdk.min.js
 # Vite uses dotenv and suggests to ignore local-only env files. See
 # https://vitejs.dev/guide/env-and-mode.html#env-files
 *.local

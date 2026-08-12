@@ -24,8 +24,11 @@ import { isWidgetColorLighter } from 'shared/helpers/colorHelper';
 import { dispatchWindowEvent } from 'shared/helpers/CustomEventHelper';
 import {
   CHATWOOT_ERROR,
+  CHATWOOT_INIT,
+  CHATWOOT_LOADED,
   CHATWOOT_POSTBACK,
   CHATWOOT_READY,
+  CHATWOOT_READY_2,
 } from '../widget/constants/sdkEvents';
 import { SET_USER_ERROR } from '../widget/constants/errorTypes';
 import { getUserCookieName, setCookieWithDomain } from './cookieHelpers';
@@ -54,7 +57,7 @@ export const IFrameHelper = {
   getUrl({ baseUrl, websiteToken }) {
     return `${baseUrl}/widget?website_token=${websiteToken}`;
   },
-  createFrame: ({ baseUrl, websiteToken }) => {
+  createFrame: ({ baseUrl, websiteToken, mountSelector }) => {
     if (IFrameHelper.getAppFrame()) {
       return;
     }
@@ -84,10 +87,19 @@ export const IFrameHelper = {
     widgetHolder.id = 'cw-widget-holder';
     widgetHolder.dataset.turboPermanent = true;
     widgetHolder.appendChild(iframe);
-    body.appendChild(widgetHolder);
+    const mountNode = mountSelector
+      ? document.querySelector(mountSelector)
+      : null;
+    if (mountNode) {
+      addClasses(widgetHolder, 'woot-widget-holder--embedded');
+      mountNode.appendChild(widgetHolder);
+    } else {
+      body.appendChild(widgetHolder);
+    }
     IFrameHelper.initPostMessageCommunication();
     IFrameHelper.initWindowSizeListener();
     IFrameHelper.preventDefaultScroll();
+    dispatchWindowEvent({ eventName: CHATWOOT_LOADED });
   },
   getAppFrame: () => document.getElementById('chatwoot_live_chat_widget'),
   getBubbleHolder: () => document.getElementsByClassName('woot--bubble-holder'),
@@ -191,7 +203,10 @@ export const IFrameHelper = {
 
       if (!window.$chatwoot.resetTriggered) {
         dispatchWindowEvent({ eventName: CHATWOOT_READY });
+        dispatchWindowEvent({ eventName: CHATWOOT_READY_2 });
       }
+
+      dispatchWindowEvent({ eventName: CHATWOOT_INIT });
     },
     error: ({ errorType, data }) => {
       dispatchWindowEvent({ eventName: CHATWOOT_ERROR, data: data });

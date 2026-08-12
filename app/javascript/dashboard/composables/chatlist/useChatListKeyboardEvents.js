@@ -54,6 +54,15 @@ export function useChatListKeyboardEvents(listRef) {
       action: () => handleConversationNavigation('next'),
       allowOnFocusedInput: true,
     },
+    // OnlineSIM: Alt+Arrow navigation (in addition to Alt+J/K)
+    'Alt+ArrowUp': {
+      action: () => handleConversationNavigation('previous'),
+      allowOnFocusedInput: true,
+    },
+    'Alt+ArrowDown': {
+      action: () => handleConversationNavigation('next'),
+      allowOnFocusedInput: true,
+    },
   };
 
   useKeyboardEvents(keyboardEvents);

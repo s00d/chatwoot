@@ -18,7 +18,17 @@ class Api::V1::Accounts::Conversations::MessagesController < Api::V1::Accounts::
     @message = message
   end
 
+  # OnlineSIM: edit message content (separate from status update)
+  def edit_content
+    return render json: { error: 'Forbidden' }, status: :forbidden unless message_owned_by_current_user?
+
+    message.update!(content: params.require(:content))
+    @message = message
+  end
+
   def destroy
+    return render json: { error: 'Forbidden' }, status: :forbidden unless message_owned_by_current_user?
+
     ActiveRecord::Base.transaction do
       message.update!(content: I18n.t('conversations.messages.deleted'), content_type: :text, content_attributes: { deleted: true })
       message.attachments.destroy_all
@@ -68,11 +78,15 @@ class Api::V1::Accounts::Conversations::MessagesController < Api::V1::Accounts::
   end
 
   def permitted_params
-    params.permit(:id, :target_language, :status, :external_error)
+    params.permit(:id, :target_language, :status, :external_error, :content)
   end
 
   def already_translated_content_available?
     message.translations.present? && message.translations[permitted_params[:target_language]].present?
+  end
+
+  def message_owned_by_current_user?
+    Current.user.present? && message.sender_id == Current.user.id
   end
 
   # API inbox check

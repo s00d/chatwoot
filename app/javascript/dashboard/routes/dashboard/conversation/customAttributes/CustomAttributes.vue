@@ -74,18 +74,23 @@ const toggleButtonText = computed(() =>
 );
 
 const filteredCustomAttributes = computed(() =>
-  attributes.value.map(attribute => {
-    // Check if the attribute key exists in customAttributes
-    const hasValue = attribute.attribute_key in customAttributes.value;
+  attributes.value
+    // OnlineSIM: hide sensitive/internal contact attrs from sidebar
+    .filter(
+      attribute => !['accountId', 'hash_id'].includes(attribute.attribute_key)
+    )
+    .map(attribute => {
+      // Check if the attribute key exists in customAttributes
+      const hasValue = attribute.attribute_key in customAttributes.value;
 
-    return {
-      ...attribute,
-      type: 'custom_attribute',
-      key: attribute.attribute_key,
-      // Set value from customAttributes if it exists, otherwise use ''
-      value: hasValue ? customAttributes.value[attribute.attribute_key] : '',
-    };
-  })
+      return {
+        ...attribute,
+        type: 'custom_attribute',
+        key: attribute.attribute_key,
+        // Set value from customAttributes if it exists, otherwise use ''
+        value: hasValue ? customAttributes.value[attribute.attribute_key] : '',
+      };
+    })
 );
 
 // Order key name for UI settings

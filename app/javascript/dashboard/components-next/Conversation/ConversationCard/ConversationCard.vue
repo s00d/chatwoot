@@ -57,6 +57,33 @@ const lastActivityAt = computed(() => {
   return timestamp ? shortTimestamp(dynamicTime(timestamp)) : '';
 });
 
+// OnlineSIM: browser / OS / device from conversation additional_attributes
+const browserInfo = computed(() => {
+  const browser =
+    props.conversation?.additional_attributes?.browser ||
+    props.conversation?.additionalAttributes?.browser;
+  if (!browser) return null;
+
+  const {
+    browser_name: browserName,
+    browser_version: browserVersion,
+    platform_name: platformName,
+    platform_version: platformVersion,
+    device_name: deviceName,
+  } = browser;
+
+  const platform = platformName
+    ? `${platformName}${platformVersion ? ` ${platformVersion}` : ''}`
+    : '';
+  const browserText = browserName
+    ? `${browserName}${browserVersion ? ` ${browserVersion}` : ''}`
+    : '';
+
+  return (
+    [platform, browserText, deviceName].filter(Boolean).join(' · ') || null
+  );
+});
+
 const showMessagePreviewWithoutMeta = computed(() => {
   const { labels = [] } = props.conversation;
   return (
@@ -118,6 +145,9 @@ const onCardClick = e => {
           </span>
         </div>
       </div>
+      <p v-if="browserInfo" class="text-xs truncate text-n-slate-10">
+        {{ browserInfo }}
+      </p>
       <CardMessagePreview
         v-show="showMessagePreviewWithoutMeta"
         :conversation="conversation"

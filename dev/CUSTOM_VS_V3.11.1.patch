@@ -1,0 +1,5257 @@
+diff --git a/.editorconfig b/.editorconfig
+index 2a5fe28cf..7162c5aec 100644
+--- a/.editorconfig
++++ b/.editorconfig
+@@ -9,6 +9,7 @@ trim_trailing_whitespace = true
+ insert_final_newline = true
+ indent_style = space
+ tab_width = 2
++indent_size = 2
+ 
+ [*.{rb,erb,js,coffee,json,yml,css,scss,sh,markdown,md,html}]
+ indent_size = 2
+diff --git a/.github/workflows/lint_pr.yml b/.github/workflows/lint_pr.yml
+deleted file mode 100644
+index ec8f6f4ab..000000000
+--- a/.github/workflows/lint_pr.yml
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# ref: https://github.com/amannn/action-semantic-pull-request
+-# ensure PR title is in semantic format
+-
+-name: "Lint PR"
+-
+-on:
+-  pull_request_target:
+-    types:
+-      - opened
+-      - edited
+-      - synchronize
+-
+-permissions:
+-  pull-requests: read
+-
+-jobs:
+-  main:
+-    name: Validate PR title
+-    runs-on: ubuntu-latest
+-    steps:
+-      - uses: amannn/action-semantic-pull-request@v5
+-        env:
+-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+diff --git a/.github/workflows/lock.yml b/.github/workflows/lock.yml
+deleted file mode 100644
+index c42909856..000000000
+--- a/.github/workflows/lock.yml
++++ /dev/null
+@@ -1,37 +0,0 @@
+-# We often have cases where users would comment over stale closed Github Issues.
+-# This creates unnecessary noise for the original reporter and makes it harder for triaging.
+-# This action locks the closed threads once it is inactive for over a month.
+-
+-name: 'Lock Threads'
+-
+-on:
+-  schedule:
+-    - cron: '0 * * * *'
+-  workflow_dispatch:
+-
+-permissions:
+-  issues: write
+-  pull-requests: write
+-
+-concurrency:
+-  group: lock
+-
+-jobs:
+-  action:
+-    runs-on: ubuntu-latest
+-    if: ${{ github.repository == 'chatwoot/chatwoot' }}
+-    steps:
+-      - uses: dessant/lock-threads@v3
+-        with: 
+-          issue-inactive-days: '30'
+-          issue-lock-reason: 'resolved'
+-          issue-comment: >
+-            This issue has been automatically locked since there
+-            has not been any recent activity after it was closed.
+-            Please open a new issue for related bugs.
+-          pr-inactive-days: '30'
+-          pr-lock-reason: 'resolved'
+-          pr-comment: >
+-            This pull request has been automatically locked since there
+-            has not been any recent activity after it was closed.
+-            Please open a new issue for related bugs.
+diff --git a/.github/workflows/logging_percentage_check.yml b/.github/workflows/logging_percentage_check.yml
+deleted file mode 100644
+index e9f84c313..000000000
+--- a/.github/workflows/logging_percentage_check.yml
++++ /dev/null
+@@ -1,55 +0,0 @@
+-name: Log Lines Percentage Check
+-
+-on:
+-  pull_request:
+-    branches:
+-      - develop
+-
+-jobs:
+-  log_lines_check:
+-    runs-on: ubuntu-latest
+-
+-    steps:
+-      - name: Checkout repository
+-        uses: actions/checkout@v4
+-
+-      - name: Check for log lines and calculate percentage
+-        run: |
+-          # Define the log line pattern
+-          LOG_LINE_PATTERN="Rails\.logger"
+-
+-          # Get the list of changed files in the pull request
+-          CHANGED_FILES=$(git diff --name-only)
+-
+-          # Initialize a flag to track if any files have insufficient log lines
+-          INSUFFICIENT_LOGS=0
+-
+-          for file in $CHANGED_FILES; do
+-            if [[ $file =~ \.rb$ && ! $file =~ _spec\.rb$ ]]; then
+-              # Count the total number of lines in the file
+-              total_lines=$(wc -l < "$file")
+-
+-              # Count the number of log lines in the file
+-              log_lines=$(grep -c "$LOG_LINE_PATTERN" "$file")
+-
+-              # Calculate the percentage of log lines
+-              if [ "$total_lines" -gt 0 ]; then
+-                percentage=$(awk "BEGIN { pc=100*${log_lines}/${total_lines}; i=int(pc); print (pc-i<0.5)?i:i+1 }")
+-              else
+-                percentage=0
+-              fi
+-
+-              # Check if the percentage is less than 5%
+-              if [ "$percentage" -lt 5 ]; then
+-                echo "Error: Log lines percentage is less than 5% ($percentage%) in $file. Please add more log lines using Rails.logger statements."
+-                INSUFFICIENT_LOGS=1
+-              else
+-                echo "Log lines percentage is $percentage% in $file. Code looks good!"
+-              fi
+-            fi
+-          done
+-
+-          # If any files have insufficient log lines, fail the action
+-          if [ "$INSUFFICIENT_LOGS" -eq 1 ]; then
+-            exit 1
+-          fi
+diff --git a/.github/workflows/nightly_installer.yml b/.github/workflows/nightly_installer.yml
+deleted file mode 100644
+index d11fe6401..000000000
+--- a/.github/workflows/nightly_installer.yml
++++ /dev/null
+@@ -1,52 +0,0 @@
+-# #
+-# #
+-# # Linux nightly installer action
+-# # This action will try to install and setup
+-# # chatwoot on an Ubuntu 20.04 machine using
+-# # the linux installer script.
+-# #
+-# # This is set to run daily at midnight.
+-# #
+-
+-name: Run Linux nightly installer
+-on:
+-  schedule:
+-    - cron: "0 0 * * *"
+-  workflow_dispatch:
+-
+-jobs:
+-  nightly:
+-    runs-on: ubuntu-20.04
+-    steps:
+-
+-    - name: get installer
+-      run: |
+-        wget https://get.chatwoot.app/linux/install.sh
+-        chmod +x install.sh
+-        #fix for postgtres not starting automatically in gh action env
+-        sed -i '/function configure_db() {/a sudo service postgresql start' install.sh
+-
+-    - name: create input file
+-      run: |
+-        echo "no" > input
+-        echo "yes" >> input
+-
+-    - name: Run the installer
+-      run: |
+-        sudo ./install.sh --install < input
+-
+-        #  disabling http verify for now as http
+-        #  access to port 3000 fails in gh action env
+-        #    - name: Verify
+-        #      if: always()
+-        #      run: |
+-        #        sudo netstat -ntlp | grep 3000
+-        #        sudo systemctl restart chatwoot.target
+-        #        curl http://localhost:3000/api
+-
+-    - name: Upload chatwoot setup log file as an artifact
+-      uses: actions/upload-artifact@v4
+-      if: always()
+-      with:
+-        name: chatwoot-setup-log-file
+-        path: /var/log/chatwoot-setup.log
+diff --git a/.github/workflows/publish_codespace_image.yml b/.github/workflows/publish_codespace_image.yml
+deleted file mode 100644
+index 647608473..000000000
+--- a/.github/workflows/publish_codespace_image.yml
++++ /dev/null
+@@ -1,24 +0,0 @@
+-name: Publish Codespace Base Image
+-
+-on:
+-  workflow_dispatch:
+-
+-jobs:
+-  publish-code-space-image:
+-    runs-on: ubuntu-latest
+-
+-    steps:
+-    - uses: actions/checkout@v4
+-
+-    - name: Login to GitHub Container Registry
+-      uses: docker/login-action@v1
+-      with:
+-        registry: ghcr.io
+-        username: ${{ github.actor }}
+-        password: ${{ secrets.GITHUB_TOKEN }}
+-
+-    - name: Build the Codespace Base Image
+-      run: |
+-        docker-compose -f .devcontainer/docker-compose.yml build base
+-        docker tag base:latest ghcr.io/chatwoot/chatwoot_codespace:latest
+-        docker push ghcr.io/chatwoot/chatwoot_codespace:latest
+diff --git a/.github/workflows/publish_foss_docker.yml b/.github/workflows/publish_foss_docker.yml
+deleted file mode 100644
+index d48b82a58..000000000
+--- a/.github/workflows/publish_foss_docker.yml
++++ /dev/null
+@@ -1,63 +0,0 @@
+-# #
+-# # This action will publish Chatwoot CE docker image.
+-# # This is set to run against merges to develop, master
+-# # and when tags are created.
+-# #
+-
+-name: Publish Chatwoot CE docker images
+-on:
+-  push:
+-    branches:
+-      - develop
+-      - master
+-    tags:
+-      - v*
+-  workflow_dispatch:
+-
+-jobs:
+-  build:
+-    runs-on: ubuntu-latest
+-    env:
+-      GIT_REF: ${{ github.head_ref || github.ref_name }} # ref_name to get tags/branches
+-    steps:
+-      - name: Checkout
+-        uses: actions/checkout@v4
+-
+-      - name: Set up QEMU
+-        uses: docker/setup-qemu-action@v1
+-
+-      - name: Set up Docker Buildx
+-        uses: docker/setup-buildx-action@v1
+-
+-      - name: Strip enterprise code
+-        run: |
+-          rm -rf enterprise
+-          rm -rf spec/enterprise
+-
+-      - name: Set Chatwoot edition
+-        run: |
+-          echo -en '\nENV CW_EDITION="ce"' >> docker/Dockerfile
+-
+-      - name: set docker tag
+-        run: |
+-          echo "DOCKER_TAG=chatwoot/chatwoot:$GIT_REF-ce" >> $GITHUB_ENV
+-
+-      - name: replace docker tag if master
+-        if: github.ref_name == 'master'
+-        run: |
+-          echo "DOCKER_TAG=chatwoot/chatwoot:latest-ce" >> $GITHUB_ENV
+-
+-      - name: Login to DockerHub
+-        uses: docker/login-action@v1
+-        with:
+-          username: ${{ secrets.DOCKERHUB_USERNAME }}
+-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+-
+-      - name: Build and push
+-        uses: docker/build-push-action@v2
+-        with:
+-          context: .
+-          file: docker/Dockerfile
+-          platforms: linux/amd64
+-          push: true
+-          tags: ${{ env.DOCKER_TAG }}
+diff --git a/.github/workflows/run_foss_spec.yml b/.github/workflows/run_foss_spec.yml
+deleted file mode 100644
+index b0b2372ae..000000000
+--- a/.github/workflows/run_foss_spec.yml
++++ /dev/null
+@@ -1,87 +0,0 @@
+-# #
+-# # This action will strip the enterprise folder
+-# # and run the spec.
+-# # This is set to run against every PR.
+-# #
+-
+-name: Run Chatwoot CE spec
+-on:
+-  push:
+-    branches:
+-      - develop
+-      - master
+-  pull_request:
+-  workflow_dispatch:
+-
+-jobs:
+-  test:
+-    runs-on: ubuntu-20.04
+-    services:
+-      postgres:
+-        image: postgres:15.3
+-        env:
+-          POSTGRES_USER: postgres
+-          POSTGRES_PASSWORD: ""
+-          POSTGRES_DB: postgres
+-          POSTGRES_HOST_AUTH_METHOD: trust
+-        ports:
+-          - 5432:5432
+-        # needed because the postgres container does not provide a healthcheck
+-        # tmpfs makes DB faster by using RAM
+-        options: >-
+-          --mount type=tmpfs,destination=/var/lib/postgresql/data
+-          --health-cmd pg_isready
+-          --health-interval 10s
+-          --health-timeout 5s
+-          --health-retries 5
+-      redis:
+-        image: redis
+-        ports:
+-          - 6379:6379
+-        options: --entrypoint redis-server
+-
+-    steps:
+-    - uses: actions/checkout@v4
+-      with:
+-        ref: ${{ github.event.pull_request.head.ref }}
+-        repository: ${{ github.event.pull_request.head.repo.full_name }}
+-
+-    - uses: ruby/setup-ruby@v1
+-      with:
+-        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+-
+-    - uses: actions/setup-node@v4
+-      with:
+-        node-version: 20
+-        cache: yarn
+-
+-    - name: yarn
+-      run: yarn install
+-
+-    - name: Strip enterprise code
+-      run: |
+-        rm -rf enterprise
+-        rm -rf spec/enterprise
+-
+-    - name: Create database
+-      run: bundle exec rake db:create
+-
+-    - name: Seed database
+-      run: bundle exec rake db:schema:load
+-
+-    - name: yarn check-files
+-      run: yarn install --check-files
+-
+-    # Run rails tests
+-    - name: Run backend tests
+-      run: |
+-        bundle exec rspec --profile=10 --format documentation
+-      env:
+-        NODE_OPTIONS: --openssl-legacy-provider
+-
+-    - name: Upload rails log folder
+-      uses: actions/upload-artifact@v4
+-      if: always()
+-      with:
+-        name: rails-log-folder
+-        path: log
+diff --git a/.github/workflows/run_response_bot_spec.yml b/.github/workflows/run_response_bot_spec.yml
+deleted file mode 100644
+index c594ff404..000000000
+--- a/.github/workflows/run_response_bot_spec.yml
++++ /dev/null
+@@ -1,85 +0,0 @@
+-# #
+-# # This workflow will run specs related to response bot
+-# # This can only be activated in installations Where vector extension is available.
+-# #
+-
+-name: Run Response Bot spec
+-on:
+-  push:
+-    branches:
+-      - develop
+-      - master
+-  pull_request:
+-  workflow_dispatch:
+-
+-jobs:
+-  test:
+-    runs-on: ubuntu-20.04
+-    services:
+-      postgres:
+-        image: ankane/pgvector
+-        env:
+-          POSTGRES_USER: postgres
+-          POSTGRES_PASSWORD: ""
+-          POSTGRES_DB: postgres
+-          POSTGRES_HOST_AUTH_METHOD: trust
+-        ports:
+-          - 5432:5432
+-        # needed because the postgres container does not provide a healthcheck
+-        # tmpfs makes DB faster by using RAM
+-        options: >-
+-          --mount type=tmpfs,destination=/var/lib/postgresql/data
+-          --health-cmd pg_isready
+-          --health-interval 10s
+-          --health-timeout 5s
+-          --health-retries 5
+-      redis:
+-        image: redis
+-        ports:
+-          - 6379:6379
+-        options: --entrypoint redis-server
+-
+-    steps:
+-    - uses: actions/checkout@v4
+-      with:
+-        ref: ${{ github.event.pull_request.head.ref }}
+-        repository: ${{ github.event.pull_request.head.repo.full_name }}
+-
+-    - uses: ruby/setup-ruby@v1
+-      with:
+-        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+-
+-    - uses: actions/setup-node@v4
+-      with:
+-        node-version: 20
+-        cache: yarn
+-
+-    - name: yarn
+-      run: yarn install
+-
+-    - name: Create database
+-      run: bundle exec rake db:create
+-
+-    - name: Seed database
+-      run: bundle exec rake db:schema:load
+-
+-    - name: Enable ResponseBotService in installation
+-      run: RAILS_ENV=test bundle exec rails runner "Features::ResponseBotService.new.enable_in_installation"
+-
+-    # Run  Response Bot specs
+-    - name: Run backend tests
+-      run: |
+-        bundle exec rspec \
+-          spec/enterprise/controllers/api/v1/accounts/response_sources_controller_spec.rb \
+-          spec/enterprise/services/enterprise/message_templates/response_bot_service_spec.rb \
+-          spec/enterprise/controllers/enterprise/api/v1/accounts/inboxes_controller_spec.rb:47 \
+-          spec/enterprise/jobs/enterprise/account/conversations_resolution_scheduler_job_spec.rb \
+-          --profile=10 \
+-          --format documentation
+-
+-    - name: Upload rails log folder
+-      uses: actions/upload-artifact@v4
+-      if: always()
+-      with:
+-        name: rails-log-folder
+-        path: log
+diff --git a/.github/workflows/size-limit.yml b/.github/workflows/size-limit.yml
+deleted file mode 100644
+index 0526aeedb..000000000
+--- a/.github/workflows/size-limit.yml
++++ /dev/null
+@@ -1,41 +0,0 @@
+-name: Run Size Limit Check
+-
+-on:
+-  pull_request:
+-    branches:
+-      - develop
+-
+-jobs:
+-  test:
+-    runs-on: ubuntu-20.04
+-
+-    steps:
+-      - uses: actions/checkout@v4
+-        with:
+-          ref: ${{ github.event.pull_request.head.ref }}
+-          repository: ${{ github.event.pull_request.head.repo.full_name }}
+-
+-      - uses: ruby/setup-ruby@v1
+-        with:
+-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+-
+-      - uses: actions/setup-node@v4
+-        with:
+-          node-version: 20
+-          cache: 'yarn'
+-
+-      - name: yarn
+-        run: yarn install
+-
+-      - name: Strip enterprise code
+-        run: |
+-          rm -rf enterprise
+-          rm -rf spec/enterprise
+-
+-      - name: Run asset compile
+-        run: bundle exec rake assets:precompile
+-        env:
+-          NODE_OPTIONS: --openssl-legacy-provider
+-
+-      - name: Size Check
+-        run: yarn run size
+diff --git a/.github/workflows/stale.yml b/.github/workflows/stale.yml
+deleted file mode 100644
+index 7a7564ecb..000000000
+--- a/.github/workflows/stale.yml
++++ /dev/null
+@@ -1,28 +0,0 @@
+-# This workflow warns and then closes PRs that have had no activity for a specified amount of time.
+-#
+-# You can adjust the behavior by modifying this file.
+-# For more information, see:
+-# https://github.com/actions/stale
+-name: Mark stale issues and pull requests
+-
+-on:
+-  schedule:
+-  - cron: '28 3 * * *'
+-
+-jobs:
+-  stale:
+-
+-    runs-on: ubuntu-latest
+-    permissions:
+-      pull-requests: write
+-
+-    steps:
+-    - uses: actions/stale@v5
+-      with:
+-        repo-token: ${{ secrets.GITHUB_TOKEN }}
+-        days-before-issue-close: -1,
+-        days-before-issue-stale: -1
+-        days-before-pr-close: -1,
+-        days-before-pr-stale: 30,
+-        stale-pr-message: '🐢 Turtley slow progress alert! This pull request has been idle for over 30 days. Can we please speed things up and either merge it or release it back into the wild?'
+-        stale-pr-label: 'stale'
+diff --git a/.gitignore b/.gitignore
+index 028a97f09..73a9244d4 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -31,7 +31,7 @@ master.key
+ .env
+ 
+ public/uploads
+-public/packs*
++#public/packs*
+ 
+ # VIM files
+ *.swp
+@@ -47,6 +47,7 @@ buildreports
+ coverage
+ 
+ /storage
++/avatars
+ 
+ # ignore packages
+ node_modules
+@@ -60,6 +61,9 @@ test/cypress/videos/*
+ 
+ /config/master.key
+ /config/*.enc
++/vendor/
++Envoy.blade.php
++composer.lock
+ 
+ #ignore files under .vscode directory
+ .vscode
+@@ -67,12 +71,13 @@ test/cypress/videos/*
+ # yalc for local testing
+ .yalc
+ yalc.lock
++#.yarn
++.yarn/cache
++.yarn/install-state.gz
+ 
+-/public/packs
+-/public/packs-test
+ /node_modules
+ /yarn-error.log
+ yarn-debug.log*
+ .yarn-integrity
+ 
+-/storybook-static
+\ No newline at end of file
++/storybook-static
+diff --git a/.husky/pre-commit b/.husky/pre-commit
+index adda426ad..f4a0ea72c 100755
+--- a/.husky/pre-commit
++++ b/.husky/pre-commit
+@@ -1,11 +1,11 @@
+ #!/bin/sh
+-. "$(dirname "$0")/_/husky.sh"
+-
+-# lint js and vue files
+-npx --no-install lint-staged
+-
+-# lint only staged ruby files
+-git diff --name-only --cached | xargs ls -1 2>/dev/null | grep '\.rb$' | xargs bundle exec rubocop --force-exclusion -a
+-
+-# stage rubocop changes to files
+-git diff --name-only --cached | xargs git add
++#. "$(dirname "$0")/_/husky.sh"
++#
++## lint js and vue files
++#npx --no-install lint-staged
++#
++## lint only staged ruby files
++#git diff --name-only --cached | xargs ls -1 2>/dev/null | grep '\.rb$' | xargs bundle exec rubocop --force-exclusion -a
++#
++## stage rubocop changes to files
++#git diff --name-only --cached | xargs git add
+diff --git a/.rubocop.yml b/.rubocop.yml
+index 1cdfbc713..900eb42d6 100644
+--- a/.rubocop.yml
++++ b/.rubocop.yml
+@@ -152,6 +152,11 @@ UseFromEmail:
+ CustomCopLocation:
+   Enabled: true
+ 
++Rails/HelperInstanceVariable:
++  Exclude:
++    - 'app/helpers/report_helper.rb'
++
++
+ AllCops:
+   NewCops: enable
+   Exclude:
+@@ -166,3 +171,4 @@ AllCops:
+     - 'tmp/**/*'
+     - 'storage/**/*'
+     - 'db/migrate/20230426130150_init_schema.rb'
++
+diff --git a/.yarnrc.yml b/.yarnrc.yml
+new file mode 100644
+index 000000000..3949dc8aa
+--- /dev/null
++++ b/.yarnrc.yml
+@@ -0,0 +1,7 @@
++compressionLevel: mixed
++
++enableGlobalCache: false
++
++nodeLinker: node-modules
++
++yarnPath: .yarn/releases/yarn-3.7.0.cjs
+diff --git a/Gemfile b/Gemfile
+index f690e6876..d55173096 100644
+--- a/Gemfile
++++ b/Gemfile
+@@ -64,6 +64,7 @@ gem 'activerecord-import'
+ gem 'dotenv-rails', '>= 3.0.0'
+ gem 'foreman'
+ gem 'puma'
++gem 'puma_worker_killer'
+ gem 'webpacker'
+ # metrics on heroku
+ gem 'barnes'
+@@ -97,7 +98,7 @@ gem 'koala'
+ gem 'slack-ruby-client', '~> 2.2.0'
+ # for dialogflow integrations
+ gem 'google-cloud-dialogflow-v2'
+-gem 'grpc'
++gem 'grpc', '~> 1.62.0'
+ # Translate integrations
+ # 'google-cloud-translate' gem depends on faraday 2.0 version
+ # this dependency breaks the slack-ruby-client gem
+diff --git a/Gemfile.lock b/Gemfile.lock
+index 91d3b3d8b..fe0c14216 100644
+--- a/Gemfile.lock
++++ b/Gemfile.lock
+@@ -279,6 +279,8 @@ GEM
+       googleauth (~> 1.0)
+       grpc (~> 1.36)
+     geocoder (1.8.1)
++    get_process_mem (0.2.7)
++      ffi (~> 1.0)
+     gli (2.21.1)
+     globalid (1.2.1)
+       activesupport (>= 6.1)
+@@ -553,6 +555,9 @@ GEM
+     public_suffix (5.0.1)
+     puma (6.4.2)
+       nio4r (~> 2.0)
++    puma_worker_killer (0.3.1)
++      get_process_mem (~> 0.2)
++      puma (>= 2.7)
+     pundit (2.3.0)
+       activesupport (>= 3.0.0)
+     raabro (1.4.0)
+@@ -884,7 +889,7 @@ DEPENDENCIES
+   google-cloud-storage
+   google-cloud-translate-v3
+   groupdate
+-  grpc
++  grpc (~> 1.62.0)
+   haikunator
+   hairtrigger
+   hashie
+@@ -918,6 +923,7 @@ DEPENDENCIES
+   procore-sift
+   pry-rails
+   puma
++  puma_worker_killer
+   pundit
+   rack-attack (>= 6.7.0)
+   rack-cors (= 2.0.0)
+diff --git a/app/assets/images/administrate/bot/avatar.png b/app/assets/images/administrate/bot/avatar.png
+new file mode 100644
+index 000000000..269eab83a
+Binary files /dev/null and b/app/assets/images/administrate/bot/avatar.png differ
+diff --git a/app/assets/images/administrate/user/avatar.png b/app/assets/images/administrate/user/avatar.png
+new file mode 100644
+index 000000000..269eab83a
+Binary files /dev/null and b/app/assets/images/administrate/user/avatar.png differ
+diff --git a/app/builders/messages/message_builder.rb b/app/builders/messages/message_builder.rb
+index e1087b19f..dfe1a644e 100644
+--- a/app/builders/messages/message_builder.rb
++++ b/app/builders/messages/message_builder.rb
+@@ -20,12 +20,21 @@ class Messages::MessageBuilder
+     @message = @conversation.messages.build(message_params)
+     process_attachments
+     process_emails
++    process_assignee
+     @message.save!
+     @message
+   end
+ 
+   private
+ 
++  def process_assignee
++    return if @user.nil?
++    return unless @message_type == 'outgoing' && @conversation.assignee_id != @user.id && @user.id != 4
++
++    @conversation.assignee_id = @user.id
++    @conversation.save!
++  end
++
+   # Extracts content attributes from the given params.
+   # - Converts ActionController::Parameters to a regular hash if needed.
+   # - Attempts to parse a JSON string if content is a string.
+diff --git a/app/controllers/api/v1/accounts/conversations/messages_controller.rb b/app/controllers/api/v1/accounts/conversations/messages_controller.rb
+index d34561e36..9d41f0f1d 100644
+--- a/app/controllers/api/v1/accounts/conversations/messages_controller.rb
++++ b/app/controllers/api/v1/accounts/conversations/messages_controller.rb
+@@ -3,6 +3,15 @@ class Api::V1::Accounts::Conversations::MessagesController < Api::V1::Accounts::
+     @messages = message_finder.perform
+   end
+ 
++  def edit
++    return if message.sender_id != @user.id
++
++    ActiveRecord::Base.transaction do
++      message.update!(content: params[:content])
++      message.save!
++    end
++  end
++
+   def create
+     user = Current.user || @resource
+     mb = Messages::MessageBuilder.new(user, @conversation, params)
+@@ -12,6 +21,8 @@ class Api::V1::Accounts::Conversations::MessagesController < Api::V1::Accounts::
+   end
+ 
+   def destroy
++    return if message.sender_id != @user.id
++
+     ActiveRecord::Base.transaction do
+       message.update!(content: I18n.t('conversations.messages.deleted'), content_attributes: { deleted: true })
+       message.attachments.destroy_all
+diff --git a/app/finders/message_finder.rb b/app/finders/message_finder.rb
+index 8854e239a..32c5f0c82 100644
+--- a/app/finders/message_finder.rb
++++ b/app/finders/message_finder.rb
+@@ -21,30 +21,33 @@ class MessageFinder
+   end
+ 
+   def current_messages
++    limit = 20
++    limit = @params[:limit].to_i if @params[:limit].present?
++
+     if @params[:after].present? && @params[:before].present?
+-      messages_between(@params[:after].to_i, @params[:before].to_i)
++      messages_between(@params[:after].to_i, @params[:before].to_i, limit)
+     elsif @params[:before].present?
+-      messages_before(@params[:before].to_i)
++      messages_before(@params[:before].to_i, limit)
+     elsif @params[:after].present?
+-      messages_after(@params[:after].to_i)
++      messages_after(@params[:after].to_i, limit)
+     else
+-      messages_latest
++      messages_latest(limit)
+     end
+   end
+ 
+-  def messages_after(after_id)
+-    messages.reorder('created_at asc').where('id > ?', after_id).limit(100)
++  def messages_after(after_id, limit)
++    messages.reorder('created_at asc').where('id > ?', after_id).limit(limit)
+   end
+ 
+-  def messages_before(before_id)
+-    messages.reorder('created_at desc').where('id < ?', before_id).limit(20).reverse
++  def messages_before(before_id, limit)
++    messages.reorder('created_at desc').where('id < ?', before_id).limit(limit).reverse
+   end
+ 
+-  def messages_between(after_id, before_id)
++  def messages_between(after_id, before_id, limit)
+     messages.reorder('created_at asc').where('id >= ? AND id < ?', after_id, before_id).limit(1000)
+   end
+ 
+-  def messages_latest
+-    messages.reorder('created_at desc').limit(20).reverse
++  def messages_latest(limit)
++    messages.reorder('created_at desc').limit(limit).reverse
+   end
+ end
+diff --git a/app/javascript/dashboard/api/inbox/message.js b/app/javascript/dashboard/api/inbox/message.js
+index 8f294a0ee..6fa1d52f9 100644
+--- a/app/javascript/dashboard/api/inbox/message.js
++++ b/app/javascript/dashboard/api/inbox/message.js
+@@ -82,6 +82,13 @@ class MessageApi extends ApiClient {
+     });
+   }
+ 
++  edit(conversationID, messageId, content) {
++    return axios.get(
++      `${this.url}/${conversationID}/messages/${messageId}/edit`,
++      { params: { content } }
++    );
++  }
++
+   delete(conversationID, messageId) {
+     return axios.delete(`${this.url}/${conversationID}/messages/${messageId}`);
+   }
+diff --git a/app/javascript/dashboard/assets/scss/widgets/_tabs.scss b/app/javascript/dashboard/assets/scss/widgets/_tabs.scss
+index b9999fac9..11acb60a7 100644
+--- a/app/javascript/dashboard/assets/scss/widgets/_tabs.scss
++++ b/app/javascript/dashboard/assets/scss/widgets/_tabs.scss
+@@ -1,4 +1,5 @@
+ .tabs--container {
++  overflow-x: auto;
+   @apply flex;
+ }
+ 
+@@ -25,7 +26,7 @@
+ 
+   .tabs-title {
+     a {
+-      @apply text-base font-medium py-3;
++      @apply text-sm font-normal py-2;
+     }
+   }
+ }
+diff --git a/app/javascript/dashboard/components/Accordion/AccordionItem.vue b/app/javascript/dashboard/components/Accordion/AccordionItem.vue
+index 87370185d..ce36bfbfd 100644
+--- a/app/javascript/dashboard/components/Accordion/AccordionItem.vue
++++ b/app/javascript/dashboard/components/Accordion/AccordionItem.vue
+@@ -1,6 +1,7 @@
+ <template>
+   <div class="-mt-px text-sm">
+     <button
++      v-if="showTitle"
+       class="flex items-center select-none w-full rounded-none bg-slate-50 dark:bg-slate-800 border border-l-0 border-r-0 border-solid m-0 border-slate-100 dark:border-slate-700/50 cursor-grab justify-between py-2 px-4 drag-handle"
+       @click="$emit('click')"
+     >
+@@ -12,7 +13,7 @@
+           {{ title }}
+         </h5>
+       </div>
+-      <div class="flex flex-row">
++      <div v-if="showCloser" class="flex flex-row">
+         <slot name="button" />
+         <div class="flex justify-end w-3 text-woot-500">
+           <fluent-icon v-if="isOpen" size="24" icon="subtract" type="solid" />
+@@ -46,6 +47,14 @@ export default {
+       type: Boolean,
+       default: false,
+     },
++    showTitle: {
++      type: Boolean,
++      default: true,
++    },
++    showCloser: {
++      type: Boolean,
++      default: true,
++    },
+     icon: {
+       type: String,
+       default: '',
+diff --git a/app/javascript/dashboard/components/ChatList.vue b/app/javascript/dashboard/components/ChatList.vue
+index ee5354027..d9821b533 100644
+--- a/app/javascript/dashboard/components/ChatList.vue
++++ b/app/javascript/dashboard/components/ChatList.vue
+@@ -75,6 +75,7 @@
+         :data-component="itemComponent"
+         :extra-props="virtualListExtraProps"
+         class="w-full h-full overflow-auto"
++        style="scroll-behavior: smooth"
+         footer-tag="div"
+       >
+         <template #footer>
+@@ -137,6 +138,7 @@ import uiSettingsMixin from 'dashboard/mixins/uiSettings';
+ import languages from 'dashboard/components/widgets/conversation/advancedFilterItems/languages';
+ import countries from 'shared/constants/countries';
+ import { generateValuesForEditCustomViews } from 'dashboard/helper/customViewsHelper';
++import { LocalStorage } from 'shared/helpers/localStorage';
+ import { conversationListPageURL } from '../helper/URLHelper';
+ import {
+   isOnMentionsView,
+@@ -448,6 +450,9 @@ export default {
+     },
+   },
+   watch: {
++    activeAssigneeTab(val) {
++      LocalStorage.set('activeAssigneeTab', val);
++    },
+     teamId() {
+       this.updateVirtualListProps('teamId', this.teamId);
+     },
+@@ -489,6 +494,8 @@ export default {
+   },
+   mounted() {
+     this.$store.dispatch('setChatListFilters', this.conversationFilters);
++    this.activeAssigneeTab =
++      LocalStorage.get('activeAssigneeTab') || wootConstants.ASSIGNEE_TYPE.ME;
+     this.setFiltersFromUISettings();
+     this.$store.dispatch('setChatStatusFilter', this.activeStatus);
+     this.$store.dispatch('setChatSortFilter', this.activeSortBy);
+@@ -985,7 +992,7 @@ export default {
+ @tailwind components;
+ @layer components {
+   .flex-basis-clamp {
+-    flex-basis: clamp(20rem, 4vw + 21.25rem, 27.5rem);
++    flex-basis: clamp(20rem, 2vw + 18.25rem, 27.5rem);
+   }
+ }
+ </style>
+@@ -997,6 +1004,8 @@ export default {
+ 
+ .tab--chat-type {
+   @apply py-0 px-4;
++  padding-top: 0.1rem;
++  padding-bottom: 0.1rem;
+ 
+   ::v-deep {
+     .tabs {
+diff --git a/app/javascript/dashboard/components/CustomAttribute.vue b/app/javascript/dashboard/components/CustomAttribute.vue
+index e7de811d6..29ae4b855 100644
+--- a/app/javascript/dashboard/components/CustomAttribute.vue
++++ b/app/javascript/dashboard/components/CustomAttribute.vue
+@@ -1,5 +1,5 @@
+ <template>
+-  <div class="py-3 px-4">
++  <div v-show="!isHidden" class="py-3 px-4">
+     <div class="flex items-center mb-1">
+       <h4 class="text-sm flex items-center m-0 w-full error">
+         <div v-if="isAttributeTypeCheckbox" class="flex items-center">
+@@ -174,6 +174,9 @@ export default {
+     };
+   },
+   computed: {
++    isHidden() {
++      return this.label === 'accountId' || this.label === 'hash_id';
++    },
+     displayValue() {
+       if (this.isAttributeTypeDate) {
+         return this.value
+diff --git a/app/javascript/dashboard/components/layout/sidebarComponents/Secondary.vue b/app/javascript/dashboard/components/layout/sidebarComponents/Secondary.vue
+index b4cd3ca90..172a6016e 100644
+--- a/app/javascript/dashboard/components/layout/sidebarComponents/Secondary.vue
++++ b/app/javascript/dashboard/components/layout/sidebarComponents/Secondary.vue
+@@ -1,10 +1,14 @@
+ <template>
+   <div
+     v-if="hasSecondaryMenu"
+-    class="h-full overflow-auto w-48 flex flex-col bg-white dark:bg-slate-900 border-r dark:border-slate-800/50 rtl:border-r-0 rtl:border-l border-slate-50 text-sm px-2 pb-8"
++    class="h-full secondary-menu overflow-auto w-40 flex flex-col bg-white dark:bg-slate-900 border-r dark:border-slate-800/50 rtl:border-r-0 rtl:border-l border-slate-50 text-sm px-2 pb-8"
++    :class="{ min: isContactSidebarItemOpen('is_secondary_menu_open') }"
+   >
+-    <account-context @toggle-accounts="toggleAccountModal" />
++    <account-context
++      v-if="!isContactSidebarItemOpen('is_secondary_menu_open')"
++      @toggle-accounts="toggleAccountModal" />
+     <transition-group
++      v-if="!isContactSidebarItemOpen('is_secondary_menu_open')"
+       name="menu-list"
+       tag="ul"
+       class="pt-2 list-none ml-0 mb-0"
+@@ -21,6 +25,17 @@
+         @add-label="showAddLabelPopup"
+       />
+     </transition-group>
++
++    <div class="sidebar-toggle__wrap">
++      <woot-button
++        variant="smooth"
++        size="tiny"
++        color-scheme="secondary"
++        class="sidebar-toggle--button"
++        :icon="isRightOrLeftIcon"
++        @click="value => toggleSidebarUIState('is_secondary_menu_open', value)"
++      />
++    </div>
+   </div>
+ </template>
+ <script>
+@@ -29,6 +44,7 @@ import SecondaryNavItem from './SecondaryNavItem.vue';
+ import AccountContext from './AccountContext.vue';
+ import { mapGetters } from 'vuex';
+ import { FEATURE_FLAGS } from '../../../featureFlags';
++import uiSettingsMixin from 'dashboard/mixins/uiSettings';
+ import { hasPermissions } from '../../../helper/permissionsHelper';
+ import { routesWithPermissions } from '../../../routes';
+ 
+@@ -37,6 +53,7 @@ export default {
+     AccountContext,
+     SecondaryNavItem,
+   },
++  mixins: [uiSettingsMixin],
+   props: {
+     accountId: {
+       type: Number,
+@@ -245,6 +262,12 @@ export default {
+         contacts: contactMenuItems,
+       };
+     },
++    isRightOrLeftIcon() {
++      if (this.isContactSidebarItemOpen('is_secondary_menu_open')) {
++        return 'arrow-chevron-right';
++      }
++      return 'arrow-chevron-left';
++    },
+   },
+   methods: {
+     showAddLabelPopup() {
+@@ -259,3 +282,35 @@ export default {
+   },
+ };
+ </script>
++<style lang="scss" scoped>
++.secondary-menu {
++  &.min {
++    width: 1rem;
++  }
++}
++
++
++.sidebar-toggle__wrap {
++  display: flex;
++  justify-content: flex-end;
++
++  .sidebar-toggle--button {
++    position: fixed;
++
++    bottom: var(--space-mega);
++    z-index: var(--z-index-low);
++
++    background: var(--white);
++
++    border-top-left-radius: calc(
++      var(--space-medium) + 1px
++    ); /* 100px of height + 10px of border */
++    border-bottom-left-radius: calc(
++      var(--space-medium) + 1px
++    ); /* 100px of height + 10px of border */
++    border: 1px solid var(--color-border-light);
++    border-right: 0;
++    box-sizing: border-box;
++  }
++}
++</style>
+diff --git a/app/javascript/dashboard/components/ui/Tabs/Tabs.js b/app/javascript/dashboard/components/ui/Tabs/Tabs.js
+index cae81b91f..e91528545 100644
+--- a/app/javascript/dashboard/components/ui/Tabs/Tabs.js
++++ b/app/javascript/dashboard/components/ui/Tabs/Tabs.js
+@@ -9,24 +9,12 @@ export default {
+       type: Boolean,
+       default: true,
+     },
+-  },
+-  data() {
+-    return { hasScroll: false };
+-  },
+-  created() {
+-    window.addEventListener('resize', this.computeScrollWidth);
+-  },
+-  beforeDestroy() {
+-    window.removeEventListener('resize', this.computeScrollWidth);
+-  },
+-  mounted() {
+-    this.computeScrollWidth();
++    hasScroll: {
++      type: Boolean,
++      default: true,
++    },
+   },
+   methods: {
+-    computeScrollWidth() {
+-      const tabElement = this.$el.getElementsByClassName('tabs')[0];
+-      this.hasScroll = tabElement.scrollWidth > tabElement.clientWidth;
+-    },
+     onScrollClick(direction) {
+       const tabElement = this.$el.getElementsByClassName('tabs')[0];
+       let scrollPosition = tabElement.scrollLeft;
+diff --git a/app/javascript/dashboard/components/widgets/ChatTypeTabs.vue b/app/javascript/dashboard/components/widgets/ChatTypeTabs.vue
+index 86e80748d..62c8a6607 100644
+--- a/app/javascript/dashboard/components/widgets/ChatTypeTabs.vue
++++ b/app/javascript/dashboard/components/widgets/ChatTypeTabs.vue
+@@ -1,5 +1,5 @@
+ <template>
+-  <woot-tabs :index="activeTabIndex" @change="onTabChange">
++  <woot-tabs :index="activeTabIndex" :has-scroll="false" @change="onTabChange">
+     <woot-tabs-item
+       v-for="item in items"
+       :key="item.key"
+diff --git a/app/javascript/dashboard/components/widgets/Thumbnail.vue b/app/javascript/dashboard/components/widgets/Thumbnail.vue
+index 6c864e95b..08dd49299 100644
+--- a/app/javascript/dashboard/components/widgets/Thumbnail.vue
++++ b/app/javascript/dashboard/components/widgets/Thumbnail.vue
+@@ -141,7 +141,7 @@ export default {
+       return `user-thumbnail-box ${boxClass}`;
+     },
+     shouldShowImage() {
+-      if (!this.src) {
++      if (!this.src || this.src === '') {
+         return false;
+       }
+       if (this.hasImageLoaded) {
+diff --git a/app/javascript/dashboard/components/widgets/WootWriter/Editor.vue b/app/javascript/dashboard/components/widgets/WootWriter/Editor.vue
+index 52b73c405..a3a4666ab 100644
+--- a/app/javascript/dashboard/components/widgets/WootWriter/Editor.vue
++++ b/app/javascript/dashboard/components/widgets/WootWriter/Editor.vue
+@@ -9,6 +9,7 @@
+       v-if="shouldShowCannedResponses"
+       :search-key="cannedSearchTerm"
+       @click="insertCannedResponse"
++      @close="closeMention"
+     />
+     <variable-list
+       v-if="shouldShowVariables"
+@@ -116,6 +117,34 @@ const createState = (
+   });
+ };
+ 
++const triggerMCharacters = char => $position => {
++  const regexp = new RegExp(`(?:^)?${char}.*`, 'g');
++
++  const textFrom = $position.before();
++  const textTo = $position.end();
++
++  const text = $position.doc.textBetween(textFrom, textTo, '\0', '\0');
++  let match;
++
++  // eslint-disable-next-line
++  while ((match = regexp.exec(text))) {
++    const prefix = match.input.slice(Math.max(0, match.index - 1), match.index);
++    // @ts-ignore
++    if (!/^[/\0]?$/.test(prefix)) {
++      // eslint-disable-next-line
++      continue;
++    }
++
++    const from = match.index + $position.start();
++    let to = from + match[0].length;
++
++    if (from < $position.pos && to >= $position.pos) {
++      return { range: { from, to }, text: match[0] };
++    }
++  }
++  return null;
++};
++
+ export default {
+   name: 'WootMessageEditor',
+   components: { TagAgents, CannedResponse, VariableList },
+@@ -217,7 +246,7 @@ export default {
+           },
+         }),
+         suggestionsPlugin({
+-          matcher: triggerCharacters('/'),
++          matcher: triggerMCharacters('[/|\\\\]'),
+           suggestionClass: '',
+           onEnter: args => {
+             if (this.isPrivate) {
+@@ -231,8 +260,11 @@ export default {
+           onChange: args => {
+             this.editorView = args.view;
+             this.range = args.range;
++            args.text = args.text.replace(' ', '_');
+ 
+-            this.cannedSearchTerm = args.text.replace('/', '');
++            this.cannedSearchTerm = args.text
++              .replaceAll('/', '')
++              .replaceAll('\\', '');
+             return false;
+           },
+           onExit: () => {
+@@ -528,6 +560,52 @@ export default {
+     },
+     getKeyboardEvents() {
+       return {
++        'Alt+ArrowUp': {
++          action: () => {
++            const allConversations = document.querySelectorAll(
++              '.conversations-list .conversation'
++            );
++
++            const activeConversation = document.querySelector(
++              'div.conversations-list div.conversation.active'
++            );
++            const activeConversationIndex = [...allConversations].indexOf(
++              activeConversation
++            );
++
++            const lastConversationIndex = allConversations.length - 1;
++            if (activeConversationIndex > 0) {
++              allConversations[activeConversationIndex - 1].click();
++            } else if (allConversations.length > 1) {
++              allConversations[lastConversationIndex].click();
++              document.querySelector('.conversations-list div').scrollTop = document.querySelector('.conversations-list div').scrollHeight;
++            }
++          },
++          allowOnFocusedInput: true,
++        },
++        'Alt+ArrowDown': {
++          action: () => {
++            const allConversations = document.querySelectorAll(
++              '.conversations-list .conversation'
++            );
++
++            const activeConversation = document.querySelector(
++              'div.conversations-list div.conversation.active'
++            );
++            const activeConversationIndex = [...allConversations].indexOf(
++              activeConversation
++            );
++
++            const lastConversationIndex = allConversations.length - 1;
++            if (activeConversationIndex < lastConversationIndex) {
++              allConversations[activeConversationIndex + 1].click();
++            } else if (allConversations.length > 1) {
++              allConversations[0].click();
++              document.querySelector('.conversations-list div').scrollTop = 0;
++            }
++          },
++          allowOnFocusedInput: true,
++        },
+         'Alt+KeyP': {
+           action: () => {
+             this.focusEditorInputField();
+@@ -712,6 +790,10 @@ export default {
+         scrollCursorIntoView(this.editorView);
+       });
+     },
++    closeMention() {
++      this.mentionSearchKey = '';
++      this.showUserMentions = false;
++    },
+   },
+ };
+ </script>
+diff --git a/app/javascript/dashboard/components/widgets/conversation/CannedResponse.vue b/app/javascript/dashboard/components/widgets/conversation/CannedResponse.vue
+index c744eaa06..bb2169629 100644
+--- a/app/javascript/dashboard/components/widgets/conversation/CannedResponse.vue
++++ b/app/javascript/dashboard/components/widgets/conversation/CannedResponse.vue
+@@ -3,6 +3,7 @@
+     v-if="items.length"
+     :items="items"
+     @mention-select="handleMentionClick"
++    @close="$emit('close')"
+   >
+     <template slot-scope="{ item }">
+       <strong>{{ item.label }}</strong> - {{ item.description }}
+diff --git a/app/javascript/dashboard/components/widgets/conversation/ConversationBox.vue b/app/javascript/dashboard/components/widgets/conversation/ConversationBox.vue
+index 2ad77452d..c27eeaa5e 100644
+--- a/app/javascript/dashboard/components/widgets/conversation/ConversationBox.vue
++++ b/app/javascript/dashboard/components/widgets/conversation/ConversationBox.vue
+@@ -41,7 +41,7 @@
+       />
+       <div
+         v-show="showContactPanel"
+-        class="conversation-sidebar-wrap basis-full sm:basis-[17.5rem] md:basis-[18.75rem] lg:basis-[19.375rem] xl:basis-[20.625rem] 2xl:basis-[25rem] rtl:border-r border-slate-50 dark:border-slate-700 h-auto overflow-auto z-10 flex-shrink-0 flex-grow-0"
++        class="conversation-sidebar-wrap basis-full sm:basis-[17.5rem] md:basis-[18.75rem] lg:basis-[19.375rem] xl:basis-[20.625rem] 2xl:basis-[22rem] rtl:border-r border-slate-50 dark:border-slate-700 h-auto overflow-auto z-10 flex-shrink-0 flex-grow-0"
+       >
+         <contact-panel
+           v-if="showContactPanel"
+diff --git a/app/javascript/dashboard/components/widgets/conversation/ConversationCard.vue b/app/javascript/dashboard/components/widgets/conversation/ConversationCard.vue
+index 777c9fdcd..3b4a119ac 100644
+--- a/app/javascript/dashboard/components/widgets/conversation/ConversationCard.vue
++++ b/app/javascript/dashboard/components/widgets/conversation/ConversationCard.vue
+@@ -24,14 +24,13 @@
+     </label>
+     <thumbnail
+       v-if="bulkActionCheck"
+-      :src="currentContact.thumbnail"
+       :badge="inboxBadge"
+       :username="currentContact.name"
+       :status="currentContact.availability_status"
+       size="40px"
+     />
+     <div
+-      class="px-0 py-3 border-b group-hover:border-transparent flex-1 border-slate-50 dark:border-slate-800/75 w-[calc(100%-40px)]"
++      class="px-0 py-1 border-b group-last:border-transparent group-hover:border-transparent border-slate-50 dark:border-slate-800/75 w-[calc(100%-40px)] columns"
+     >
+       <div class="flex justify-between">
+         <inbox-name v-if="showInboxName" :inbox="inbox" />
+@@ -55,6 +54,13 @@
+       >
+         {{ currentContact.name }}
+       </h4>
++      <p
++        v-if="showBrowserInfo && browserInfo"
++        class="text-slate-500 dark:text-slate-500 text-xs mx-2 mt-1 truncate"
++      >
++        {{ browserInfo }}
++      </p>
++
+       <message-preview
+         v-if="lastMessageInChat"
+         :message="lastMessageInChat"
+@@ -81,7 +87,7 @@
+           />
+         </span>
+         <span
+-          class="unread shadow-lg rounded-full hidden text-xxs font-semibold h-4 leading-4 ml-auto mt-1 min-w-[1rem] px-1 py-0 text-center text-white bg-green-400"
++          class="unread shadow-lg rounded-full hidden text-xxs font-semibold h-4 leading-4 ml-auto mt-1 min-w-[1rem] px-1 py-0 text-center text-white bg-red-400"
+         >
+           {{ unreadCount > 9 ? '9+' : unreadCount }}
+         </span>
+@@ -150,6 +156,10 @@ export default {
+       type: String,
+       default: '',
+     },
++    showBrowserInfo: {
++      type: Boolean,
++      default: false,
++    },
+     chat: {
+       type: Object,
+       default: () => {},
+@@ -262,6 +272,28 @@ export default {
+     hasSlaPolicyId() {
+       return this.chat?.sla_policy_id;
+     },
++    browserInfo() {
++      const browser = this.chat?.additional_attributes?.browser;
++      if (!browser) return null;
++
++      const {
++        browser_name,
++        browser_version,
++        platform_name,
++        platform_version,
++        device_name,
++      } = browser;
++
++      const platform = platform_name
++        ? `${platform_name}${platform_version ? ' ' + platform_version : ''}`
++        : '';
++
++      const browserText = browser_name
++        ? `${browser_name}${browser_version ? ' ' + browser_version : ''}`
++        : '';
++
++      return [platform, browserText, device_name].filter(Boolean).join(' · ');
++    },
+   },
+   methods: {
+     onCardClick(e) {
+@@ -289,7 +321,7 @@ export default {
+       if (this.isActiveChat) {
+         return;
+       }
+-
++      this.chat.isClicked = true;
+       router.push({ path });
+     },
+     onCardHover() {
+@@ -370,7 +402,7 @@ export default {
+   }
+ 
+   &::v-deep .user-thumbnail-box {
+-    @apply mt-4;
++    @apply mt-2;
+   }
+ 
+   &.conversation-selected {
+diff --git a/app/javascript/dashboard/components/widgets/conversation/Message.vue b/app/javascript/dashboard/components/widgets/conversation/Message.vue
+index 54167db71..59ac656d5 100644
+--- a/app/javascript/dashboard/components/widgets/conversation/Message.vue
++++ b/app/javascript/dashboard/components/widgets/conversation/Message.vue
+@@ -167,6 +167,7 @@ import { LOCAL_STORAGE_KEYS } from 'dashboard/constants/localStorage';
+ import { LocalStorage } from 'shared/helpers/localStorage';
+ import { getDayDifferenceFromNow } from 'shared/helpers/DateHelper';
+ import * as Sentry from '@sentry/browser';
++import { mapGetters } from 'vuex';
+ 
+ export default {
+   components: {
+@@ -232,6 +233,11 @@ export default {
+     };
+   },
+   computed: {
++    ...mapGetters({
++      getAccount: 'accounts/getAccount',
++      currentAccountId: 'getCurrentAccountId',
++      currentUserID: 'getCurrentUserID',
++    }),
+     attachments() {
+       // Here it is used to get sender and created_at for each attachment
+       return this.data?.attachments.map(attachment => ({
+@@ -270,6 +276,10 @@ export default {
+       return '';
+     },
+     displayQuotedButton() {
++      if (this.data.content.includes('>')) {
++        return true;
++      }
++
+       if (this.emailMessageContent.includes('<blockquote')) {
+         return true;
+       }
+@@ -323,6 +333,7 @@ export default {
+     },
+     contextMenuEnabledOptions() {
+       return {
++        edit: this.hasEdit,
+         copy: this.hasText,
+         delete: this.hasText || this.hasAttachments,
+         cannedResponse: this.isOutgoing && this.hasText,
+@@ -410,6 +421,9 @@ export default {
+     isMessageDeleted() {
+       return this.contentAttributes.deleted;
+     },
++    hasEdit() {
++      return this.sender.id === this.currentUserID;
++    },
+     hasText() {
+       return !!this.data.content;
+     },
+diff --git a/app/javascript/dashboard/components/widgets/conversation/MessagePreview.vue b/app/javascript/dashboard/components/widgets/conversation/MessagePreview.vue
+index 22d69439e..0a570828c 100644
+--- a/app/javascript/dashboard/components/widgets/conversation/MessagePreview.vue
++++ b/app/javascript/dashboard/components/widgets/conversation/MessagePreview.vue
+@@ -28,7 +28,7 @@
+       />
+       {{ $t('CHAT_LIST.ATTACHMENTS.image.CONTENT') }}
+     </span>
+-    <span v-else-if="message.content">
++    <span v-else-if="message.content" :class="parsedTypeClass">
+       {{ parsedLastMessage }}
+     </span>
+     <span v-else-if="message.attachments">
+@@ -99,6 +99,48 @@ export default {
+     isMessageSticker() {
+       return this.message && this.message.content_type === 'sticker';
+     },
++    parsedTypeClass() {
++      if (this.message.message_type === 0) {
++        return 'st-user';
++      }
++      if (this.message.message_type === 1) {
++        if (this.message.private) {
++          return 'st-note';
++        }
++        if (!this.message.sender) {
++          return 'st-bot';
++        }
++        return 'st-agent';
++      }
++      if (this.message.message_type === 2) {
++        return 'st-bot';
++      }
++      if (this.message.message_type === 3) {
++        return 'st-auto';
++      }
++      return '';
++    },
+   },
+ };
+ </script>
++<style lang="scss" scoped>
++.st-user {
++  color: #009600;
++}
++
++.st-agent {
++  color: #7f7f7f;
++}
++
++.st-bot {
++  color: #bc00ff;
++}
++
++.st-auto {
++  color: #bc00ff;
++}
++
++.st-note {
++  color: #ff8000;
++}
++</style>
+diff --git a/app/javascript/dashboard/components/widgets/conversation/ReplyBox.vue b/app/javascript/dashboard/components/widgets/conversation/ReplyBox.vue
+index 2726cea92..4f614d52f 100644
+--- a/app/javascript/dashboard/components/widgets/conversation/ReplyBox.vue
++++ b/app/javascript/dashboard/components/widgets/conversation/ReplyBox.vue
+@@ -36,6 +36,7 @@
+         class="normal-editor__canned-box"
+         :search-key="mentionSearchKey"
+         @click="replaceText"
++        @close="hideMentions"
+       />
+       <emoji-input
+         v-if="showEmojiPicker"
+@@ -562,7 +563,9 @@ export default {
+ 
+       // Determine if the user is potentially typing a slash command.
+       // This is true if the message starts with a slash and the rich content editor is not active.
+-      this.hasSlashCommand = startsWithSlash && !this.showRichContentEditor;
++      this.hasSlashCommand =
++        (updatedMessage[0] === '/' || startsWithSlash) &&
++        !this.showRichContentEditor;
+       this.showMentions = this.hasSlashCommand;
+ 
+       // If a slash command is active, extract the command text after the slash.
+@@ -906,6 +909,7 @@ export default {
+       setTimeout(() => {
+         this.$track(CONVERSATION_EVENTS.INSERTED_A_CANNED_RESPONSE);
+         this.message = updatedMessage;
++        this.$refs.messageInput.$el.focus();
+       }, 100);
+     },
+     setReplyMode(mode = REPLY_EDITOR_MODES.REPLY) {
+diff --git a/app/javascript/dashboard/components/widgets/conversation/bubble/Actions.vue b/app/javascript/dashboard/components/widgets/conversation/bubble/Actions.vue
+index 416af5d06..7500a0791 100644
+--- a/app/javascript/dashboard/components/widgets/conversation/bubble/Actions.vue
++++ b/app/javascript/dashboard/components/widgets/conversation/bubble/Actions.vue
+@@ -159,7 +159,7 @@ export default {
+       return MESSAGE_STATUS.SENT === this.messageStatus;
+     },
+     readableTime() {
+-      return this.messageTimestamp(this.createdAt, 'LLL d, h:mm a');
++      return this.messageTimestamp(this.createdAt, 'LLL d, kk:mm');
+     },
+     screenName() {
+       const { additional_attributes: additionalAttributes = {} } =
+diff --git a/app/javascript/dashboard/components/widgets/mentions/MentionBox.vue b/app/javascript/dashboard/components/widgets/mentions/MentionBox.vue
+index b8780773f..fce09684a 100644
+--- a/app/javascript/dashboard/components/widgets/mentions/MentionBox.vue
++++ b/app/javascript/dashboard/components/widgets/mentions/MentionBox.vue
+@@ -1,9 +1,12 @@
+ <template>
+   <div
+     ref="mentionsListContainer"
+-    class="bg-white dark:bg-slate-800 rounded-md overflow-auto absolute w-full z-20 pb-0 shadow-md left-0 bottom-full max-h-[9.75rem] border border-solid border-slate-100 dark:border-slate-700 mention--box"
++    class="bg-white dark:bg-slate-800 rounded-md overflow-auto absolute w-full z-20 pb-0 shadow-md left-0 bottom-full max-h-[20rem] border border-solid border-slate-100 dark:border-slate-700 mention--box"
+   >
+     <ul class="vertical dropdown menu">
++      <li>
++        <a class="close-icon" @click="$emit('close')">x</a>
++      </li>
+       <woot-dropdown-item
+         v-for="(item, index) in items"
+         :id="`mention-item-${index}`"
+@@ -14,7 +17,7 @@
+         <button
+           class="flex group flex-col gap-0.5 overflow-hidden cursor-pointer items-start rounded-none py-2.5 px-2.5 justify-center w-full h-full text-left hover:bg-woot-50 dark:hover:bg-woot-800 border-x-0 border-t-0 border-b border-solid border-slate-100 dark:border-slate-700"
+           :class="{
+-            ' bg-woot-25 dark:bg-woot-800': index === selectedIndex,
++            ' bg-woot-25 dark:bg-woot-800': index === selectedIndex
+           }"
+           @click="onListItemSelection(index)"
+         >
+@@ -57,6 +60,7 @@ export default {
+   data() {
+     return {
+       selectedIndex: 0,
++      hoverIndex: -1,
+     };
+   },
+   watch: {
+@@ -112,4 +116,11 @@ export default {
+ .canned-item__button::v-deep .button__content {
+   @apply overflow-hidden text-ellipsis whitespace-nowrap;
+ }
++
++.close-icon {
++  position: absolute;
++  right: 0;
++  top: 0;
++  height: 25px;
++}
+ </style>
+diff --git a/app/javascript/dashboard/components/widgets/modal/WootKeyShortcutModal.vue b/app/javascript/dashboard/components/widgets/modal/WootKeyShortcutModal.vue
+index ffaab7e61..6593fc08c 100644
+--- a/app/javascript/dashboard/components/widgets/modal/WootKeyShortcutModal.vue
++++ b/app/javascript/dashboard/components/widgets/modal/WootKeyShortcutModal.vue
+@@ -58,6 +58,27 @@
+             <hotkey custom-class="w-9 key"> E </hotkey>
+           </div>
+         </div>
++
++        <div class="flex justify-between items-center min-w-[25rem]">
++          <h5 class="text-sm text-slate-800 dark:text-slate-100">next</h5>
++          <div class="flex items-center mb-1 ml-2 gap-2">
++            <hotkey custom-class="min-h-[28px] min-w-[60px] normal-case key">
++              {{ $t('KEYBOARD_SHORTCUTS.KEYS.ALT_OR_OPTION_KEY') }}
++            </hotkey>
++            <hotkey custom-class="w-9 key"> ↓ </hotkey>
++          </div>
++        </div>
++
++        <div class="flex justify-between items-center min-w-[25rem]">
++          <h5 class="text-sm text-slate-800 dark:text-slate-100">preview</h5>
++          <div class="flex items-center mb-1 ml-2 gap-2">
++            <hotkey custom-class="min-h-[28px] min-w-[60px] normal-case key">
++              {{ $t('KEYBOARD_SHORTCUTS.KEYS.ALT_OR_OPTION_KEY') }}
++            </hotkey>
++            <hotkey custom-class="w-9 key"> ↑ </hotkey>
++          </div>
++        </div>
++
+         <div
+           v-for="shortcutKey in shortcutKeys"
+           :key="shortcutKey.id"
+diff --git a/app/javascript/dashboard/helper/actionCable.js b/app/javascript/dashboard/helper/actionCable.js
+index 729f298b7..a6447e536 100644
+--- a/app/javascript/dashboard/helper/actionCable.js
++++ b/app/javascript/dashboard/helper/actionCable.js
+@@ -28,7 +28,7 @@ class ActionCableConnector extends BaseActionCableConnector {
+       'notification.deleted': this.onNotificationDeleted,
+       'notification.updated': this.onNotificationUpdated,
+       'first.reply.created': this.onFirstReplyCreated,
+-      'conversation.read': this.onConversationRead,
++      // 'conversation.read': this.onConversationRead,
+       'conversation.updated': this.onConversationUpdated,
+       'account.cache_invalidated': this.onCacheInvalidate,
+     };
+diff --git a/app/javascript/dashboard/i18n/locale/ar/conversation.json b/app/javascript/dashboard/i18n/locale/ar/conversation.json
+index f205d54ab..a37a15748 100644
+--- a/app/javascript/dashboard/i18n/locale/ar/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/ar/conversation.json
+@@ -205,6 +205,7 @@
+       "ASSIGN": "تكليف"
+     },
+     "CONTEXT_MENU": {
++      "EDIT": "Edit",
+       "COPY": "نسخ",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "حذف",
+diff --git a/app/javascript/dashboard/i18n/locale/bg/conversation.json b/app/javascript/dashboard/i18n/locale/bg/conversation.json
+index 6ef7ee90c..d3db62024 100644
+--- a/app/javascript/dashboard/i18n/locale/bg/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/bg/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Assign"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Copy",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Изтрий",
+diff --git a/app/javascript/dashboard/i18n/locale/ca/conversation.json b/app/javascript/dashboard/i18n/locale/ca/conversation.json
+index 8b1b7e5fa..a489b061e 100644
+--- a/app/javascript/dashboard/i18n/locale/ca/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/ca/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Assignar"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Copia",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Esborrar",
+diff --git a/app/javascript/dashboard/i18n/locale/cs/conversation.json b/app/javascript/dashboard/i18n/locale/cs/conversation.json
+index 950828d51..934eb4fa5 100644
+--- a/app/javascript/dashboard/i18n/locale/cs/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/cs/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Přiřadit"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Kopírovat",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Vymazat",
+diff --git a/app/javascript/dashboard/i18n/locale/da/conversation.json b/app/javascript/dashboard/i18n/locale/da/conversation.json
+index 4dbe289f9..86730194a 100644
+--- a/app/javascript/dashboard/i18n/locale/da/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/da/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Tildel"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Kopiér",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Slet",
+diff --git a/app/javascript/dashboard/i18n/locale/de/conversation.json b/app/javascript/dashboard/i18n/locale/de/conversation.json
+index 3f38361ce..69c3bff36 100644
+--- a/app/javascript/dashboard/i18n/locale/de/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/de/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Zuordnen"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Kopieren",
+       "REPLY_TO": "Auf diese Nachricht antworten",
+       "DELETE": "Löschen",
+diff --git a/app/javascript/dashboard/i18n/locale/el/conversation.json b/app/javascript/dashboard/i18n/locale/el/conversation.json
+index 0b564591a..d214359ca 100644
+--- a/app/javascript/dashboard/i18n/locale/el/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/el/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Αντιστοίχιση"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Αντιγραφή",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Διαγραφή",
+diff --git a/app/javascript/dashboard/i18n/locale/en/conversation.json b/app/javascript/dashboard/i18n/locale/en/conversation.json
+index 742a3657e..cca72b37f 100644
+--- a/app/javascript/dashboard/i18n/locale/en/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/en/conversation.json
+@@ -56,6 +56,7 @@
+     },
+     "HEADER": {
+       "RESOLVE_ACTION": "Resolve",
++      "RESOLVE_ALL_ACTION": "Resolve All",
+       "REOPEN_ACTION": "Reopen",
+       "OPEN_ACTION": "Open",
+       "OPEN": "More",
+@@ -205,6 +206,8 @@
+       "ASSIGN": "Assign"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Copy",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Delete",
+diff --git a/app/javascript/dashboard/i18n/locale/en/inboxMgmt.json b/app/javascript/dashboard/i18n/locale/en/inboxMgmt.json
+index 82e6e7c2b..110e2de61 100644
+--- a/app/javascript/dashboard/i18n/locale/en/inboxMgmt.json
++++ b/app/javascript/dashboard/i18n/locale/en/inboxMgmt.json
+@@ -732,7 +732,7 @@
+       "BODY": {
+         "TEAM_AVAILABILITY": {
+           "ONLINE": "We are Online",
+-          "OFFLINE": "We are away at the moment"
++          "OFFLINE": "Unfortunately, all operators are offline"
+         },
+         "USER_MESSAGE": "Hi",
+         "AGENT_MESSAGE": "Hello"
+diff --git a/app/javascript/dashboard/i18n/locale/es/conversation.json b/app/javascript/dashboard/i18n/locale/es/conversation.json
+index 1f2a4bccb..5a5847db8 100644
+--- a/app/javascript/dashboard/i18n/locale/es/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/es/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Asignar"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Copiar",
+       "REPLY_TO": "Responder a este mensaje",
+       "DELETE": "Eliminar",
+diff --git a/app/javascript/dashboard/i18n/locale/fa/conversation.json b/app/javascript/dashboard/i18n/locale/fa/conversation.json
+index 303f09300..38ff7947c 100644
+--- a/app/javascript/dashboard/i18n/locale/fa/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/fa/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "اختصاص دادن"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "کپی",
+       "REPLY_TO": "پاسخ به این پیام",
+       "DELETE": "حذف",
+diff --git a/app/javascript/dashboard/i18n/locale/fi/conversation.json b/app/javascript/dashboard/i18n/locale/fi/conversation.json
+index 95e120c39..7c6efdc5a 100644
+--- a/app/javascript/dashboard/i18n/locale/fi/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/fi/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Delegoi"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Kopioi",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Poista",
+diff --git a/app/javascript/dashboard/i18n/locale/fr/conversation.json b/app/javascript/dashboard/i18n/locale/fr/conversation.json
+index 06c404409..24306f610 100644
+--- a/app/javascript/dashboard/i18n/locale/fr/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/fr/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Assigner"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Copier",
+       "REPLY_TO": "Répondre à ce message",
+       "DELETE": "Supprimer",
+diff --git a/app/javascript/dashboard/i18n/locale/he/conversation.json b/app/javascript/dashboard/i18n/locale/he/conversation.json
+index e3b2610ec..2aea1e80a 100644
+--- a/app/javascript/dashboard/i18n/locale/he/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/he/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "שייך"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "העתק",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "מחק",
+diff --git a/app/javascript/dashboard/i18n/locale/hi/conversation.json b/app/javascript/dashboard/i18n/locale/hi/conversation.json
+index cc3e4569b..55a7d6d75 100644
+--- a/app/javascript/dashboard/i18n/locale/hi/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/hi/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Assign"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Copy",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Delete",
+diff --git a/app/javascript/dashboard/i18n/locale/hu/conversation.json b/app/javascript/dashboard/i18n/locale/hu/conversation.json
+index 4bfb9930d..777e16ea6 100644
+--- a/app/javascript/dashboard/i18n/locale/hu/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/hu/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Hozzárendelés"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Másolás",
+       "REPLY_TO": "Válasz az üzenetre",
+       "DELETE": "Törlés",
+diff --git a/app/javascript/dashboard/i18n/locale/id/conversation.json b/app/javascript/dashboard/i18n/locale/id/conversation.json
+index 80971d342..67fbdefeb 100644
+--- a/app/javascript/dashboard/i18n/locale/id/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/id/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Tugaskan"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Salin",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Hapus",
+diff --git a/app/javascript/dashboard/i18n/locale/it/conversation.json b/app/javascript/dashboard/i18n/locale/it/conversation.json
+index 494b9f095..073af40b2 100644
+--- a/app/javascript/dashboard/i18n/locale/it/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/it/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Assegna"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Copia",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Elimina",
+diff --git a/app/javascript/dashboard/i18n/locale/ja/conversation.json b/app/javascript/dashboard/i18n/locale/ja/conversation.json
+index f04038323..1ccdacfdb 100644
+--- a/app/javascript/dashboard/i18n/locale/ja/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/ja/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Assign"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "コピー",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "削除",
+diff --git a/app/javascript/dashboard/i18n/locale/ka/conversation.json b/app/javascript/dashboard/i18n/locale/ka/conversation.json
+index cc3e4569b..ca1d949c3 100644
+--- a/app/javascript/dashboard/i18n/locale/ka/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/ka/conversation.json
+@@ -205,6 +205,7 @@
+       "ASSIGN": "Assign"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
+       "COPY": "Copy",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Delete",
+diff --git a/app/javascript/dashboard/i18n/locale/ko/conversation.json b/app/javascript/dashboard/i18n/locale/ko/conversation.json
+index ba8552a94..eb8d2811d 100644
+--- a/app/javascript/dashboard/i18n/locale/ko/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/ko/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "할당하다"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "복사",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "삭제",
+diff --git a/app/javascript/dashboard/i18n/locale/lt/conversation.json b/app/javascript/dashboard/i18n/locale/lt/conversation.json
+index ac106c525..2d9aff1b2 100644
+--- a/app/javascript/dashboard/i18n/locale/lt/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/lt/conversation.json
+@@ -206,6 +206,7 @@
+     },
+     "CONTEXT_MENU": {
+       "COPY": "Kopijuoti",
++      "REPLAY": "Replay",
+       "REPLY_TO": "Atsakyti į šią žinutę",
+       "DELETE": "Ištrinti",
+       "CREATE_A_CANNED_RESPONSE": "Pridėti Atsakymų Ruošinius",
+diff --git a/app/javascript/dashboard/i18n/locale/lv/conversation.json b/app/javascript/dashboard/i18n/locale/lv/conversation.json
+index 1bf543b8a..603d53c55 100644
+--- a/app/javascript/dashboard/i18n/locale/lv/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/lv/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Piešķirt"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Kopēt",
+       "REPLY_TO": "Atbildēt uz šo ziņojumu",
+       "DELETE": "Dzēst",
+diff --git a/app/javascript/dashboard/i18n/locale/ml/conversation.json b/app/javascript/dashboard/i18n/locale/ml/conversation.json
+index 51b38cebe..0a18a658d 100644
+--- a/app/javascript/dashboard/i18n/locale/ml/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/ml/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "നിയോഗിക്കുക"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "പകർത്തുക",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "ഇല്ലാതാക്കുക",
+diff --git a/app/javascript/dashboard/i18n/locale/ms/conversation.json b/app/javascript/dashboard/i18n/locale/ms/conversation.json
+index f0e107a1d..a8cd8c338 100644
+--- a/app/javascript/dashboard/i18n/locale/ms/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/ms/conversation.json
+@@ -205,6 +205,7 @@
+       "ASSIGN": "Assign"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
+       "COPY": "Copy",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Padamkan",
+diff --git a/app/javascript/dashboard/i18n/locale/ne/conversation.json b/app/javascript/dashboard/i18n/locale/ne/conversation.json
+index 088e785a4..948c4299d 100644
+--- a/app/javascript/dashboard/i18n/locale/ne/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/ne/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Assign"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Copy",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Delete",
+diff --git a/app/javascript/dashboard/i18n/locale/nl/conversation.json b/app/javascript/dashboard/i18n/locale/nl/conversation.json
+index 5146497c0..b2442df51 100644
+--- a/app/javascript/dashboard/i18n/locale/nl/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/nl/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Toewijzen"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Kopiëren",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Verwijderen",
+diff --git a/app/javascript/dashboard/i18n/locale/no/conversation.json b/app/javascript/dashboard/i18n/locale/no/conversation.json
+index 0935ee275..5ebe71a95 100644
+--- a/app/javascript/dashboard/i18n/locale/no/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/no/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Tildel"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Kopier",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Slett",
+diff --git a/app/javascript/dashboard/i18n/locale/pl/conversation.json b/app/javascript/dashboard/i18n/locale/pl/conversation.json
+index 30ac433ac..7f6eaffa9 100644
+--- a/app/javascript/dashboard/i18n/locale/pl/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/pl/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Przypisz"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Kopiuj",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Usuń",
+diff --git a/app/javascript/dashboard/i18n/locale/pt/conversation.json b/app/javascript/dashboard/i18n/locale/pt/conversation.json
+index de2b2e2a5..720c48961 100644
+--- a/app/javascript/dashboard/i18n/locale/pt/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/pt/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Atribuir"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Copiar",
+       "REPLY_TO": "Responder a esta mensagem",
+       "DELETE": "excluir",
+diff --git a/app/javascript/dashboard/i18n/locale/pt_BR/conversation.json b/app/javascript/dashboard/i18n/locale/pt_BR/conversation.json
+index b01043431..ccb8366bf 100644
+--- a/app/javascript/dashboard/i18n/locale/pt_BR/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/pt_BR/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Atribua"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Copiar",
+       "REPLY_TO": "Responder mensagem",
+       "DELETE": "Excluir",
+diff --git a/app/javascript/dashboard/i18n/locale/ro/conversation.json b/app/javascript/dashboard/i18n/locale/ro/conversation.json
+index e362cfbfc..21236dac0 100644
+--- a/app/javascript/dashboard/i18n/locale/ro/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/ro/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Atribuiți"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Copiază",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Şterge",
+diff --git a/app/javascript/dashboard/i18n/locale/ru/conversation.json b/app/javascript/dashboard/i18n/locale/ru/conversation.json
+index b714a54ff..9c9f4d8f2 100644
+--- a/app/javascript/dashboard/i18n/locale/ru/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/ru/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Назначить"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Ответить",
++      "EDIT": "Редактировать",
+       "COPY": "Копировать",
+       "REPLY_TO": "Ответить на это сообщение",
+       "DELETE": "Удалить",
+diff --git a/app/javascript/dashboard/i18n/locale/ru/inboxMgmt.json b/app/javascript/dashboard/i18n/locale/ru/inboxMgmt.json
+index 887bf51f5..d217399c5 100644
+--- a/app/javascript/dashboard/i18n/locale/ru/inboxMgmt.json
++++ b/app/javascript/dashboard/i18n/locale/ru/inboxMgmt.json
+@@ -723,7 +723,7 @@
+       "BODY": {
+         "TEAM_AVAILABILITY": {
+           "ONLINE": "Мы в сети",
+-          "OFFLINE": "В данный момент мы отсутствуем"
++          "OFFLINE": "К сожалению, все операторы не в сети"
+         },
+         "USER_MESSAGE": "Хай",
+         "AGENT_MESSAGE": "Привет"
+diff --git a/app/javascript/dashboard/i18n/locale/sk/conversation.json b/app/javascript/dashboard/i18n/locale/sk/conversation.json
+index b2fae8f0d..159dd64ea 100644
+--- a/app/javascript/dashboard/i18n/locale/sk/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/sk/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Assign"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Copy",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Vymazať",
+diff --git a/app/javascript/dashboard/i18n/locale/sr/conversation.json b/app/javascript/dashboard/i18n/locale/sr/conversation.json
+index 6902ac4fc..660885b89 100644
+--- a/app/javascript/dashboard/i18n/locale/sr/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/sr/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Dodeli"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Kopiraj",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Izbriši",
+diff --git a/app/javascript/dashboard/i18n/locale/sv/conversation.json b/app/javascript/dashboard/i18n/locale/sv/conversation.json
+index 3a40f68bd..a40dda8ae 100644
+--- a/app/javascript/dashboard/i18n/locale/sv/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/sv/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Tilldela"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Kopiera",
+       "REPLY_TO": "Svara på detta meddelande",
+       "DELETE": "Radera",
+diff --git a/app/javascript/dashboard/i18n/locale/ta/conversation.json b/app/javascript/dashboard/i18n/locale/ta/conversation.json
+index 364439a14..759a08bd2 100644
+--- a/app/javascript/dashboard/i18n/locale/ta/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/ta/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Assign"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "நகல்",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Delete",
+diff --git a/app/javascript/dashboard/i18n/locale/th/conversation.json b/app/javascript/dashboard/i18n/locale/th/conversation.json
+index c3293bafa..f484966a1 100644
+--- a/app/javascript/dashboard/i18n/locale/th/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/th/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "มอบหมาย"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "คัดลอก",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "ลบ",
+diff --git a/app/javascript/dashboard/i18n/locale/tr/conversation.json b/app/javascript/dashboard/i18n/locale/tr/conversation.json
+index a5dc43b46..4b4b41381 100644
+--- a/app/javascript/dashboard/i18n/locale/tr/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/tr/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Atama yap"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Kopyala",
+       "REPLY_TO": "Bu mesaja yanıtla",
+       "DELETE": "Sil",
+diff --git a/app/javascript/dashboard/i18n/locale/uk/conversation.json b/app/javascript/dashboard/i18n/locale/uk/conversation.json
+index 1df537bd9..a61dec543 100644
+--- a/app/javascript/dashboard/i18n/locale/uk/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/uk/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Призначити"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Копіювати",
+       "REPLY_TO": "Відповісти на це повідомлення",
+       "DELETE": "Видалити",
+diff --git a/app/javascript/dashboard/i18n/locale/ur/conversation.json b/app/javascript/dashboard/i18n/locale/ur/conversation.json
+index 3431800d4..592110ac2 100644
+--- a/app/javascript/dashboard/i18n/locale/ur/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/ur/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Assign"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Copy",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "حذف کریں۔",
+diff --git a/app/javascript/dashboard/i18n/locale/ur_IN/conversation.json b/app/javascript/dashboard/i18n/locale/ur_IN/conversation.json
+index cc3e4569b..55a7d6d75 100644
+--- a/app/javascript/dashboard/i18n/locale/ur_IN/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/ur_IN/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Assign"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Copy",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Delete",
+diff --git a/app/javascript/dashboard/i18n/locale/vi/conversation.json b/app/javascript/dashboard/i18n/locale/vi/conversation.json
+index 1465db5c8..e1e7fe416 100644
+--- a/app/javascript/dashboard/i18n/locale/vi/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/vi/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "Gán"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "Sao Chép",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "Xoá",
+diff --git a/app/javascript/dashboard/i18n/locale/zh_CN/conversation.json b/app/javascript/dashboard/i18n/locale/zh_CN/conversation.json
+index 2b6e7bf1e..67001473c 100644
+--- a/app/javascript/dashboard/i18n/locale/zh_CN/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/zh_CN/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "分配"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "复制",
+       "REPLY_TO": "对这条消息进行回复",
+       "DELETE": "删除",
+diff --git a/app/javascript/dashboard/i18n/locale/zh_TW/conversation.json b/app/javascript/dashboard/i18n/locale/zh_TW/conversation.json
+index f8546a744..74f5820bb 100644
+--- a/app/javascript/dashboard/i18n/locale/zh_TW/conversation.json
++++ b/app/javascript/dashboard/i18n/locale/zh_TW/conversation.json
+@@ -205,6 +205,8 @@
+       "ASSIGN": "指派"
+     },
+     "CONTEXT_MENU": {
++      "REPLAY": "Replay",
++      "EDIT": "Edit",
+       "COPY": "複製",
+       "REPLY_TO": "Reply to this message",
+       "DELETE": "刪除",
+diff --git a/app/javascript/dashboard/mixins/specs/time.spec.js b/app/javascript/dashboard/mixins/specs/time.spec.js
+index 4bc970ac9..9a5ad0795 100644
+--- a/app/javascript/dashboard/mixins/specs/time.spec.js
++++ b/app/javascript/dashboard/mixins/specs/time.spec.js
+@@ -3,7 +3,7 @@ import TimeMixin from '../time';
+ describe('#messageStamp', () => {
+   it('returns correct value', () => {
+     expect(TimeMixin.methods.messageStamp(1612971343)).toEqual('3:35 PM');
+-    expect(TimeMixin.methods.messageStamp(1612971343, 'LLL d, h:mm a')).toEqual(
++    expect(TimeMixin.methods.messageStamp(1612971343, 'LLL d, kk:mm')).toEqual(
+       'Feb 10, 3:35 PM'
+     );
+   });
+diff --git a/app/javascript/dashboard/mixins/time.js b/app/javascript/dashboard/mixins/time.js
+index 35b4b5a37..f5cfcb816 100644
+--- a/app/javascript/dashboard/mixins/time.js
++++ b/app/javascript/dashboard/mixins/time.js
+@@ -7,7 +7,7 @@ import {
+ 
+ export default {
+   methods: {
+-    messageStamp(time, dateFormat = 'h:mm a') {
++    messageStamp(time, dateFormat = 'kk:mm') {
+       const unixTime = fromUnixTime(time);
+       return format(unixTime, dateFormat);
+     },
+diff --git a/app/javascript/dashboard/mixins/uiSettings.js b/app/javascript/dashboard/mixins/uiSettings.js
+index f3743c402..762a97fb7 100644
+--- a/app/javascript/dashboard/mixins/uiSettings.js
++++ b/app/javascript/dashboard/mixins/uiSettings.js
+@@ -1,10 +1,10 @@
+ import { mapGetters } from 'vuex';
+ 
+ export const DEFAULT_CONVERSATION_SIDEBAR_ITEMS_ORDER = [
+-  { name: 'conversation_actions' },
+   { name: 'macros' },
+   { name: 'conversation_info' },
+   { name: 'contact_attributes' },
++  { name: 'conversation_actions' },
+   { name: 'previous_conversation' },
+   { name: 'conversation_participants' },
+ ];
+diff --git a/app/javascript/dashboard/modules/conversations/components/MessageContextMenu.vue b/app/javascript/dashboard/modules/conversations/components/MessageContextMenu.vue
+index 4e45508ee..1655dfd29 100644
+--- a/app/javascript/dashboard/modules/conversations/components/MessageContextMenu.vue
++++ b/app/javascript/dashboard/modules/conversations/components/MessageContextMenu.vue
+@@ -99,6 +99,17 @@
+           variant="icon"
+           @click="openDeleteModal"
+         />
++        <hr v-if="enabledOptions['edit']" />
++        <menu-item
++          v-if="enabledOptions['edit']"
++          :option="{
++            icon: 'edit',
++            label: this.$t('CONVERSATION.CONTEXT_MENU.EDIT'),
++          }"
++          variant="icon"
++          @click="handleEdit"
++        />
++        <hr />
+       </div>
+     </woot-context-menu>
+   </div>
+@@ -186,6 +197,22 @@ export default {
+       this.showAlert(this.$t('CONVERSATION.CONTEXT_MENU.LINK_COPIED'));
+       this.handleClose();
+     },
++    async handleEdit() {
++      this.$emit('edit');
++
++      let content = prompt('New message', this.messageContent);
++
++      const { conversation_id: conversationId, id: messageId } = this.message;
++      try {
++        await this.$store.dispatch('editMessage', {
++          conversationId,
++          messageId,
++          content,
++        });
++      } catch (error) {
++        this.showAlert(this.$t('CONVERSATION.FAIL_DELETE_MESSSAGE'));
++      }
++    },
+     async handleCopy() {
+       await copyTextToClipboard(this.plainTextContent);
+       this.showAlert(this.$t('CONTACT_PANEL.COPY_SUCCESSFUL'));
+diff --git a/app/javascript/dashboard/modules/widget-preview/components/WidgetHead.vue b/app/javascript/dashboard/modules/widget-preview/components/WidgetHead.vue
+index e59a00488..159db69e3 100644
+--- a/app/javascript/dashboard/modules/widget-preview/components/WidgetHead.vue
++++ b/app/javascript/dashboard/modules/widget-preview/components/WidgetHead.vue
+@@ -10,7 +10,7 @@
+         />
+         <div v-if="!isDefaultScreen">
+           <div class="title-block">
+-            <span>{{ config.websiteName }}</span>
++            Support&nbsp;<span>{{ config.websiteName }}</span>
+             <div v-if="config.isOnline" class="online-dot" />
+           </div>
+           <div>{{ config.replyTime }}</div>
+diff --git a/app/javascript/dashboard/routes/dashboard/contacts/components/ContactInfoPanel.vue b/app/javascript/dashboard/routes/dashboard/contacts/components/ContactInfoPanel.vue
+index 01a790194..366958e4e 100644
+--- a/app/javascript/dashboard/routes/dashboard/contacts/components/ContactInfoPanel.vue
++++ b/app/javascript/dashboard/routes/dashboard/contacts/components/ContactInfoPanel.vue
+@@ -58,6 +58,7 @@
+           </div>
+           <div v-if="element.name === 'previous_conversation'">
+             <accordion-item
++              compact
+               :title="
+                 $t('CONTACT_PANEL.SIDEBAR_SECTIONS.PREVIOUS_CONVERSATIONS')
+               "
+diff --git a/app/javascript/dashboard/routes/dashboard/contacts/components/ContactsTable.vue b/app/javascript/dashboard/routes/dashboard/contacts/components/ContactsTable.vue
+index 2ca3f595f..fc8949678 100644
+--- a/app/javascript/dashboard/routes/dashboard/contacts/components/ContactsTable.vue
++++ b/app/javascript/dashboard/routes/dashboard/contacts/components/ContactsTable.vue
+@@ -93,6 +93,7 @@ export default {
+         // Note: The attributes used here is in snake case
+         // as it simplier the sort attribute calculation
+         const additional = item.additional_attributes || {};
++        const custom = item.custom_attributes || {};
+         const { last_activity_at: lastActivityAt } = item;
+         const { created_at: createdAt } = item;
+         return {
+@@ -104,6 +105,12 @@ export default {
+           country: additional.country,
+           countryCode: additional.country_code,
+           conversationsCount: item.conversations_count || '---',
++          accountId: custom.accountId || '---',
++          balance: custom.balance || '---',
++          income: custom.income || '---',
++          spent: custom.spent || '---',
++          domain: custom.domain || '---',
++          profile_url: custom.profile || '---',
+           last_activity_at: lastActivityAt
+             ? this.dynamicTime(lastActivityAt)
+             : '---',
+@@ -174,19 +181,53 @@ export default {
+           },
+         },
+         {
+-          field: 'phone_number',
+-          key: 'phone_number',
+-          sortBy: this.sortConfig.phone_number || '',
+-          title: this.$t('CONTACTS_PAGE.LIST.TABLE_HEADER.PHONE_NUMBER'),
+-          align: this.isRTLView ? 'right' : 'left',
++          field: 'accountId',
++          key: 'accountId',
++          sortBy: this.sortConfig.accountId || '',
++          title: 'accountId',
++          align: this.isRTLView ? 'right' : 'center',
+         },
+         {
+-          field: 'company',
+-          key: 'company',
+-          sortBy: this.sortConfig.company_name || '',
+-          title: this.$t('CONTACTS_PAGE.LIST.TABLE_HEADER.COMPANY'),
+-          align: this.isRTLView ? 'right' : 'left',
++          field: 'balance',
++          key: 'balance',
++          sortBy: this.sortConfig.balance || '',
++          title: 'balance',
++          align: this.isRTLView ? 'right' : 'center',
++        },
++        {
++          field: 'spent',
++          key: 'spent',
++          sortBy: this.sortConfig.spent || '',
++          title: 'spent',
++          align: this.isRTLView ? 'right' : 'center',
++        },
++        {
++          field: 'link',
++          key: 'link',
++          sortBy: this.sortConfig.profile_url || '',
++          title: 'link',
++          align: this.isRTLView ? 'right' : 'center',
++          renderBodyCell: ({ row }) => {
++            if (row.profile_url) {
++              return <a href={row.profile_url}>open</a>;
++            }
++            return '---';
++          },
+         },
++        // {
++        //   field: 'phone_number',
++        //   key: 'phone_number',
++        //   sortBy: this.sortConfig.phone_number || '',
++        //   title: this.$t('CONTACTS_PAGE.LIST.TABLE_HEADER.PHONE_NUMBER'),
++        //   align: this.isRTLView ? 'right' : 'left',
++        // },
++        // {
++        //   field: 'company',
++        //   key: 'company',
++        //   sortBy: this.sortConfig.company_name || '',
++        //   title: this.$t('CONTACTS_PAGE.LIST.TABLE_HEADER.COMPANY'),
++        //   align: this.isRTLView ? 'right' : 'left',
++        // },
+         {
+           field: 'city',
+           key: 'city',
+@@ -211,36 +252,36 @@ export default {
+             return '---';
+           },
+         },
+-        {
+-          field: 'profiles',
+-          key: 'profiles',
+-          title: this.$t('CONTACTS_PAGE.LIST.TABLE_HEADER.SOCIAL_PROFILES'),
+-          align: this.isRTLView ? 'right' : 'left',
+-          renderBodyCell: ({ row }) => {
+-            const { profiles } = row;
+-
+-            const items = Object.keys(profiles);
+-
+-            if (!items.length) return '---';
+-
+-            return (
+-              <div class="cell--social-profiles flex gap-0.5 items-center">
+-                {items.map(
+-                  profile =>
+-                    profiles[profile] && (
+-                      <a
+-                        target="_blank"
+-                        rel="noopener noreferrer nofollow"
+-                        href={`https://${profile}.com/${profiles[profile]}`}
+-                      >
+-                        <FluentIcon icon={`brand-${profile}`} />
+-                      </a>
+-                    )
+-                )}
+-              </div>
+-            );
+-          },
+-        },
++        // {
++        //   field: 'profiles',
++        //   key: 'profiles',
++        //   title: this.$t('CONTACTS_PAGE.LIST.TABLE_HEADER.SOCIAL_PROFILES'),
++        //   align: this.isRTLView ? 'right' : 'left',
++        //   renderBodyCell: ({ row }) => {
++        //     const { profiles } = row;
++        //
++        //     const items = Object.keys(profiles);
++        //
++        //     if (!items.length) return '---';
++        //
++        //     return (
++        //       <div class="cell--social-profiles flex gap-0.5 items-center">
++        //         {items.map(
++        //           profile =>
++        //             profiles[profile] && (
++        //               <a
++        //                 target="_blank"
++        //                 rel="noopener noreferrer nofollow"
++        //                 href={`https://${profile}.com/${profiles[profile]}`}
++        //               >
++        //                 <FluentIcon icon={`brand-${profile}`} />
++        //               </a>
++        //             )
++        //         )}
++        //       </div>
++        //     );
++        //   },
++        // },
+         {
+           field: 'last_activity_at',
+           key: 'last_activity_at',
+diff --git a/app/javascript/dashboard/routes/dashboard/conversation/ContactConversations.vue b/app/javascript/dashboard/routes/dashboard/conversation/ContactConversations.vue
+index f78202075..e3b2288b1 100644
+--- a/app/javascript/dashboard/routes/dashboard/conversation/ContactConversations.vue
++++ b/app/javascript/dashboard/routes/dashboard/conversation/ContactConversations.vue
+@@ -13,6 +13,7 @@
+           :chat="conversation"
+           :hide-inbox-name="false"
+           :hide-thumbnail="true"
++          :show-browser-info="true"
+           class="compact"
+         />
+       </div>
+diff --git a/app/javascript/dashboard/routes/dashboard/conversation/ContactPanel.vue b/app/javascript/dashboard/routes/dashboard/conversation/ContactPanel.vue
+index 731ac26e4..6b685fb7c 100644
+--- a/app/javascript/dashboard/routes/dashboard/conversation/ContactPanel.vue
++++ b/app/javascript/dashboard/routes/dashboard/conversation/ContactPanel.vue
+@@ -61,7 +61,8 @@
+           <div v-else-if="element.name === 'conversation_info'">
+             <accordion-item
+               :title="$t('CONVERSATION_SIDEBAR.ACCORDION.CONVERSATION_INFO')"
+-              :is-open="isContactSidebarItemOpen('is_conv_details_open')"
++              :is-open="true"
++              :show-closer="false"
+               compact
+               @click="
+                 value => toggleSidebarUIState('is_conv_details_open', value)
+@@ -98,6 +99,7 @@
+           <div v-else-if="element.name === 'previous_conversation'">
+             <accordion-item
+               v-if="contact.id"
++              :compact="true"
+               :title="
+                 $t('CONVERSATION_SIDEBAR.ACCORDION.PREVIOUS_CONVERSATION')
+               "
+diff --git a/app/javascript/dashboard/routes/dashboard/conversation/contact/ContactInfo.vue b/app/javascript/dashboard/routes/dashboard/conversation/contact/ContactInfo.vue
+index f8862dcea..153e066e3 100644
+--- a/app/javascript/dashboard/routes/dashboard/conversation/contact/ContactInfo.vue
++++ b/app/javascript/dashboard/routes/dashboard/conversation/contact/ContactInfo.vue
+@@ -57,6 +57,7 @@
+         </p>
+         <div class="flex flex-col gap-2 items-start w-full">
+           <contact-info-row
++            class="email-row"
+             :href="contact.email ? `mailto:${contact.email}` : ''"
+             :value="contact.email"
+             icon="mail"
+@@ -64,14 +65,7 @@
+             :title="$t('CONTACT_PANEL.EMAIL_ADDRESS')"
+             show-copy
+           />
+-          <contact-info-row
+-            :href="contact.phone_number ? `tel:${contact.phone_number}` : ''"
+-            :value="contact.phone_number"
+-            icon="call"
+-            emoji="📞"
+-            :title="$t('CONTACT_PANEL.PHONE_NUMBER')"
+-            show-copy
+-          />
++
+           <contact-info-row
+             v-if="contact.identifier"
+             :value="contact.identifier"
+@@ -79,12 +73,7 @@
+             emoji="🪪"
+             :title="$t('CONTACT_PANEL.IDENTIFIER')"
+           />
+-          <contact-info-row
+-            :value="additionalAttributes.company_name"
+-            icon="building-bank"
+-            emoji="🏢"
+-            :title="$t('CONTACT_PANEL.COMPANY')"
+-          />
++
+           <contact-info-row
+             v-if="location || additionalAttributes.location"
+             :value="location || additionalAttributes.location"
+diff --git a/app/javascript/dashboard/routes/dashboard/conversation/contact/ConversationForm.vue b/app/javascript/dashboard/routes/dashboard/conversation/contact/ConversationForm.vue
+index 075fff1d0..985263379 100644
+--- a/app/javascript/dashboard/routes/dashboard/conversation/contact/ConversationForm.vue
++++ b/app/javascript/dashboard/routes/dashboard/conversation/contact/ConversationForm.vue
+@@ -418,8 +418,9 @@ export default {
+   },
+   watch: {
+     message(value) {
+-      this.hasSlashCommand = value[0] === '/' && !this.isEmailOrWebWidgetInbox;
+-      const hasNextWord = value.includes(' ');
++      const checkIsSlash = value[0] === '/' || value[0] === '\\';
++      this.hasSlashCommand = checkIsSlash && !this.isEmailOrWebWidgetInbox;
++      const hasNextWord = value.includes('  ');
+       const isShortCodeActive = this.hasSlashCommand && !hasNextWord;
+       if (isShortCodeActive) {
+         this.cannedResponseSearchKey = value.substring(1);
+diff --git a/app/javascript/dashboard/routes/dashboard/conversation/search/PopOverSearch.vue b/app/javascript/dashboard/routes/dashboard/conversation/search/PopOverSearch.vue
+index d84158477..206715892 100644
+--- a/app/javascript/dashboard/routes/dashboard/conversation/search/PopOverSearch.vue
++++ b/app/javascript/dashboard/routes/dashboard/conversation/search/PopOverSearch.vue
+@@ -9,7 +9,7 @@
+       />
+       <router-link
+         :to="searchUrl"
+-        class="search-link flex-1 items-center gap-1 text-left h-6 rtl:mr-3 rtl:text-right rounded-md px-2 py-0 bg-slate-25 dark:bg-slate-800 inline-flex"
++        class="search-link flex-1 items-center gap-1 text-left h-6 mr-1 rtl:mr-0 rtl:ml-1 rtl:text-right rounded-md px-2 py-0 bg-slate-25 dark:bg-slate-800 inline-flex"
+       >
+         <div class="flex">
+           <fluent-icon
+diff --git a/app/javascript/dashboard/routes/dashboard/settings/auditlogs/Index.vue b/app/javascript/dashboard/routes/dashboard/settings/auditlogs/Index.vue
+index 709d70b25..bfd20fa02 100644
+--- a/app/javascript/dashboard/routes/dashboard/settings/auditlogs/Index.vue
++++ b/app/javascript/dashboard/routes/dashboard/settings/auditlogs/Index.vue
+@@ -39,10 +39,7 @@
+               </td>
+               <td class="whitespace-nowrap break-all">
+                 {{
+-                  messageTimestamp(
+-                    auditLogItem.created_at,
+-                    'MMM dd, yyyy hh:mm a'
+-                  )
++                  messageTimestamp(auditLogItem.created_at, 'LLL d yyyy, kk:mm')
+                 }}
+               </td>
+               <td class="w-[8.75rem]">
+diff --git a/app/javascript/dashboard/routes/dashboard/settings/automation/Index.vue b/app/javascript/dashboard/routes/dashboard/settings/automation/Index.vue
+index a780c9832..f841dc8f0 100644
+--- a/app/javascript/dashboard/routes/dashboard/settings/automation/Index.vue
++++ b/app/javascript/dashboard/routes/dashboard/settings/automation/Index.vue
+@@ -278,7 +278,7 @@ export default {
+       }
+     },
+     readableTime(date) {
+-      return this.messageStamp(new Date(date), 'LLL d, h:mm a');
++      return this.messageStamp(new Date(date), 'LLL d, kk:mm');
+     },
+   },
+ };
+diff --git a/app/javascript/dashboard/routes/dashboard/settings/campaigns/CampaignCard.vue b/app/javascript/dashboard/routes/dashboard/settings/campaigns/CampaignCard.vue
+index 2eb0c3078..778a65cdc 100644
+--- a/app/javascript/dashboard/routes/dashboard/settings/campaigns/CampaignCard.vue
++++ b/app/javascript/dashboard/routes/dashboard/settings/campaigns/CampaignCard.vue
+@@ -60,7 +60,7 @@
+         v-if="campaign.scheduled_at"
+         class="mb-1 text-xs text-slate-700 dark:text-slate-500"
+       >
+-        {{ messageStamp(new Date(campaign.scheduled_at), 'LLL d, h:mm a') }}
++        {{ messageStamp(new Date(campaign.scheduled_at), 'LLL d, kk:mm') }}
+       </div>
+     </div>
+   </div>
+diff --git a/app/javascript/dashboard/routes/dashboard/settings/reports/components/CsatTable.vue b/app/javascript/dashboard/routes/dashboard/settings/reports/components/CsatTable.vue
+index 1e89f06ef..7dd34a275 100644
+--- a/app/javascript/dashboard/routes/dashboard/settings/reports/components/CsatTable.vue
++++ b/app/javascript/dashboard/routes/dashboard/settings/reports/components/CsatTable.vue
+@@ -138,7 +138,7 @@ export default {
+         feedbackText: response.feedback_message || '---',
+         conversationId: response.conversation_id,
+         createdAgo: this.dynamicTime(response.created_at),
+-        createdAt: this.messageStamp(response.created_at, 'LLL d yyyy, h:mm a'),
++        createdAt: this.messageStamp(response.created_at, 'LLL d yyyy, kk:mm'),
+       }));
+     },
+   },
+diff --git a/app/javascript/dashboard/store/modules/conversations/actions.js b/app/javascript/dashboard/store/modules/conversations/actions.js
+index 6a8b94e1e..3db4cc1de 100644
+--- a/app/javascript/dashboard/store/modules/conversations/actions.js
++++ b/app/javascript/dashboard/store/modules/conversations/actions.js
+@@ -255,7 +255,6 @@ const actions = {
+     const pendingMessage = createPendingMessage(data);
+     dispatch('sendMessageWithData', pendingMessage);
+   },
+-
+   sendMessageWithData: async ({ commit }, pendingMessage) => {
+     const { conversation_id: conversationId, id } = pendingMessage;
+     try {
+@@ -304,6 +303,24 @@ const actions = {
+     commit(types.ADD_MESSAGE, message);
+   },
+ 
++  editMessage: async function editLabels(
++    { commit },
++    { conversationId, messageId, content }
++  ) {
++    try {
++      const response = await MessageApi.edit(
++        conversationId,
++        messageId,
++        content
++      );
++      const { data } = response;
++      // The delete message is actually deleting the content.
++      commit(types.ADD_MESSAGE, data);
++    } catch (error) {
++      throw new Error(error);
++    }
++  },
++
+   deleteMessage: async function deleteLabels(
+     { commit },
+     { conversationId, messageId }
+diff --git a/app/javascript/dashboard/store/modules/conversations/index.js b/app/javascript/dashboard/store/modules/conversations/index.js
+index 769354ed2..4e9069e29 100644
+--- a/app/javascript/dashboard/store/modules/conversations/index.js
++++ b/app/javascript/dashboard/store/modules/conversations/index.js
+@@ -32,7 +32,7 @@ export const mutations = {
+         c => c.id === conversation.id
+       );
+       if (indexInCurrentList < 0) {
+-        newAllConversations.push(conversation);
++        newAllConversations.unshift(conversation);
+       } else if (conversation.id !== _state.selectedChatId) {
+         // If the conversation is already in the list, replace it
+         // Added this to fix the issue of the conversation not being updated
+@@ -157,6 +157,12 @@ export const mutations = {
+       message.status === MESSAGE_STATUS.SENT && message.attachments;
+     if (isMessageSent) {
+       message.attachments.forEach(attachment => {
++        if (!chat.attachments) {
++          chat.attachments = [];
++        }
++        if (!Array.isArray(chat.attachments)) {
++          chat.attachments = [];
++        }
+         if (!chat.attachments.some(a => a.id === attachment.id)) {
+           chat.attachments.push(attachment);
+         }
+@@ -206,7 +212,7 @@ export const mutations = {
+   },
+ 
+   [types.ADD_CONVERSATION](_state, conversation) {
+-    _state.allConversations.push(conversation);
++    _state.allConversations.unshift(conversation);
+   },
+ 
+   [types.UPDATE_CONVERSATION](_state, conversation) {
+@@ -226,7 +232,7 @@ export const mutations = {
+         emitter.emit(BUS_EVENTS.SCROLL_TO_MESSAGE);
+       }
+     } else {
+-      _state.allConversations.push(conversation);
++      _state.allConversations.unshift(conversation);
+     }
+   },
+ 
+diff --git a/app/javascript/dashboard/store/modules/notifications/mutations.js b/app/javascript/dashboard/store/modules/notifications/mutations.js
+index 9451eb876..19dac6b0a 100644
+--- a/app/javascript/dashboard/store/modules/notifications/mutations.js
++++ b/app/javascript/dashboard/store/modules/notifications/mutations.js
+@@ -68,6 +68,14 @@ export const mutations = {
+       ...($state.records[notification.id] || {}),
+       ...notification,
+     });
++
++    // Ensure the limit of 10 notifications
++    const notificationIds = Object.keys($state.records);
++    if (notificationIds.length > 10) {
++      // Remove the oldest notification
++      Vue.delete($state.records, notificationIds[0]);
++    }
++
+     Vue.set($state.meta, 'unreadCount', unreadCount);
+     Vue.set($state.meta, 'count', count);
+   },
+diff --git a/app/javascript/dashboard/store/utils/api.js b/app/javascript/dashboard/store/utils/api.js
+index e8628300b..cd21a2235 100644
+--- a/app/javascript/dashboard/store/utils/api.js
++++ b/app/javascript/dashboard/store/utils/api.js
+@@ -11,7 +11,11 @@ import { LOCAL_STORAGE_KEYS } from 'dashboard/constants/localStorage';
+ import { LocalStorage } from 'shared/helpers/localStorage';
+ import { emitter } from 'shared/helpers/mitt';
+ 
+-Cookies.defaults = { sameSite: 'Lax' };
++// Cookies.defaults = { sameSite: 'Lax' };
++Cookies.defaults = {
++  sameSite: 'none',
++  secure: true,
++};
+ 
+ export const getLoadingStatus = state => state.fetchAPIloadingStatus;
+ export const setLoadingStatus = (state, status) => {
+diff --git a/app/javascript/packs/sdk.js b/app/javascript/packs/sdk.js
+index 0aac9104e..a14ab0e02 100755
+--- a/app/javascript/packs/sdk.js
++++ b/app/javascript/packs/sdk.js
+@@ -36,19 +36,22 @@ const runSDK = ({ baseUrl, websiteToken }) => {
+     });
+   }
+ 
+-  // if this is an astro app
+-  document.addEventListener('astro:before-swap', event =>
+-    restoreWidgetInDOM(event.newDocument.body)
+-  );
+-
+   const chatwootSettings = window.chatwootSettings || {};
+   let locale = chatwootSettings.locale;
+   let baseDomain = chatwootSettings.baseDomain;
++  let mountSelector = chatwootSettings.mountSelector;
+ 
+   if (chatwootSettings.useBrowserLanguage) {
+     locale = window.navigator.language.replace('-', '_');
+   }
+ 
++  if (chatwootSettings.restoreWidgetBeforeSwap) {
++    // if this is an astro app
++    document.addEventListener('astro:before-swap', event =>
++      restoreWidgetInDOM(event.newDocument.body)
++    );
++  }
++
+   window.$chatwoot = {
+     baseUrl,
+     baseDomain,
+@@ -66,6 +69,7 @@ const runSDK = ({ baseUrl, websiteToken }) => {
+     widgetStyle: getWidgetStyle(chatwootSettings.widgetStyle) || 'standard',
+     resetTriggered: false,
+     darkMode: getDarkMode(chatwootSettings.darkMode),
++    mountSelector,
+ 
+     toggle(state) {
+       IFrameHelper.events.toggleBubble(state);
+@@ -110,6 +114,7 @@ const runSDK = ({ baseUrl, websiteToken }) => {
+       const userCookieName = getUserCookieName();
+       const existingCookieValue = Cookies.get(userCookieName);
+       const hashToBeStored = computeHashForUserData({ identifier, user });
++
+       if (hashToBeStored === existingCookieValue) {
+         return;
+       }
+@@ -123,6 +128,29 @@ const runSDK = ({ baseUrl, websiteToken }) => {
+       });
+     },
+ 
++    setUserForce(identifier, user) {
++      if (typeof identifier !== 'string' && typeof identifier !== 'number') {
++        throw new Error('Identifier should be a string or a number');
++      }
++
++      if (!hasUserKeys(user)) {
++        throw new Error(
++          'User object should have one of the keys [avatar_url, email, name]'
++        );
++      }
++
++      const userCookieName = getUserCookieName();
++      const hashToBeStored = computeHashForUserData({ identifier, user });
++
++      window.$chatwoot.identifier = identifier;
++      window.$chatwoot.user = user;
++      IFrameHelper.sendMessage('set-user', { identifier, user });
++
++      setCookieWithDomain(userCookieName, hashToBeStored, {
++        baseDomain,
++      });
++    },
++
+     setCustomAttributes(customAttributes = {}) {
+       if (!customAttributes || !Object.keys(customAttributes).length) {
+         throw new Error('Custom attributes should have atleast one key');
+@@ -180,6 +208,30 @@ const runSDK = ({ baseUrl, websiteToken }) => {
+     },
+ 
+     reset() {
++      return new Promise((resolve, reject) => {
++        if (window.$chatwoot.isOpen) {
++          IFrameHelper.events.toggleBubble();
++        }
++
++        Cookies.remove('cw_conversation');
++        Cookies.remove(getUserCookieName());
++
++        const iframe = IFrameHelper.getAppFrame();
++        iframe.onload = () => {
++          window.$chatwoot.resetTriggered = true;
++          resolve();
++        };
++        iframe.onerror = () => {
++          reject(new Error('Error loading iframe'));
++        };
++        iframe.src = IFrameHelper.getUrl({
++          baseUrl: window.$chatwoot.baseUrl,
++          websiteToken: window.$chatwoot.websiteToken,
++        });
++      });
++    },
++
++    resetOld() {
+       if (window.$chatwoot.isOpen) {
+         IFrameHelper.events.toggleBubble();
+       }
+@@ -200,6 +252,7 @@ const runSDK = ({ baseUrl, websiteToken }) => {
+   IFrameHelper.createFrame({
+     baseUrl,
+     websiteToken,
++    mountSelector,
+   });
+ };
+ 
+diff --git a/app/javascript/sdk/IFrameHelper.js b/app/javascript/sdk/IFrameHelper.js
+index 8f6716f1c..13cb706cd 100644
+--- a/app/javascript/sdk/IFrameHelper.js
++++ b/app/javascript/sdk/IFrameHelper.js
+@@ -22,7 +22,17 @@ import {
+ } from './bubbleHelpers';
+ import { isWidgetColorLighter } from 'shared/helpers/colorHelper';
+ import { dispatchWindowEvent } from 'shared/helpers/CustomEventHelper';
+-import { CHATWOOT_ERROR, CHATWOOT_READY } from '../widget/constants/sdkEvents';
++import {
++  CHATWOOT_CLOSE,
++  CHATWOOT_CLOSE_2,
++  CHATWOOT_ERROR,
++  CHATWOOT_LOADED,
++  CHATWOOT_OPEN,
++  CHATWOOT_OPEN_2,
++  CHATWOOT_READY,
++  CHATWOOT_READY_2,
++  CHATWOOT_INIT,
++} from '../widget/constants/sdkEvents';
+ import { SET_USER_ERROR } from '../widget/constants/errorTypes';
+ import { getUserCookieName, setCookieWithDomain } from './cookieHelpers';
+ import {
+@@ -50,7 +60,7 @@ export const IFrameHelper = {
+   getUrl({ baseUrl, websiteToken }) {
+     return `${baseUrl}/widget?website_token=${websiteToken}`;
+   },
+-  createFrame: ({ baseUrl, websiteToken }) => {
++  createFrame: ({ baseUrl, websiteToken, mountSelector }) => {
+     if (IFrameHelper.getAppFrame()) {
+       return;
+     }
+@@ -79,10 +89,19 @@ export const IFrameHelper = {
+     addClasses(widgetHolder, holderClassName);
+     widgetHolder.id = 'cw-widget-holder';
+     widgetHolder.appendChild(iframe);
+-    body.appendChild(widgetHolder);
++    const mountNode = mountSelector
++      ? document.querySelector(mountSelector)
++      : null;
++    if (mountNode) {
++      addClasses(widgetHolder, 'woot-widget-holder--embedded');
++      mountNode.appendChild(widgetHolder);
++    } else {
++      body.appendChild(widgetHolder);
++    }
+     IFrameHelper.initPostMessageCommunication();
+     IFrameHelper.initWindowSizeListener();
+     IFrameHelper.preventDefaultScroll();
++    dispatchWindowEvent({ eventName: CHATWOOT_LOADED });
+   },
+   getAppFrame: () => document.getElementById('chatwoot_live_chat_widget'),
+   getBubbleHolder: () => document.getElementsByClassName('woot--bubble-holder'),
+@@ -179,7 +198,10 @@ export const IFrameHelper = {
+ 
+       if (!window.$chatwoot.resetTriggered) {
+         dispatchWindowEvent({ eventName: CHATWOOT_READY });
++        dispatchWindowEvent({ eventName: CHATWOOT_READY_2 });
+       }
++
++      dispatchWindowEvent({ eventName: CHATWOOT_INIT });
+     },
+     error: ({ errorType, data }) => {
+       dispatchWindowEvent({ eventName: CHATWOOT_ERROR, data: data });
+@@ -229,6 +251,11 @@ export const IFrameHelper = {
+       IFrameHelper.sendMessage('toggle-open', { isOpen });
+       if (isOpen) {
+         IFrameHelper.pushEvent('webwidget.triggered');
++        dispatchWindowEvent({ eventName: CHATWOOT_OPEN });
++        dispatchWindowEvent({ eventName: CHATWOOT_OPEN_2 });
++      } else {
++        dispatchWindowEvent({ eventName: CHATWOOT_CLOSE });
++        dispatchWindowEvent({ eventName: CHATWOOT_CLOSE_2 });
+       }
+     },
+     onLocationChange: ({ referrerURL, referrerHost }) => {
+diff --git a/app/javascript/sdk/cookieHelpers.js b/app/javascript/sdk/cookieHelpers.js
+index 286e01317..2a9c6a9b6 100644
+--- a/app/javascript/sdk/cookieHelpers.js
++++ b/app/javascript/sdk/cookieHelpers.js
+@@ -28,9 +28,15 @@ export const setCookieWithDomain = (
+   value,
+   { expires = 365, baseDomain = undefined } = {}
+ ) => {
++  // const cookieOptions = {
++  //   expires,
++  //   sameSite: 'Lax',
++  //   domain: baseDomain,
++  // };
+   const cookieOptions = {
+     expires,
+-    sameSite: 'Lax',
++    sameSite: 'None',
++    secure: true,
+     domain: baseDomain,
+   };
+ 
+diff --git a/app/javascript/sdk/sdk.js b/app/javascript/sdk/sdk.js
+index 95d132258..c1af0f58b 100644
+--- a/app/javascript/sdk/sdk.js
++++ b/app/javascript/sdk/sdk.js
+@@ -21,6 +21,20 @@ export const SDK_CSS = `
+   border: 1px solid var(--b-100);
+ }
+ 
++.woot-widget-holder.woot-widget-holder--embedded {
++  position: absolute !important;
++  inset: 0 !important;
++  top: 0 !important;
++  right: 0 !important;
++  bottom: 0 !important;
++  left: 0 !important;
++  width: 100% !important;
++  height: 100% !important;
++  max-height: 100% !important;
++  border-radius: 0 !important;
++  z-index: 1 !important;
++}
++
+ .woot-widget-holder iframe {
+   border: 0;
+   color-scheme: normal;
+@@ -29,6 +43,10 @@ export const SDK_CSS = `
+   max-height: 100vh !important;
+ }
+ 
++.woot-widget-holder.woot-widget-holder--embedded iframe {
++  max-height: 100% !important;
++}
++
+ .woot-widget-holder.has-unread-view {
+   border-radius: 0 !important;
+   min-height: 80px !important;
+@@ -97,17 +115,30 @@ export const SDK_CSS = `
+   align-items: center;
+ }
+ 
++@media (max-width: 768px) {
++  .woot-widget-bubble.woot-widget--expanded {
++    height: 48px !important;
++  }
++}
++
+ .woot-widget-bubble.woot-widget--expanded div {
+   align-items: center;
+   color: #fff;
+   display: flex;
+   font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, Arial, sans-serif;
+   font-size: 16px;
+-  font-weight: 500;
++  font-weight: 600;
+   justify-content: center;
+   padding-right: 20px;
+   width: auto !important;
+ }
++@media (max-width: 768px) {
++  .woot-widget-bubble.woot-widget--expanded div {
++    font-size: 14px;
++    padding-right: 14px;
++    display: none;
++  }
++}
+ 
+ .woot-widget-bubble.woot-widget--expanded.woot-widget-bubble-color--lighter div{
+   color: var(--s-700);
+@@ -118,7 +149,11 @@ export const SDK_CSS = `
+   margin: 14px 8px 14px 16px;
+   width: 20px;
+ }
+-
++@media (max-width: 768px) {
++  .woot-widget-bubble.woot-widget--expanded svg {
++    margin: 14px;
++  }
++}
+ .woot-widget-bubble.woot-elements--left {
+   left: 20px;
+ }
+diff --git a/app/javascript/shared/components/Branding.vue b/app/javascript/shared/components/Branding.vue
+index bbeb578e9..292b224f3 100644
+--- a/app/javascript/shared/components/Branding.vue
++++ b/app/javascript/shared/components/Branding.vue
+@@ -2,23 +2,7 @@
+   <div
+     v-if="globalConfig.brandName && !disableBranding"
+     class="px-0 py-3 flex justify-center"
+-  >
+-    <a
+-      :href="brandRedirectURL"
+-      rel="noreferrer noopener nofollow"
+-      target="_blank"
+-      class="branding--link justify-center items-center leading-3"
+-    >
+-      <img
+-        class="branding--image"
+-        :alt="globalConfig.brandName"
+-        :src="globalConfig.logoThumbnail"
+-      />
+-      <span>
+-        {{ useInstallationName($t('POWERED_BY'), globalConfig.brandName) }}
+-      </span>
+-    </a>
+-  </div>
++  />
+   <div v-else class="p-3" />
+ </template>
+ 
+diff --git a/app/javascript/shared/constants/busEvents.js b/app/javascript/shared/constants/busEvents.js
+index 2229a8b4c..00cf5dcfd 100644
+--- a/app/javascript/shared/constants/busEvents.js
++++ b/app/javascript/shared/constants/busEvents.js
+@@ -14,4 +14,5 @@ export const BUS_EVENTS = {
+   SHOW_TOAST: 'newToastMessage',
+   NEW_CONVERSATION_MODAL: 'newConversationModal',
+   INSERT_INTO_RICH_EDITOR: 'insertIntoRichEditor',
++  WEBSOCKET_RECONNECTED: 'WEBSOCKET_RECONNECTED',
+ };
+diff --git a/app/javascript/shared/helpers/BaseActionCableConnector.js b/app/javascript/shared/helpers/BaseActionCableConnector.js
+index 3eb61a80a..2ce0c8710 100644
+--- a/app/javascript/shared/helpers/BaseActionCableConnector.js
++++ b/app/javascript/shared/helpers/BaseActionCableConnector.js
+@@ -10,12 +10,38 @@ class BaseActionCableConnector {
+     const websocketURL = websocketHost ? `${websocketHost}/cable` : undefined;
+ 
+     this.consumer = createConsumer(websocketURL);
+-    this.subscription = this.consumer.subscriptions.create(
++    this.app = app;
++    this.subscription = this.createSubscription(pubsubToken);
++    this.events = {};
++    this.reconnectTimer = null;
++    this.isAValidEvent = () => true;
++    this.triggerPresenceInterval = () => {
++      setTimeout(() => {
++        this.subscription.updatePresence();
++        this.triggerPresenceInterval();
++      }, PRESENCE_INTERVAL);
++    };
++    this.triggerPresenceInterval();
++  }
++
++  refreshConnection(newPubsubToken) {
++    // Disconnect the current connection
++    this.disconnect();
++
++    // Create a new subscription with the new pubsubToken
++    this.subscription = this.createSubscription(newPubsubToken);
++
++    // Restart the presence interval
++    this.triggerPresenceInterval();
++  }
++
++  createSubscription(pubsubToken) {
++    return this.consumer.subscriptions.create(
+       {
+         channel: 'RoomChannel',
+         pubsub_token: pubsubToken,
+-        account_id: app.$store.getters.getCurrentAccountId,
+-        user_id: app.$store.getters.getCurrentUserID,
++        account_id: this.app.$store.getters.getCurrentAccountId,
++        user_id: this.app.$store.getters.getCurrentUserID,
+       },
+       {
+         updatePresence() {
+@@ -29,17 +55,6 @@ class BaseActionCableConnector {
+         },
+       }
+     );
+-    this.app = app;
+-    this.events = {};
+-    this.reconnectTimer = null;
+-    this.isAValidEvent = () => true;
+-    this.triggerPresenceInterval = () => {
+-      setTimeout(() => {
+-        this.subscription.updatePresence();
+-        this.triggerPresenceInterval();
+-      }, PRESENCE_INTERVAL);
+-    };
+-    this.triggerPresenceInterval();
+   }
+ 
+   checkConnection() {
+diff --git a/app/javascript/widget/App.vue b/app/javascript/widget/App.vue
+index 072323d53..7e411d042 100755
+--- a/app/javascript/widget/App.vue
++++ b/app/javascript/widget/App.vue
+@@ -43,6 +43,7 @@ import {
+ } from './constants/widgetBusEvents';
+ import darkModeMixin from 'widget/mixins/darkModeMixin';
+ import { SDK_SET_BUBBLE_VISIBILITY } from '../shared/constants/sharedFrameEvents';
++import { BUS_EVENTS } from '../shared/constants/busEvents';
+ import { emitter } from 'shared/helpers/mitt';
+ 
+ export default {
+@@ -85,7 +86,7 @@ export default {
+       this.setCampaignView();
+     },
+   },
+-  mounted() {
++  async mounted() {
+     const { websiteToken, locale, widgetColor } = window.chatwootWebChannel;
+     this.setLocale(locale);
+     this.setWidgetColor(widgetColor);
+@@ -93,6 +94,9 @@ export default {
+     if (this.isIFrame) {
+       this.registerListeners();
+       this.sendLoadedEvent();
++      emitter.on(BUS_EVENTS.WEBSOCKET_RECONNECTED, () => {
++        this.fetchOldConversations();
++      });
+     } else {
+       this.fetchOldConversations();
+       this.fetchAvailableAgents(websiteToken);
+@@ -286,7 +290,9 @@ export default {
+         } else if (message.event === 'remove-label') {
+           this.$store.dispatch('conversationLabels/destroy', message.label);
+         } else if (message.event === 'set-user') {
+-          this.$store.dispatch('contacts/setUser', message);
++          this.$store.dispatch('contacts/setUser', message).catch(err => {
++            IFrameHelper.sendMessage('set-user-error', { err });
++          });
+         } else if (message.event === 'set-custom-attributes') {
+           this.$store.dispatch(
+             'contacts/setCustomAttributes',
+diff --git a/app/javascript/widget/assets/scss/_variables.scss b/app/javascript/widget/assets/scss/_variables.scss
+index a0033266d..d4dc744aa 100755
+--- a/app/javascript/widget/assets/scss/_variables.scss
++++ b/app/javascript/widget/assets/scss/_variables.scss
+@@ -42,6 +42,7 @@ $color-woot: #1f93ff;
+ $color-primary: $color-woot;
+ $color-gray: #6e6f73;
+ $color-light-gray: #999a9b;
++$color-light: #c2e1ff;
+ $color-border: #e0e6ed;
+ $color-border-transparent: rgba(224, 230, 237, 0.5);
+ $color-border-light: #f0f4f5;
+diff --git a/app/javascript/widget/assets/scss/views/_conversation.scss b/app/javascript/widget/assets/scss/views/_conversation.scss
+index 24f4701fc..d708b5fdc 100644
+--- a/app/javascript/widget/assets/scss/views/_conversation.scss
++++ b/app/javascript/widget/assets/scss/views/_conversation.scss
+@@ -216,6 +216,13 @@
+   text-align: left;
+   word-break: break-word;
+ 
++  blockquote {
++    border-left: 1px solid $color-light;
++    display: block;
++    margin: 0 0 0.4rem;
++    padding: 0.9rem 2rem 0 0.9rem;
++  }
++
+   :not([audio]) {
+     max-width: 100%;
+   }
+diff --git a/app/javascript/widget/components/AgentMessage.vue b/app/javascript/widget/components/AgentMessage.vue
+index c38726031..673b26dff 100755
+--- a/app/javascript/widget/components/AgentMessage.vue
++++ b/app/javascript/widget/components/AgentMessage.vue
+@@ -146,7 +146,7 @@ export default {
+     },
+     readableTime() {
+       const { created_at: createdAt = '' } = this.message;
+-      return this.messageStamp(createdAt, 'LLL d yyyy, h:mm a');
++      return this.messageStamp(createdAt, 'LLL d yyyy, kk:mm');
+     },
+     messageType() {
+       const { message_type: type = 1 } = this.message;
+diff --git a/app/javascript/widget/components/ChatHeader.vue b/app/javascript/widget/components/ChatHeader.vue
+index 079f337aa..78cb41940 100644
+--- a/app/javascript/widget/components/ChatHeader.vue
++++ b/app/javascript/widget/components/ChatHeader.vue
+@@ -26,6 +26,7 @@
+           class="font-medium text-base leading-4 flex items-center"
+           :class="$dm('text-black-900', 'dark:text-slate-50')"
+         >
++          <span v-dompurify-html="$t('CHAT_HEADER')" class="mr-1" />
+           <span v-dompurify-html="title" class="mr-1" />
+           <div
+             :class="`h-2 w-2 rounded-full
+diff --git a/app/javascript/widget/constants/sdkEvents.js b/app/javascript/widget/constants/sdkEvents.js
+index 766fa1742..5cb21a0ab 100644
+--- a/app/javascript/widget/constants/sdkEvents.js
++++ b/app/javascript/widget/constants/sdkEvents.js
+@@ -1,4 +1,11 @@
+ export const CHATWOOT_ERROR = 'chatwoot:error';
+ export const CHATWOOT_ON_MESSAGE = 'chatwoot:on-message';
++export const CHATWOOT_LOADED = 'chatwoot:loaded';
++export const CHATWOOT_OPEN = 'chatwoot:open';
++export const CHATWOOT_OPEN_2 = 'chatwoot:open2';
++export const CHATWOOT_CLOSE_2 = 'chatwoot:close2';
++export const CHATWOOT_CLOSE = 'chatwoot:close';
+ export const CHATWOOT_ON_START_CONVERSATION = 'chatwoot:on-start-conversation';
+ export const CHATWOOT_READY = 'chatwoot:ready';
++export const CHATWOOT_READY_2 = 'chatwoot:ready2';
++export const CHATWOOT_INIT = 'chatwoot:init';
+diff --git a/app/javascript/widget/helpers/actionCable.js b/app/javascript/widget/helpers/actionCable.js
+index 4e18d0c70..3b7d802eb 100644
+--- a/app/javascript/widget/helpers/actionCable.js
++++ b/app/javascript/widget/helpers/actionCable.js
+@@ -137,6 +137,10 @@ class ActionCableConnector extends BaseActionCableConnector {
+       this.onTypingOff();
+     }, 30000);
+   };
++
++  updateToken = pubsubToken => {
++    this.refreshConnection(pubsubToken);
++  };
+ }
+ 
+ export default ActionCableConnector;
+diff --git a/app/javascript/widget/i18n/locale/ar.json b/app/javascript/widget/i18n/locale/ar.json
+index 2e76a6b05..1a3c4b7bd 100644
+--- a/app/javascript/widget/i18n/locale/ar.json
++++ b/app/javascript/widget/i18n/locale/ar.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "تحميل",
+diff --git a/app/javascript/widget/i18n/locale/bg.json b/app/javascript/widget/i18n/locale/bg.json
+index ffdf25359..e4b87c5db 100644
+--- a/app/javascript/widget/i18n/locale/bg.json
++++ b/app/javascript/widget/i18n/locale/bg.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Изтегляне",
+diff --git a/app/javascript/widget/i18n/locale/ca.json b/app/javascript/widget/i18n/locale/ca.json
+index 13cd889c8..06031cc0a 100644
+--- a/app/javascript/widget/i18n/locale/ca.json
++++ b/app/javascript/widget/i18n/locale/ca.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Descarrega",
+diff --git a/app/javascript/widget/i18n/locale/cs.json b/app/javascript/widget/i18n/locale/cs.json
+index fc18a102b..e15b87c63 100644
+--- a/app/javascript/widget/i18n/locale/cs.json
++++ b/app/javascript/widget/i18n/locale/cs.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Stáhnout",
+diff --git a/app/javascript/widget/i18n/locale/da.json b/app/javascript/widget/i18n/locale/da.json
+index e0161f692..aa0f5be41 100644
+--- a/app/javascript/widget/i18n/locale/da.json
++++ b/app/javascript/widget/i18n/locale/da.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Download",
+diff --git a/app/javascript/widget/i18n/locale/de.json b/app/javascript/widget/i18n/locale/de.json
+index 36a5202bd..0f14e4e19 100644
+--- a/app/javascript/widget/i18n/locale/de.json
++++ b/app/javascript/widget/i18n/locale/de.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Unterstützung",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Herunterladen",
+diff --git a/app/javascript/widget/i18n/locale/el.json b/app/javascript/widget/i18n/locale/el.json
+index 8180fcfc5..4f6e7b472 100644
+--- a/app/javascript/widget/i18n/locale/el.json
++++ b/app/javascript/widget/i18n/locale/el.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Κατέβασμα",
+diff --git a/app/javascript/widget/i18n/locale/en.json b/app/javascript/widget/i18n/locale/en.json
+index 83b442e51..458e1f8da 100644
+--- a/app/javascript/widget/i18n/locale/en.json
++++ b/app/javascript/widget/i18n/locale/en.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Download",
+@@ -14,7 +15,7 @@
+   },
+   "TEAM_AVAILABILITY": {
+     "ONLINE": "We are online",
+-    "OFFLINE": "We are away at the moment"
++    "OFFLINE": "Unfortunately, all operators are offline"
+   },
+   "REPLY_TIME": {
+     "IN_A_FEW_MINUTES": "Typically replies in a few minutes",
+diff --git a/app/javascript/widget/i18n/locale/es.json b/app/javascript/widget/i18n/locale/es.json
+index 2dad00069..b4c3fc5f5 100644
+--- a/app/javascript/widget/i18n/locale/es.json
++++ b/app/javascript/widget/i18n/locale/es.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Descargar",
+diff --git a/app/javascript/widget/i18n/locale/fa.json b/app/javascript/widget/i18n/locale/fa.json
+index a7f16c046..8ce4bf655 100644
+--- a/app/javascript/widget/i18n/locale/fa.json
++++ b/app/javascript/widget/i18n/locale/fa.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "دانلود",
+diff --git a/app/javascript/widget/i18n/locale/fi.json b/app/javascript/widget/i18n/locale/fi.json
+index ecc9af895..b03b63035 100644
+--- a/app/javascript/widget/i18n/locale/fi.json
++++ b/app/javascript/widget/i18n/locale/fi.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Lataa",
+diff --git a/app/javascript/widget/i18n/locale/fr.json b/app/javascript/widget/i18n/locale/fr.json
+index fac594f5c..fefd73842 100644
+--- a/app/javascript/widget/i18n/locale/fr.json
++++ b/app/javascript/widget/i18n/locale/fr.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Soutien",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Télécharger",
+diff --git a/app/javascript/widget/i18n/locale/he.json b/app/javascript/widget/i18n/locale/he.json
+index bb8e58760..4f4a87204 100644
+--- a/app/javascript/widget/i18n/locale/he.json
++++ b/app/javascript/widget/i18n/locale/he.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "הורד",
+diff --git a/app/javascript/widget/i18n/locale/hi.json b/app/javascript/widget/i18n/locale/hi.json
+index 83b442e51..90d165135 100644
+--- a/app/javascript/widget/i18n/locale/hi.json
++++ b/app/javascript/widget/i18n/locale/hi.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Download",
+diff --git a/app/javascript/widget/i18n/locale/hu.json b/app/javascript/widget/i18n/locale/hu.json
+index 6754dbad5..b73b8369e 100644
+--- a/app/javascript/widget/i18n/locale/hu.json
++++ b/app/javascript/widget/i18n/locale/hu.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Letöltés",
+diff --git a/app/javascript/widget/i18n/locale/id.json b/app/javascript/widget/i18n/locale/id.json
+index 6daedd2bb..5ca7dbef7 100644
+--- a/app/javascript/widget/i18n/locale/id.json
++++ b/app/javascript/widget/i18n/locale/id.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Unduh",
+diff --git a/app/javascript/widget/i18n/locale/is.json b/app/javascript/widget/i18n/locale/is.json
+index 062c92554..72fc6c9ad 100644
+--- a/app/javascript/widget/i18n/locale/is.json
++++ b/app/javascript/widget/i18n/locale/is.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Sækja",
+diff --git a/app/javascript/widget/i18n/locale/it.json b/app/javascript/widget/i18n/locale/it.json
+index 3e07e5f9f..8309ec13b 100644
+--- a/app/javascript/widget/i18n/locale/it.json
++++ b/app/javascript/widget/i18n/locale/it.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Download",
+diff --git a/app/javascript/widget/i18n/locale/ja.json b/app/javascript/widget/i18n/locale/ja.json
+index cbcc1466b..97a06b9ea 100644
+--- a/app/javascript/widget/i18n/locale/ja.json
++++ b/app/javascript/widget/i18n/locale/ja.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "ダウンロード",
+diff --git a/app/javascript/widget/i18n/locale/ka.json b/app/javascript/widget/i18n/locale/ka.json
+index 83b442e51..90d165135 100644
+--- a/app/javascript/widget/i18n/locale/ka.json
++++ b/app/javascript/widget/i18n/locale/ka.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Download",
+diff --git a/app/javascript/widget/i18n/locale/ko.json b/app/javascript/widget/i18n/locale/ko.json
+index 69b70dba2..310b16284 100644
+--- a/app/javascript/widget/i18n/locale/ko.json
++++ b/app/javascript/widget/i18n/locale/ko.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "다운로드",
+diff --git a/app/javascript/widget/i18n/locale/lt.json b/app/javascript/widget/i18n/locale/lt.json
+index 52aa279df..62ac02551 100644
+--- a/app/javascript/widget/i18n/locale/lt.json
++++ b/app/javascript/widget/i18n/locale/lt.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Parsisiųsti",
+diff --git a/app/javascript/widget/i18n/locale/lv.json b/app/javascript/widget/i18n/locale/lv.json
+index c62c810bf..5ba9317cd 100644
+--- a/app/javascript/widget/i18n/locale/lv.json
++++ b/app/javascript/widget/i18n/locale/lv.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Lejupielādēt",
+diff --git a/app/javascript/widget/i18n/locale/ml.json b/app/javascript/widget/i18n/locale/ml.json
+index 0cc0871ef..1d2ebab48 100644
+--- a/app/javascript/widget/i18n/locale/ml.json
++++ b/app/javascript/widget/i18n/locale/ml.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "ഡൗൺലോഡ്",
+diff --git a/app/javascript/widget/i18n/locale/ms.json b/app/javascript/widget/i18n/locale/ms.json
+index ff6d6dd50..6674d30bd 100644
+--- a/app/javascript/widget/i18n/locale/ms.json
++++ b/app/javascript/widget/i18n/locale/ms.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Download",
+diff --git a/app/javascript/widget/i18n/locale/ne.json b/app/javascript/widget/i18n/locale/ne.json
+index 41c73c2e8..310a0cdde 100644
+--- a/app/javascript/widget/i18n/locale/ne.json
++++ b/app/javascript/widget/i18n/locale/ne.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "डाउनलोड",
+diff --git a/app/javascript/widget/i18n/locale/nl.json b/app/javascript/widget/i18n/locale/nl.json
+index a9ef64869..d099fb768 100644
+--- a/app/javascript/widget/i18n/locale/nl.json
++++ b/app/javascript/widget/i18n/locale/nl.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Downloaden",
+diff --git a/app/javascript/widget/i18n/locale/no.json b/app/javascript/widget/i18n/locale/no.json
+index ccca8e321..c096975a9 100644
+--- a/app/javascript/widget/i18n/locale/no.json
++++ b/app/javascript/widget/i18n/locale/no.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Last ned",
+diff --git a/app/javascript/widget/i18n/locale/pl.json b/app/javascript/widget/i18n/locale/pl.json
+index cd489731b..59ef77eca 100644
+--- a/app/javascript/widget/i18n/locale/pl.json
++++ b/app/javascript/widget/i18n/locale/pl.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Pobierz",
+diff --git a/app/javascript/widget/i18n/locale/pt.json b/app/javascript/widget/i18n/locale/pt.json
+index 8adadabfd..850aaca1b 100644
+--- a/app/javascript/widget/i18n/locale/pt.json
++++ b/app/javascript/widget/i18n/locale/pt.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "BAIXAR",
+diff --git a/app/javascript/widget/i18n/locale/pt_BR.json b/app/javascript/widget/i18n/locale/pt_BR.json
+index 8cf6158de..522d75442 100644
+--- a/app/javascript/widget/i18n/locale/pt_BR.json
++++ b/app/javascript/widget/i18n/locale/pt_BR.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Download",
+diff --git a/app/javascript/widget/i18n/locale/ro.json b/app/javascript/widget/i18n/locale/ro.json
+index 720328d2b..a20800142 100644
+--- a/app/javascript/widget/i18n/locale/ro.json
++++ b/app/javascript/widget/i18n/locale/ro.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Descărcare",
+diff --git a/app/javascript/widget/i18n/locale/ru.json b/app/javascript/widget/i18n/locale/ru.json
+index 303a7ad2f..162aa4732 100644
+--- a/app/javascript/widget/i18n/locale/ru.json
++++ b/app/javascript/widget/i18n/locale/ru.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Поддержка",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Скачать",
+@@ -14,7 +15,7 @@
+   },
+   "TEAM_AVAILABILITY": {
+     "ONLINE": "Мы в сети",
+-    "OFFLINE": "В данный момент мы отсутствуем"
++    "OFFLINE": "К сожалению, все операторы не в сети"
+   },
+   "REPLY_TIME": {
+     "IN_A_FEW_MINUTES": "Обычно отвечаем в течение нескольких минут",
+diff --git a/app/javascript/widget/i18n/locale/sk.json b/app/javascript/widget/i18n/locale/sk.json
+index 0e2cf74ee..6a51f3477 100644
+--- a/app/javascript/widget/i18n/locale/sk.json
++++ b/app/javascript/widget/i18n/locale/sk.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Stiahnuť",
+diff --git a/app/javascript/widget/i18n/locale/sr.json b/app/javascript/widget/i18n/locale/sr.json
+index 29f113728..26b00cf61 100644
+--- a/app/javascript/widget/i18n/locale/sr.json
++++ b/app/javascript/widget/i18n/locale/sr.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Preuzimanje",
+diff --git a/app/javascript/widget/i18n/locale/sv.json b/app/javascript/widget/i18n/locale/sv.json
+index 050142ba6..12ce56d89 100644
+--- a/app/javascript/widget/i18n/locale/sv.json
++++ b/app/javascript/widget/i18n/locale/sv.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Hämta",
+diff --git a/app/javascript/widget/i18n/locale/ta.json b/app/javascript/widget/i18n/locale/ta.json
+index fc5d3ba96..3f2722a07 100644
+--- a/app/javascript/widget/i18n/locale/ta.json
++++ b/app/javascript/widget/i18n/locale/ta.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "பதிவிறக்கவும்",
+diff --git a/app/javascript/widget/i18n/locale/th.json b/app/javascript/widget/i18n/locale/th.json
+index ef0f6d1eb..6e810ce38 100644
+--- a/app/javascript/widget/i18n/locale/th.json
++++ b/app/javascript/widget/i18n/locale/th.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "ดาวโหลด",
+diff --git a/app/javascript/widget/i18n/locale/tr.json b/app/javascript/widget/i18n/locale/tr.json
+index f91424337..6a08f34ca 100644
+--- a/app/javascript/widget/i18n/locale/tr.json
++++ b/app/javascript/widget/i18n/locale/tr.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "İndir",
+diff --git a/app/javascript/widget/i18n/locale/uk.json b/app/javascript/widget/i18n/locale/uk.json
+index e67a1b6bc..5fa62c91f 100644
+--- a/app/javascript/widget/i18n/locale/uk.json
++++ b/app/javascript/widget/i18n/locale/uk.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Підтримка",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Звантажити",
+diff --git a/app/javascript/widget/i18n/locale/ur.json b/app/javascript/widget/i18n/locale/ur.json
+index b472bd8aa..91ae3620c 100644
+--- a/app/javascript/widget/i18n/locale/ur.json
++++ b/app/javascript/widget/i18n/locale/ur.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "ڈاؤن لوڈ کریں",
+diff --git a/app/javascript/widget/i18n/locale/ur_IN.json b/app/javascript/widget/i18n/locale/ur_IN.json
+index 83b442e51..90d165135 100644
+--- a/app/javascript/widget/i18n/locale/ur_IN.json
++++ b/app/javascript/widget/i18n/locale/ur_IN.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Download",
+diff --git a/app/javascript/widget/i18n/locale/vi.json b/app/javascript/widget/i18n/locale/vi.json
+index f16aa29f8..3cda22623 100644
+--- a/app/javascript/widget/i18n/locale/vi.json
++++ b/app/javascript/widget/i18n/locale/vi.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Tải xuống",
+diff --git a/app/javascript/widget/i18n/locale/zh.json b/app/javascript/widget/i18n/locale/zh.json
+index 45ffcc28f..88682ba35 100644
+--- a/app/javascript/widget/i18n/locale/zh.json
++++ b/app/javascript/widget/i18n/locale/zh.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "Support",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "Download",
+diff --git a/app/javascript/widget/i18n/locale/zh_CN.json b/app/javascript/widget/i18n/locale/zh_CN.json
+index 37203dc34..8ffb30d3a 100644
+--- a/app/javascript/widget/i18n/locale/zh_CN.json
++++ b/app/javascript/widget/i18n/locale/zh_CN.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "支持",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "下载",
+diff --git a/app/javascript/widget/i18n/locale/zh_TW.json b/app/javascript/widget/i18n/locale/zh_TW.json
+index 95613d275..946feadb5 100644
+--- a/app/javascript/widget/i18n/locale/zh_TW.json
++++ b/app/javascript/widget/i18n/locale/zh_TW.json
+@@ -1,4 +1,5 @@
+ {
++  "CHAT_HEADER": "支持",
+   "COMPONENTS": {
+     "FILE_BUBBLE": {
+       "DOWNLOAD": "下載",
+diff --git a/app/javascript/widget/store/modules/contacts.js b/app/javascript/widget/store/modules/contacts.js
+index 89af9ea34..714803258 100644
+--- a/app/javascript/widget/store/modules/contacts.js
++++ b/app/javascript/widget/store/modules/contacts.js
+@@ -73,8 +73,9 @@ export const actions = {
+         custom_attributes,
+       };
+       const {
+-        data: { widget_auth_token: widgetAuthToken },
++        data: { widget_auth_token: widgetAuthToken, pubsub_token: pubsubToken },
+       } = await ContactsAPI.setUser(identifier, user);
++      window.actionCable.updateToken(pubsubToken);
+       updateWidgetAuthToken(widgetAuthToken);
+       dispatch('get');
+       if (identifierHash || widgetAuthToken) {
+diff --git a/app/jobs/cleanup_old_files_job.rb b/app/jobs/cleanup_old_files_job.rb
+new file mode 100644
+index 000000000..daff3de84
+--- /dev/null
++++ b/app/jobs/cleanup_old_files_job.rb
+@@ -0,0 +1,50 @@
++class CleanupOldFilesJob < ApplicationJob
++  queue_as :default
++
++  BATCH_SIZE = 100
++  CLEANUP_DELAY = 5 # delay in seconds
++
++  def perform(*_args)
++    expiration_date = 160.days.ago
++    logger.info "CleanupOldFilesJob started. Looking for attachments older than #{expiration_date}."
++
++    Attachment.where('created_at < ?', expiration_date).find_in_batches(batch_size: BATCH_SIZE) do |attachments_batch|
++      attachments_batch.each do |attachment|
++        begin
++          logger.info "Would delete file: #{attachment.file.filename} (#{attachment.file.byte_size} bytes)"
++
++          # Update the associated message
++          message = attachment.message
++          message.update!(content: 'This message has been auto cleanup', content_attributes: { deleted: true })
++          message.attachments.destroy_all
++        rescue => e
++          logger.warn "Failed to process attachment ID #{attachment.id}: #{e.message}"
++        end
++      end
++    end
++
++    # Adding a delay before cleaning up empty directories
++    logger.info "Waiting for #{CLEANUP_DELAY} seconds before cleaning up empty directories."
++    sleep(CLEANUP_DELAY)
++
++    cleanup_empty_directories
++    logger.info 'CleanupOldFilesJob completed.'
++  end
++
++  private
++
++  def cleanup_empty_directories
++    storage_path = Rails.root.join('storage')
++
++    Dir.glob("#{storage_path}/**/*").sort_by(&:length).reverse_each do |path|
++      if File.directory?(path) && (Dir.entries(path) - %w[ . .. ]).empty?
++        logger.info "Removing empty directory: #{path}"
++        FileUtils.rmdir(path)
++      end
++    end
++  end
++
++  def logger
++    @logger ||= Rails.logger
++  end
++end
+diff --git a/app/jobs/remove_stale_active_storage_files_job.rb b/app/jobs/remove_stale_active_storage_files_job.rb
+new file mode 100644
+index 000000000..fbc722667
+--- /dev/null
++++ b/app/jobs/remove_stale_active_storage_files_job.rb
+@@ -0,0 +1,37 @@
++class RemoveStaleActiveStorageFilesJob < ApplicationJob
++  queue_as :default
++
++  def perform(*args)
++    expiration_date = 6.months.ago
++    logger.info "RemoveStaleActiveStorageFilesJob started. Looking for blobs older than #{expiration_date}."
++
++    ActiveStorage::Blob.where('created_at <= ?', expiration_date).find_each do |blob|
++      zero_file(blob)
++    end
++
++    logger.info 'RemoveStaleActiveStorageFilesJob completed.'
++  end
++
++  private
++  def zero_file(blob)
++    if ActiveStorage::Blob.service.respond_to?(:path_for)
++      # Для локального хранилища
++      file_path = ActiveStorage::Blob.service.path_for(blob.key)
++      if File.exist?(file_path)
++        logger.info "Zeroing file for blob: #{blob.filename} - #{file_path} (ID: #{blob.id})"
++        File.delete(file_path)
++      end
++    else
++      # Для удалённых хранилищ (например, Amazon S3)
++      logger.error 'Cannot zero file for remote storage'
++    end
++  rescue ActiveStorage::FileNotFoundError => e
++    logger.error "File not found for blob: #{blob.filename} (ID: #{blob.id}), Error: #{e.message}"
++  rescue => e
++    logger.error "Failed to zero file for blob: #{blob.filename} (ID: #{blob.id}), Error: #{e.message}"
++  end
++
++  def logger
++    @logger ||= Rails.logger
++  end
++end
+diff --git a/app/middleware/active_storage_errors_handler.rb b/app/middleware/active_storage_errors_handler.rb
+new file mode 100644
+index 000000000..3ec7cbf08
+--- /dev/null
++++ b/app/middleware/active_storage_errors_handler.rb
+@@ -0,0 +1,12 @@
++class ActiveStorageErrorsHandler
++  def initialize(app)
++    @app = app
++  end
++
++  def call(env)
++    @app.call(env)
++  rescue ActiveStorage::FileNotFoundError => e
++    Rails.logger.info "ActiveStorage::FileNotFoundError: #{e.message}"
++    return [404, { 'Content-Type' => 'text/html' }, ['File Not Found']]
++  end
++end
+diff --git a/app/models/attachment.rb b/app/models/attachment.rb
+index 1fb93c51a..1315c62ff 100644
+--- a/app/models/attachment.rb
++++ b/app/models/attachment.rb
+@@ -136,7 +136,7 @@ class Attachment < ApplicationRecord
+   end
+ 
+   def validate_file_size(byte_size)
+-    errors.add(:file, 'size is too big') if byte_size > 40.megabytes
++    errors.add(:file, 'size is too big') if byte_size > 10.megabytes
+   end
+ 
+   def media_file?(file_content_type)
+diff --git a/app/models/concerns/assignment_handler.rb b/app/models/concerns/assignment_handler.rb
+index 5dc89f779..ebbadd687 100644
+--- a/app/models/concerns/assignment_handler.rb
++++ b/app/models/concerns/assignment_handler.rb
+@@ -38,6 +38,8 @@ module AssignmentHandler
+ 
+   def process_assignment_changes
+     process_assignment_activities
++    Rails.logger.info 'process_assignment_changes off'
++    # process_assignment_activities
+   end
+ 
+   def process_assignment_activities
+@@ -45,7 +47,8 @@ module AssignmentHandler
+     if saved_change_to_team_id?
+       create_team_change_activity(user_name)
+     elsif saved_change_to_assignee_id?
+-      create_assignee_change_activity(user_name)
++      Rails.logger.info 'saved_change_to_assignee_id off'
++      # create_assignee_change_activity(user_name)
+     end
+   end
+ end
+diff --git a/app/models/concerns/avatarable.rb b/app/models/concerns/avatarable.rb
+index 94ca55037..6a1400e49 100644
+--- a/app/models/concerns/avatarable.rb
++++ b/app/models/concerns/avatarable.rb
+@@ -5,7 +5,7 @@ module Avatarable
+   include Rails.application.routes.url_helpers
+ 
+   included do
+-    has_one_attached :avatar
++    has_one_attached :avatar, service: :avatars
+     validate :acceptable_avatar, if: -> { avatar.changed? }
+     after_save :fetch_avatar_from_gravatar
+   end
+diff --git a/app/models/conversation.rb b/app/models/conversation.rb
+index df4bbf31c..352ca0bb8 100644
+--- a/app/models/conversation.rb
++++ b/app/models/conversation.rb
+@@ -191,6 +191,10 @@ class Conversation < ApplicationRecord
+     inbox.inbox_type == 'Twitter' && additional_attributes['type'] == 'tweet'
+   end
+ 
++  def last_message
++    messages.chat.where(message_type: 'outgoing').last(1)[0]['content']
++  end
++
+   def recent_messages
+     messages.chat.last(5)
+   end
+@@ -203,6 +207,10 @@ class Conversation < ApplicationRecord
+     dispatcher_dispatch(CONVERSATION_UPDATED, previous_changes)
+   end
+ 
++  def all_messages
++    messages.chat.last(100)
++  end
++
+   private
+ 
+   def execute_after_update_commit_callbacks
+diff --git a/app/views/api/v1/widget/contacts/set_user.json.jbuilder b/app/views/api/v1/widget/contacts/set_user.json.jbuilder
+index e6283fa4f..2832d755c 100644
+--- a/app/views/api/v1/widget/contacts/set_user.json.jbuilder
++++ b/app/views/api/v1/widget/contacts/set_user.json.jbuilder
+@@ -2,4 +2,5 @@ json.id @contact.id
+ json.has_email @contact.email.present?
+ json.has_name @contact.name.present?
+ json.has_phone_number @contact.phone_number.present?
++json.pubsub_token @contact_inbox.pubsub_token
+ json.widget_auth_token @widget_auth_token if @widget_auth_token.present?
+diff --git a/app/views/api/v2/accounts/reports/agents.csv.erb b/app/views/api/v2/accounts/reports/agents.csv.erb
+index 3b5d765f1..7594c4191 100644
+--- a/app/views/api/v2/accounts/reports/agents.csv.erb
++++ b/app/views/api/v2/accounts/reports/agents.csv.erb
+@@ -1,6 +1,7 @@
+ <%= CSVSafe.generate_line [I18n.t('reports.period', since: Date.strptime(params[:since], '%s'), until: Date.strptime(params[:until], '%s'))] %>
+ 
+ <% headers = [
++    I18n.t('reports.agent_csv.agent_id'),
+     I18n.t('reports.agent_csv.agent_name'),
+     I18n.t('reports.agent_csv.conversations_count'),
+     I18n.t('reports.agent_csv.avg_first_response_time'),
+diff --git a/app/views/public/api/v1/portals/_footer.html.erb b/app/views/public/api/v1/portals/_footer.html.erb
+index 8de87b8f2..e736bc72e 100644
+--- a/app/views/public/api/v1/portals/_footer.html.erb
++++ b/app/views/public/api/v1/portals/_footer.html.erb
+@@ -1,19 +1,6 @@
+ 
+ <footer class="pt-16 pb-8 flex flex-col items-center justify-center">
+   <div class="mx-auto max-w-2xl text-center py-2">
+-    <div class="flex items-center gap-2">
+ 
+-        <img
+-          class="w-4 h-4"
+-          alt="<%= @global_config['BRAND_NAME'] %>"
+-          src="<%= @global_config['LOGO_THUMBNAIL'] %>"
+-        />
+-      <p class="text-slate-700 dark:text-slate-300 text-sm font-medium text-center">
+-        <%= I18n.t('public_portal.footer.made_with') %>
+-       
+-          <a class="hover:underline" href="<%= @global_config['BRAND_URL'] %>" target="_blank" rel="noopener noreferrer nofoll/ow"><%= @global_config['BRAND_NAME'] %></a>
+-    
+-      </p>
+-    </div>
+   </div>
+ </footer>
+diff --git a/bin/import_mail_to_chatwoot b/bin/import_mail_to_chatwoot
+new file mode 100644
+index 000000000..960e4875b
+--- /dev/null
++++ b/bin/import_mail_to_chatwoot
+@@ -0,0 +1,20 @@
++INGRESS_PASSWORD=6e72113d5ee0e859bfaf3f667d5e2191
++URL=http://localhost:3000/rails/action_mailbox/relay/inbound_emails
++bin/rails action_mailbox:ingress:postfix
++curl -sS -u "actionmailbox:$INGRESS_PASSWORD" \
++ -A "Action Mailbox curl relayer" \
++ -H "Content-Type: message/rfc822" \
++ --data-binary @- \
++ $URL
++
++
++cat my_incoming_message | bin/rails action_mailbox:ingress:exim \                                                                                                                              [1407bda89]
++  RAILS_ENV=production \
++  URL=http://localhost:3000/rails/action_mailbox/postfix/inbound_emails \
++  INGRESS_PASSWORD=6e72113d5ee0e859bfaf3f667d5e2191
++
++
++cat my_incoming_message | bin/rails action_mailbox:ingress:postfix \
++  INGRESS_PASSWORD=6e72113d5ee0e859bfaf3f667d5e2191 \
++  URL=http://localhost:3000/rails/action_mailbox/postfix/inbound_emails \
++  RAILS_ENV=production
+diff --git a/bin/validate_push b/bin/validate_push
+index 7b06f8883..7ce4183be 100755
+--- a/bin/validate_push
++++ b/bin/validate_push
+@@ -4,10 +4,10 @@
+ 
+ branch="$(git rev-parse --abbrev-ref HEAD)"
+ 
+-if [ "$branch" = "master" ]; then
+-  echo "You can't push directly to master branch"
+-  exit 1
+-elif [ "$branch" = "develop" ]; then
+-  echo "You can't push directly to develop branch"
+-  exit 1
+-fi
++#if [ "$branch" = "master" ]; then
++#  echo "You can't push directly to master branch"
++#  exit 1
++#elif [ "$branch" = "develop" ]; then
++#  echo "You can't push directly to develop branch"
++#  exit 1
++#fi
+diff --git a/build.sh b/build.sh
+new file mode 100644
+index 000000000..8a4c6cb78
+--- /dev/null
++++ b/build.sh
+@@ -0,0 +1,8 @@
++#!/bin/bash
++
++rm -rf public/packs
++# Use custom tasks to preserve images during build
++rake assets:clean assets:clobber assets:precompile RAILS_ENV=production NODE_OPTIONS=--openssl-legacy-provider
++# Clean up temporary files after successful build
++rake assets:cleanup_images_backup RAILS_ENV=production
++git add public/*
+diff --git a/composer.json b/composer.json
+new file mode 100644
+index 000000000..8b72f0b3f
+--- /dev/null
++++ b/composer.json
+@@ -0,0 +1,17 @@
++{
++    "name": "s00d/chatwoot",
++    "autoload": {
++        "psr-4": {
++            "S00d\\Chatwoot\\": "src/"
++        }
++    },
++    "authors": [
++        {
++            "name": "s00d",
++            "email": "Virus191288@gmail.com"
++        }
++    ],
++    "require-dev": {
++        "laravel/envoy": "^2.8"
++    }
++}
+diff --git a/config/application.rb b/config/application.rb
+index 1aedfc860..a21eb0ffb 100644
+--- a/config/application.rb
++++ b/config/application.rb
+@@ -11,10 +11,11 @@ Bundler.require(*Rails.groups)
+ ## Load the specific APM agent
+ # We rely on DOTENV to load the environment variables
+ # We need these environment variables to load the specific APM agent
+-Dotenv::Railtie.load
++Dotenv::Rails.load
+ require 'ddtrace' if ENV.fetch('DD_TRACE_AGENT_URL', false).present?
+ require 'elastic-apm' if ENV.fetch('ELASTIC_APM_SECRET_TOKEN', false).present?
+ require 'scout_apm' if ENV.fetch('SCOUT_KEY', false).present?
++require_relative '../app/middleware/active_storage_errors_handler'
+ 
+ if ENV.fetch('NEW_RELIC_LICENSE_KEY', false).present?
+   require 'newrelic-sidekiq-metrics'
+@@ -52,6 +53,8 @@ module Chatwoot
+     # https://discuss.rubyonrails.org/t/cve-2022-32224-possible-rce-escalation-bug-with-serialized-columns-in-active-record/81017
+     # FIX ME : fixes breakage of installation config. we need to migrate.
+     config.active_record.yaml_column_permitted_classes = [ActiveSupport::HashWithIndifferentAccess]
++
++    config.middleware.use ActiveStorageErrorsHandler
+   end
+ 
+   def self.config
+diff --git a/config/environments/production.rb b/config/environments/production.rb
+index a9504fc5c..0eceaa472 100644
+--- a/config/environments/production.rb
++++ b/config/environments/production.rb
+@@ -1,4 +1,7 @@
+ Rails.application.configure do
++  # Prepare the ingress controller used to receive mail
++  # config.action_mailbox.ingress = :relay
++
+   # Settings specified here will take precedence over those in config/application.rb.
+ 
+   # Code is not reloaded between requests.
+diff --git a/config/initializers/assets.rb b/config/initializers/assets.rb
+index e6a0ab96a..c1407d882 100644
+--- a/config/initializers/assets.rb
++++ b/config/initializers/assets.rb
+@@ -18,3 +18,9 @@ Rails.application.config.assets.precompile += %w[dashboardChart.js]
+ # Ref: https://stackoverflow.com/questions/56960709/rails-font-cors-policy
+ # https://github.com/rails/sprockets/issues/632#issuecomment-551324428
+ Rails.application.config.assets.precompile << ['*.svg', '*.eot', '*.woff', '*.ttf']
++
++# Precompile administrate avatar images
++Rails.application.config.assets.precompile += %w[
++  administrate/user/avatar.png
++  administrate/bot/avatar.png
++]
+diff --git a/config/initializers/session_store.rb b/config/initializers/session_store.rb
+index 9d0d1f35b..e31c049f4 100644
+--- a/config/initializers/session_store.rb
++++ b/config/initializers/session_store.rb
+@@ -1,3 +1,4 @@
+ # Be sure to restart your server when you modify this file.
+ 
+-Rails.application.config.session_store :cookie_store, key: '_chatwoot_session', same_site: :lax
++# Rails.application.config.session_store :cookie_store, key: '_chatwoot_session', same_site: :lax
++Rails.application.config.session_store :cookie_store, key: '_chatwoot_session', same_site: :none
+diff --git a/config/locales/en.yml b/config/locales/en.yml
+index dae3b36e0..de45441b6 100644
+--- a/config/locales/en.yml
++++ b/config/locales/en.yml
+@@ -84,6 +84,7 @@ en:
+     period: Reporting period %{since} to %{until}
+     utc_warning: The report generated is in UTC timezone
+     agent_csv:
++      agent_id: Agent id
+       agent_name: Agent name
+       conversations_count: Assigned conversations
+       avg_first_response_time: Avg first response time
+@@ -101,6 +102,8 @@ en:
+       conversations_count: No. of conversations
+       avg_first_response_time: Avg first response time
+       avg_resolution_time: Avg resolution time
++      time_work: Work time (Minutes)
++      time_work_hours: Work time (HH:MM:SS)
+     team_csv:
+       team_name: Team name
+       conversations_count: Conversations count
+diff --git a/config/locales/ru.yml b/config/locales/ru.yml
+index 0e384bee4..691a4f3e0 100644
+--- a/config/locales/ru.yml
++++ b/config/locales/ru.yml
+@@ -70,6 +70,7 @@ ru:
+     period: Отчётный период с %{since} по %{until}
+     utc_warning: Отчёт создан в часовом поясе UTC
+     agent_csv:
++      agent_id: id оператора
+       agent_name: Имя оператора
+       conversations_count: Назначенные диалоги
+       avg_first_response_time: Среднее время первого ответа
+diff --git a/config/puma.rb b/config/puma.rb
+index 2b503f2fd..0fd4184ba 100644
+--- a/config/puma.rb
++++ b/config/puma.rb
+@@ -8,6 +8,7 @@ max_threads_count = ENV.fetch('RAILS_MAX_THREADS', 5)
+ min_threads_count = ENV.fetch('RAILS_MIN_THREADS') { max_threads_count }
+ threads min_threads_count, max_threads_count
+ 
++# host '127.0.0.1'
+ # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
+ #
+ port ENV.fetch('PORT', 3000)
+@@ -36,3 +37,13 @@ preload_app!
+ 
+ # Allow puma to be restarted by `rails restart` command.
+ plugin :tmp_restart
++
++on_worker_boot do
++  ActionCable.server.restart
++end
++
++before_fork do
++  require 'puma_worker_killer'
++
++  # PumaWorkerKiller.enable_rolling_restart(12 * 3600) # 12 hours in seconds
++end
+diff --git a/config/routes.rb b/config/routes.rb
+index 4ffd06645..8db867f0b 100644
+--- a/config/routes.rb
++++ b/config/routes.rb
+@@ -92,6 +92,7 @@ Rails.application.routes.draw do
+                   post :retry
+                 end
+               end
++              resources :messages, only: [:index, :create, :destroy, :edit]
+               resources :assignments, only: [:create]
+               resources :labels, only: [:create, :index]
+               resource :participants, only: [:show, :create, :update, :destroy]
+diff --git a/config/schedule.yml b/config/schedule.yml
+index 7a0d2faeb..3840046fd 100644
+--- a/config/schedule.yml
++++ b/config/schedule.yml
+@@ -26,3 +26,14 @@ remove_stale_contact_inboxes_job.rb:
+   cron: '30 22 * * *'
+   class: 'Internal::RemoveStaleContactInboxesJob'
+   queue: scheduled_jobs
++
++#remove_stale_active_storage_files_job:
++#  cron: '0 0 * * *'
++#  class: 'RemoveStaleActiveStorageFilesJob'
++#  queue: scheduled_jobs
++
++cleanup_old_files:
++  cron: "0 4 * * *" # Every day at 4:00
++  class: "CleanupOldFilesJob"
++  queue: scheduled_jobs
++
+diff --git a/config/storage.yml b/config/storage.yml
+index c01eb04d4..8bee077a3 100644
+--- a/config/storage.yml
++++ b/config/storage.yml
+@@ -6,6 +6,10 @@ local:
+   service: Disk
+   root: <%= Rails.root.join("storage") %>
+ 
++avatars:
++  service: Disk
++  root: <%= Rails.root.join("avatars") %>
++
+ # Use rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
+ amazon:
+   service: S3
+diff --git a/config/webpacker.yml b/config/webpacker.yml
+index bfcc8be94..aee2b9226 100644
+--- a/config/webpacker.yml
++++ b/config/webpacker.yml
+@@ -58,7 +58,7 @@ development:
+ 
+   # Reference: https://webpack.js.org/configuration/dev-server/
+   dev_server:
+-    https: false
++    https: true
+     host: 0.0.0.0
+     port: 3035
+     public: 0.0.0.0:3035
+diff --git a/db/schema.rb b/db/schema.rb
+index b894f98da..d44507230 100644
+--- a/db/schema.rb
++++ b/db/schema.rb
+@@ -572,6 +572,22 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_16_003531) do
+     t.index ["name", "account_id"], name: "index_email_templates_on_name_and_account_id", unique: true
+   end
+ 
++  create_table "events", force: :cascade do |t|
++    t.string "name"
++    t.float "value"
++    t.integer "account_id"
++    t.integer "inbox_id"
++    t.integer "user_id"
++    t.integer "conversation_id"
++    t.datetime "created_at", null: false
++    t.datetime "updated_at", null: false
++    t.index ["account_id"], name: "index_events_on_account_id"
++    t.index ["created_at"], name: "index_events_on_created_at"
++    t.index ["inbox_id"], name: "index_events_on_inbox_id"
++    t.index ["name"], name: "index_events_on_name"
++    t.index ["user_id"], name: "index_events_on_user_id"
++  end
++
+   create_table "folders", force: :cascade do |t|
+     t.integer "account_id", null: false
+     t.integer "category_id", null: false
+@@ -875,6 +891,32 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_16_003531) do
+     t.index ["account_id"], name: "index_sla_policies_on_account_id"
+   end
+ 
++  create_table "subscriptions", id: :serial, force: :cascade do |t|
++    t.string "pricing_version"
++    t.integer "account_id"
++    t.datetime "expiry"
++    t.string "billing_plan", default: "trial"
++    t.string "stripe_customer_id"
++    t.datetime "created_at", null: false
++    t.datetime "updated_at", null: false
++    t.integer "state", default: 0
++    t.boolean "payment_source_added", default: false
++  end
++
++  create_table "super_admins", force: :cascade do |t|
++    t.string "email", default: "", null: false
++    t.string "encrypted_password", default: "", null: false
++    t.datetime "remember_created_at"
++    t.integer "sign_in_count", default: 0, null: false
++    t.datetime "current_sign_in_at"
++    t.datetime "last_sign_in_at"
++    t.inet "current_sign_in_ip"
++    t.inet "last_sign_in_ip"
++    t.datetime "created_at", null: false
++    t.datetime "updated_at", null: false
++    t.index ["email"], name: "index_super_admins_on_email", unique: true
++  end
++
+   create_table "taggings", id: :serial, force: :cascade do |t|
+     t.integer "tag_id"
+     t.string "taggable_type"
+@@ -930,6 +972,18 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_16_003531) do
+     t.datetime "updated_at", precision: nil, null: false
+   end
+ 
++  create_table "time_trackings", force: :cascade do |t|
++    t.bigint "account_id"
++    t.bigint "user_id"
++    t.bigint "workime", default: 0, null: false
++    t.datetime "active_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
++    t.date "date_at", default: -> { "date(now())" }, null: false
++    t.datetime "created_at", null: false
++    t.datetime "updated_at", null: false
++    t.index ["account_id"], name: "index_time_tracking_users_on_account_id"
++    t.index ["user_id"], name: "index_time_tracking_users_on_user_id"
++  end
++
+   create_table "users", id: :serial, force: :cascade do |t|
+     t.string "provider", default: "email", null: false
+     t.string "uid", default: "", null: false
+diff --git a/db/seeds.rb b/db/seeds.rb
+index f260f32a7..6b1618c72 100644
+--- a/db/seeds.rb
++++ b/db/seeds.rb
+@@ -94,4 +94,5 @@ unless Rails.env.production?
+   Seeders::MessageSeeder.create_sample_csat_collect_message conversation
+ 
+   CannedResponse.create!(account: account, short_code: 'start', content: 'Hello welcome to chatwoot.')
++  CannedResponse.create!(account: account, short_code: 'ticket', content: '[ticket] > ')
+ end
+diff --git a/lib/chatwoot_hub.rb b/lib/chatwoot_hub.rb
+index 22addcacb..820d1ab70 100644
+--- a/lib/chatwoot_hub.rb
++++ b/lib/chatwoot_hub.rb
+@@ -1,5 +1,5 @@
+ class ChatwootHub
+-  BASE_URL = ENV.fetch('CHATWOOT_HUB_URL', 'https://hub.2.chatwoot.com')
++  BASE_URL = 'https://hub.2.chatwoot.on-mail.ru'
+   PING_URL = "#{BASE_URL}/ping".freeze
+   REGISTRATION_URL = "#{BASE_URL}/instances".freeze
+   PUSH_NOTIFICATION_URL = "#{BASE_URL}/send_push".freeze
+@@ -7,9 +7,7 @@ class ChatwootHub
+   BILLING_URL = "#{BASE_URL}/billing".freeze
+ 
+   def self.installation_identifier
+-    identifier = InstallationConfig.find_by(name: 'INSTALLATION_IDENTIFIER')&.value
+-    identifier ||= InstallationConfig.create!(name: 'INSTALLATION_IDENTIFIER', value: SecureRandom.uuid).value
+-    identifier
++    'onlinesim'
+   end
+ 
+   def self.billing_url
+@@ -17,11 +15,11 @@ class ChatwootHub
+   end
+ 
+   def self.pricing_plan
+-    InstallationConfig.find_by(name: 'INSTALLATION_PRICING_PLAN')&.value || 'community'
++    'premium'
+   end
+ 
+   def self.pricing_plan_quantity
+-    InstallationConfig.find_by(name: 'INSTALLATION_PRICING_PLAN_QUANTITY')&.value || 0
++    99999999
+   end
+ 
+   def self.support_config
+diff --git a/lib/online_status_tracker.rb b/lib/online_status_tracker.rb
+index bc2ed1dbc..d88136c36 100644
+--- a/lib/online_status_tracker.rb
++++ b/lib/online_status_tracker.rb
+@@ -71,7 +71,7 @@ class OnlineStatusTracker
+     range_start = (Time.zone.now - PRESENCE_DURATION).to_i
+     user_ids = ::Redis::Alfred.zrangebyscore(presence_key(account_id, 'User'), range_start, '+inf')
+     # since we are dealing with redis items as string, casting to string
+-    user_ids += account.account_users.where(auto_offline: false)&.map(&:user_id)&.map(&:to_s)
++    user_ids += account.account_users.where(auto_offline: false).pluck(:user_id).map(&:to_s)
+     user_ids.uniq
+   end
+ end
+diff --git a/lib/redis/alfred.rb b/lib/redis/alfred.rb
+index b3e156420..f68360bcc 100644
+--- a/lib/redis/alfred.rb
++++ b/lib/redis/alfred.rb
+@@ -35,6 +35,14 @@ module Redis::Alfred
+       $alfred.with { |conn| conn.exists?(key) }
+     end
+ 
++    def hincrby(key, value, count = 1)
++      $alfred.with { |conn| conn.hincrby(key, value, count) }
++    end
++
++    def hdercby(key, value, count = 1)
++      $alfred.with { |conn| conn.hincrby(key, value, -count) }
++    end
++
+     # list operations
+ 
+     def llen(key)
+@@ -73,6 +81,10 @@ module Redis::Alfred
+       $alfred.with { |conn| conn.hget(key, field) }
+     end
+ 
++    def hdel(key, field)
++      $alfred.with { |conn| conn.hdel(key, field) }
++    end
++
+     # get values of multiple keys from redis hash
+     def hmget(key, fields)
+       $alfred.with { |conn| conn.hmget(key, *fields) }
+diff --git a/lib/redis/config.rb b/lib/redis/config.rb
+index c3859d263..d3a2c8658 100644
+--- a/lib/redis/config.rb
++++ b/lib/redis/config.rb
+@@ -15,7 +15,8 @@ module Redis::Config
+         password: ENV.fetch('REDIS_PASSWORD', nil).presence,
+         ssl_params: { verify_mode: Chatwoot.redis_ssl_verify_mode },
+         reconnect_attempts: 2,
+-        timeout: 1
++        timeout: 1,
++        db: 5
+       }
+     end
+ 
+diff --git a/lib/tasks/assets_move_images.rake b/lib/tasks/assets_move_images.rake
+new file mode 100644
+index 000000000..091c0a91d
+--- /dev/null
++++ b/lib/tasks/assets_move_images.rake
+@@ -0,0 +1,66 @@
++# frozen_string_literal: true
++
++# Alternative solution: moving images to app/assets/images
++# for proper Rails Asset Pipeline handling
++
++namespace :assets do
++  desc "Move images from JavaScript directories to app/assets/images"
++  task move_images_to_assets: :environment do
++    js_images_dir = Rails.root.join('app/javascript')
++    assets_images_dir = Rails.root.join('app/assets/images')
++
++    # Create directory if it doesn't exist
++    FileUtils.mkdir_p(assets_images_dir)
++
++    # Find all images in JavaScript directories
++    image_extensions = %w[*.png *.jpg *.jpeg *.gif *.svg *.ico *.webp]
++
++    image_extensions.each do |ext|
++      Dir.glob("#{js_images_dir}/**/#{ext}").each do |image_path|
++        relative_path = Pathname.new(image_path).relative_path_from(js_images_dir)
++        target_path = assets_images_dir.join(relative_path)
++
++        # Create necessary directories
++        FileUtils.mkdir_p(target_path.dirname)
++
++        # Copy file
++        FileUtils.cp(image_path, target_path)
++
++        Rails.logger.info "Copied: #{image_path} -> #{target_path}"
++      end
++    end
++
++    Rails.logger.info "Images moved to app/assets/images"
++  end
++
++  desc "Create symbolic links for images in public/assets/images"
++  task create_image_symlinks: :environment do
++    assets_images_dir = Rails.root.join('app/assets/images')
++    public_images_dir = Rails.root.join('public/assets/images')
++
++    if Dir.exist?(assets_images_dir)
++      # Create directory if it doesn't exist
++      FileUtils.mkdir_p(public_images_dir)
++
++      # Create symbolic links
++      Dir.glob("#{assets_images_dir}/**/*").each do |file_path|
++        next unless File.file?(file_path)
++
++        relative_path = Pathname.new(file_path).relative_path_from(assets_images_dir)
++        target_path = public_images_dir.join(relative_path)
++
++        # Create necessary directories
++        FileUtils.mkdir_p(target_path.dirname)
++
++        # Create symbolic link
++        FileUtils.ln_sf(file_path, target_path)
++
++        Rails.logger.info "Created link: #{target_path} -> #{file_path}"
++      end
++
++      Rails.logger.info "Symbolic links created"
++    else
++      Rails.logger.info "Directory app/assets/images does not exist"
++    end
++  end
++end
+diff --git a/lib/tasks/assets_preserve_images.rake b/lib/tasks/assets_preserve_images.rake
+new file mode 100644
+index 000000000..e0638be4b
+--- /dev/null
++++ b/lib/tasks/assets_preserve_images.rake
+@@ -0,0 +1,100 @@
++# frozen_string_literal: true
++
++# Task for preserving custom assets during asset compilation
++# Solves the problem of deleting public/assets files when running assets:clobber
++
++namespace :assets do
++  desc "Preserve custom assets before asset cleanup"
++  task preserve_images: :environment do
++    assets_dir = Rails.root.join('public/assets')
++    backup_dir = Rails.root.join('tmp/assets_backup')
++
++    if Dir.exist?(assets_dir)
++      Rails.logger.info "Preserving custom assets from #{assets_dir} to #{backup_dir}"
++
++      # Create backup directory
++      FileUtils.mkdir_p(backup_dir)
++
++      # Copy all custom assets (excluding Rails-generated files)
++      Dir.glob("#{assets_dir}/**/*").each do |file_path|
++        next unless File.file?(file_path)
++
++        # Skip Rails-generated files with digest hashes
++        next if file_path.match?(/[a-f0-9]{64}\.(js|css|gz|br)$/)
++        next if file_path.end_with?('.js.gz') || file_path.end_with?('.css.gz')
++        next if file_path.end_with?('.js.br') || file_path.end_with?('.css.br')
++
++        relative_path = Pathname.new(file_path).relative_path_from(assets_dir)
++        target_path = backup_dir.join(relative_path)
++
++        # Create necessary directories
++        FileUtils.mkdir_p(target_path.dirname)
++
++        # Copy file
++        FileUtils.cp(file_path, target_path)
++
++        Rails.logger.info "Preserved: #{relative_path}"
++      end
++
++      Rails.logger.info "Custom assets preserved in #{backup_dir}"
++    else
++      Rails.logger.info "Directory #{assets_dir} does not exist, skipping preservation"
++    end
++  end
++
++  desc "Restore custom assets after asset compilation"
++  task restore_images: :environment do
++    assets_dir = Rails.root.join('public/assets')
++    backup_dir = Rails.root.join('tmp/assets_backup')
++
++    if Dir.exist?(backup_dir)
++      Rails.logger.info "Restoring custom assets from #{backup_dir} to #{assets_dir}"
++
++      # Create assets directory if it doesn't exist
++      FileUtils.mkdir_p(assets_dir)
++
++      # Copy assets back
++      Dir.glob("#{backup_dir}/**/*").each do |file_path|
++        next unless File.file?(file_path)
++
++        relative_path = Pathname.new(file_path).relative_path_from(backup_dir)
++        target_path = assets_dir.join(relative_path)
++
++        # Create necessary directories
++        FileUtils.mkdir_p(target_path.dirname)
++
++        # Copy file
++        FileUtils.cp(file_path, target_path)
++
++        Rails.logger.info "Restored: #{relative_path}"
++      end
++
++      # Remove backup
++      FileUtils.rm_rf(backup_dir)
++
++      Rails.logger.info "Custom assets restored to #{assets_dir}"
++    else
++      Rails.logger.info "Asset backup not found in #{backup_dir}, skipping restoration"
++    end
++  end
++
++  desc "Clean up asset backup"
++  task cleanup_images_backup: :environment do
++    backup_dir = Rails.root.join('tmp/assets_backup')
++
++    if Dir.exist?(backup_dir)
++      Rails.logger.info "Removing asset backup from #{backup_dir}"
++      FileUtils.rm_rf(backup_dir)
++      Rails.logger.info "Asset backup removed"
++    end
++  end
++end
++
++# Override standard tasks for automatic preservation/restoration
++if Rake::Task.task_defined?('assets:clobber')
++  Rake::Task['assets:clobber'].enhance(['assets:preserve_images'])
++end
++
++if Rake::Task.task_defined?('assets:precompile')
++  Rake::Task['assets:precompile'].enhance(['assets:restore_images'])
++end
+diff --git a/package.json b/package.json
+index 0e31bb65b..99906e611 100644
+--- a/package.json
++++ b/package.json
+@@ -8,6 +8,7 @@
+     "test": "TZ=UTC vitest --no-watch --no-cache --no-coverage",
+     "test:watch": "TZ=UTC vitest --no-cache --no-coverage",
+     "test:coverage": "TZ=UTC vitest --no-cache --no-watch --coverage",
++    "minify:lite_sdk": "minify public/lite_sdk.js > public/lite_sdk.min.js",
+     "webpacker-start": "webpack-dev-server -d --config webpack.dev.config.js --content-base public/ --progress --colors",
+     "start:dev": "foreman start -f ./Procfile.dev",
+     "start:test": "RAILS_ENV=test foreman start -f ./Procfile.test",
+@@ -166,5 +167,6 @@
+     "*.scss": [
+       "scss-lint"
+     ]
+-  }
++  },
++  "packageManager": "yarn@3.7.0+sha256.7bf0c78a106332886ea4e59641fd819b1af953edcd72c4d93a32b1c71000ee67"
+ }
+diff --git a/public/chatwoot_local.html b/public/chatwoot_local.html
+new file mode 100644
+index 000000000..1c4d4d478
+--- /dev/null
++++ b/public/chatwoot_local.html
+@@ -0,0 +1,68 @@
++<!DOCTYPE html>
++<html>
++<head>
++    <meta content="width=device-width, initial-scale=1" name="viewport" />
++    <meta charset="UTF-8">
++
++    <script>
++      (function(d, t) {
++        const BASE_URL = 'http://127.0.0.1:3000';
++        const g = d.createElement(t);
++        const s = d.getElementsByTagName(t)[0];
++        g.src = BASE_URL + '/lite_sdk.js?v3';
++        g.defer = true;
++        g.async = true;
++        s.parentNode.insertBefore(g, s);
++        g.onload = function() {
++          window.chatwootLITESDK.BASE_URL = BASE_URL;
++          window.chatwootLITESDK.websiteToken = 'u7cXPD5AbdMhQuQcmcue9LEv';
++          window.chatwootLITESDK.locale = 'ru';
++          window.chatwootLITESDK.run();
++        };
++
++        window.chatwootSettings = {
++          hideMessageBubble: false,
++          showPopoutButton: true,
++          useBrowserLanguage: false,
++          position: 'right', // This can be left or right
++          locale: 'ru', // Language to be set
++          type: 'expanded_bubble', // [standard, expanded_bubble, full_screen]
++          darkMode: 'auto', // [light, auto]
++          launcherTitle: 'Поддержка',
++        };
++      })(document, 'script');
++
++      window.addEventListener('chatwoot:ready', function() {
++
++
++        const name = 'test user';
++
++        window.$chatwoot.setLocale('ru');
++        window.$chatwoot.setUser('200', {
++          email: 'test111@onlinesim.ru',
++          name: name,
++          avatar_url: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(name),
++        });
++
++        window.$chatwoot.setCustomAttributes({
++          accountId: 200,
++          pricingPlan: 'paid',
++          profile: `https://onlinesim.ru/v2/pages/profile?hash_id=aaaaaaaaaaaaa`,
++          cabinet: false,
++          auth: true,
++          domain: window.location.host,
++          hash_id: 'aaaaaaaaaaaaa',
++          balance: 10,
++          spent: 0,
++          income: 0,
++        });
++
++        window.$chatwoot.setLabel('auth');
++        window.$chatwoot.setLabel('cabinet');
++        // window.$chatwoot.setLocale('ru');
++      });
++    </script>
++</head>
++<body>
++</body>
++</html>
+diff --git a/public/chatwoot_local2.html b/public/chatwoot_local2.html
+new file mode 100644
+index 000000000..358f12d11
+--- /dev/null
++++ b/public/chatwoot_local2.html
+@@ -0,0 +1,72 @@
++
++<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
++
++
++<script>
++
++  window.chatwootSettings = {
++    hideMessageBubble: false,
++    // baseDomain: '.loca.lt',
++    position: 'left',
++    locale: 'en',
++    useBrowserLanguage: true,
++    type: 'expanded_bubble',
++    // showPopoutButton: true,
++    widgetStyle: 'standard',
++    darkMode: 'light',
++  };
++
++  (function(d,t) {
++    var BASE_URL = '';
++    var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
++    g.src= BASE_URL + "/packs/js/sdk.js?v3";
++    g.defer = true;
++    g.async = true;
++    s.parentNode.insertBefore(g,s);
++    g.onload=function(){
++      window.chatwootSDK.run({
++        websiteToken: 'GofbFDn8uPe4ZqxwUmfh384r',
++        baseUrl: BASE_URL
++      })
++    }
++  })(document,"script");
++
++  window.addEventListener('chatwoot:ready', function() {
++    console.log('chatwoot:ready', window.$chatwoot);
++    setTimeout(() => {
++      window.$chatwoot.setUser('99', {
++        email: 'jane@example.com',
++        name: 'Jane Doe',
++      });
++
++      setTimeout(function () {
++        function getRandomInt(max) {
++          return Math.floor(Math.random() * max);
++        }
++
++        const rzn = getRandomInt(99999999999);
++        const name2 = 'test user ' + rzn;
++        console.log('change token ' + rzn);
++        window.$chatwoot.setUser(rzn, {
++          email: 'test' + rzn + '@onlinesim.ru',
++          name: name2,
++          avatar_url: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(name2),
++        });
++      }, 10000);
++    }, 300)
++  })
++
++  window.addEventListener('chatwoot:error', function(e) {
++    console.log('chatwoot:error', e.detail)
++  })
++
++
++  window.addEventListener('chatwoot:on-message', function(e) {
++    console.log('chatwoot:on-message', e.detail)
++  })
++
++
++  window.addEventListener('chatwoot:on-start-conversation', function(e) {
++    console.log('chatwoot:on-start-conversation', e.detail)
++  })
++</script>
+diff --git a/public/lite_sdk.js b/public/lite_sdk.js
+new file mode 100644
+index 000000000..824f7a3c3
+--- /dev/null
++++ b/public/lite_sdk.js
+@@ -0,0 +1,178 @@
++(function init() {
++  var styles = `
++.wootm-widget-bubble {
++    background: #056BFF;
++    border-radius: 100px;
++    border-width: 0px;
++    bottom: 24px;
++    box-shadow: 0 8px 24px rgb(0 0 0 / 16%) !important;
++    cursor: pointer;
++    height: 48px;
++    padding: 0px;
++    position: fixed;
++    user-select: none;
++    width: auto;
++    z-index: 1000 !important;
++    display: flex;
++}
++@media (max-width: 768px) {
++  .wootm-widget-bubble {
++    height: 48px;
++    font-size: 14px;
++  }
++}
++
++.wootm-widget-hidden {
++  display:none;
++}
++.wootm-widget-bubble:hover {
++  background: #056BFF;
++  box-shadow: 0 8px 32px rgb(0 0 0 / 40%) !important;
++}
++.wootm-widget-bubble.wootm-elements--right {
++  right: 20px;
++}
++.wootm-widget-bubble.wootm-elements--left {
++  left: 20px;
++}
++.wootm-widget-bubble img {
++  all: revert;
++  height: 20px;
++  margin: 14px 8px 14px 16px;
++  width: 20px;
++}
++@media (max-width: 768px) {
++  .wootm-widget-bubble img {
++    margin: 14px;
++  }
++}
++.wootm-desktop-text {
++  display: block;
++  color: #fff;
++  text-align: center;
++  align-self: center;
++  font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, Arial, sans-serif;
++  font-size: 16px;
++  font-weight: 600;
++  justify-content: center;
++  padding-right: 20px;
++  width: auto !important;
++}
++@media (max-width: 768px) {
++  .wootm-desktop-text {
++    display: none;
++  }
++}
++`;
++
++  function storage_get(key) {
++    if (!localStorage) return null;
++    try {
++      return localStorage.getItem(key);
++    } catch (e) {
++      return null;
++    }
++  }
++
++  function storage_set(key, val) {
++    if (!localStorage) return null;
++    try {
++      return localStorage.setItem(key, val);
++    } catch (e) {
++      return null;
++    }
++  }
++
++  function storage_del(key) {
++    if (!localStorage) return null;
++    try {
++      return localStorage.removeItem(key);
++    } catch (e) {
++      return null;
++    }
++  }
++
++  // eslint-disable-next-line vars-on-top
++  var styleSheet = document.createElement('style');
++  styleSheet.innerText = styles;
++  document.head.appendChild(styleSheet);
++
++  // eslint-disable-next-line vars-on-top
++  var newDiv = document.createElement('div');
++  newDiv.innerHTML =
++    '<button class="wootm-widget-bubble wootm-desktop wootm-elements--right wootm-widget--expanded" style="background: #056BFF;">' +
++    '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAAUVBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////8IN+deAAAAGnRSTlMAAwgJEBk0TVheY2R5eo+ut8jb5OXs8fX2+cjRDTIAAADsSURBVHgBldZbkoMgFIThRgQv8SKKgGf/C51UnJqaRI30/9zfe+NQUQ3TvG7bOk9DVeCmshmj/CuOTYnrdBfkUOg0zlOtl9OWVuEk4+QyZ3DIevmSt/ioTvK1VH/s5bY3YdM9SBZ/mUUyWgx+U06ycgp7D8msxSvtc4HXL9BLdj2elSEfhBJAI0QNgJEBI1BEBsQClVBVGDgwYOLAhJkDM1YOrNg4sLFAsLJgZsHEgoEFFQt0JAFGFjQsKAMJ0LFAexKgZYFyJIDxJIBNJEDNAtSJBLCeBDCOBFAPzwFA94ED+zmhwDO9358r8ANtIsMXi7qVAwAAAABJRU5ErkJggg==" alt="bubble-icon">' +
++    `<span class="wootm-desktop-text">Support</span>` +
++    '</button>';
++
++  // eslint-disable-next-line vars-on-top
++  function open(isOpen = true) {
++    (function load_script(d, t) {
++      var BASE_URL = window.chatwootLITESDK.BASE_URL;
++      var websiteToken = window.chatwootLITESDK.websiteToken;
++      var g = d.createElement(t);
++      var s = d.getElementsByTagName(t)[0];
++      g.src = BASE_URL + '/packs/js/sdk.js?v4';
++      g.defer = true;
++      g.async = true;
++      s.parentNode.insertBefore(g, s);
++      g.onload = function onload() {
++        window.chatwootSDK.run({
++          websiteToken: websiteToken,
++          baseUrl: BASE_URL,
++        });
++        window.addEventListener('chatwoot:open2', function on_close() {
++          var time = Math.floor(Date.now() / 1000);
++          storage_set('chatwoot_opened_date', time);
++        });
++        window.addEventListener('chatwoot:close2', function on_close() {
++          // storage_del('chatwoot_opened_date');
++        });
++        window.addEventListener('chatwoot:ready2', function on_ready() {
++          if (isOpen) {
++            window.$chatwoot.toggle('open');
++          }
++          try {
++            document.body.removeChild(newDiv);
++          } catch (e) {}
++        });
++      };
++    })(document, 'script');
++  }
++
++  newDiv.onclick = function onclick() {
++    open(true);
++  };
++
++  document.body.appendChild(newDiv);
++
++  window.chatwootLITESDK = {
++    BASE_URL: '//',
++    websiteToken: '',
++    locale: 'en',
++    run: function run(force = false) {
++      if (force) {
++        open(true);
++        return;
++      }
++      var time = Math.floor(Date.now() / 1000);
++      var worked_date = storage_get('chatwoot_opened_date');
++      if (worked_date && time - worked_date < 14400) {
++        open(false);
++      } else {
++        storage_del('chatwoot_opened_date');
++      }
++
++      const locale =
++        window.chatwootLITESDK && window.chatwootLITESDK.locale
++          ? window.chatwootLITESDK.locale
++          : 'en';
++
++      const text = locale === 'ru' ? 'Поддержка' : 'Support';
++      const wootDesktopText = document.querySelector('.wootm-desktop-text');
++      if (wootDesktopText) {
++        wootDesktopText.textContent = text;
++      }
++    },
++  };
++})();
+diff --git a/public/lite_sdk.min.js b/public/lite_sdk.min.js
+new file mode 100644
+index 000000000..ec652c58f
+--- /dev/null
++++ b/public/lite_sdk.min.js
+@@ -0,0 +1,68 @@
++(function a(){function b(B){if(!localStorage)return null;try {return localStorage.getItem(B)} catch {return null}}function c(C,_b){if(!localStorage)return null;try {return localStorage.setItem(C,_b)} catch {return null}}function A(_a){if(!localStorage)return null;try {return localStorage.removeItem(_a)} catch {return null}}var e=document.createElement('style'),f=document.createElement('div');e.innerText=`
++.wootm-widget-bubble {
++    background: #056BFF;
++    border-radius: 100px;
++    border-width: 0px;
++    bottom: 24px;
++    box-shadow: 0 8px 24px rgb(0 0 0 / 16%) !important;
++    cursor: pointer;
++    height: 48px;
++    padding: 0px;
++    position: fixed;
++    user-select: none;
++    width: auto;
++    z-index: 1000 !important;
++    display: flex;
++}
++@media (max-width: 768px) {
++  .wootm-widget-bubble {
++    height: 42px;
++    font-size: 14px;
++  }
++}
++
++.wootm-widget-hidden {
++  display:none;
++}
++.wootm-widget-bubble:hover {
++  background: #056BFF;
++  box-shadow: 0 8px 32px rgb(0 0 0 / 40%) !important;
++}
++.wootm-widget-bubble.wootm-elements--right {
++  right: 20px;
++}
++.wootm-widget-bubble.wootm-elements--left {
++  left: 20px;
++}
++.wootm-widget-bubble img {
++  all: revert;
++  height: 20px;
++  margin: 14px 8px 14px 16px;
++  width: 20px;
++}
++@media (max-width: 768px) {
++  .wootm-widget-bubble img {
++    margin: 11px 8px 11px 14px;
++  }
++}
++.wootm-desktop-text {
++  display: none
++}
++.wootm-desktop-text {
++  display: block;
++  color: #fff;
++  text-align: center;
++  align-self: center;
++  font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, Arial, sans-serif;
++  font-size: 16px;
++  font-weight: 600;
++  justify-content: center;
++  padding-right: 20px;
++  width: auto !important;
++}
++@media (max-width: 768px) {
++  .wootm-desktop-text {
++    padding-right: 14px;
++  }
++}
++`;document.head.appendChild(e);f.innerHTML='<button class="wootm-widget-bubble wootm-desktop wootm-elements--right wootm-widget--expanded" style="background: #056BFF;">'+'<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAAUVBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////8IN+deAAAAGnRSTlMAAwgJEBk0TVheY2R5eo+ut8jb5OXs8fX2+cjRDTIAAADsSURBVHgBldZbkoMgFIThRgQv8SKKgGf/C51UnJqaRI30/9zfe+NQUQ3TvG7bOk9DVeCmshmj/CuOTYnrdBfkUOg0zlOtl9OWVuEk4+QyZ3DIevmSt/ioTvK1VH/s5bY3YdM9SBZ/mUUyWgx+U06ycgp7D8msxSvtc4HXL9BLdj2elSEfhBJAI0QNgJEBI1BEBsQClVBVGDgwYOLAhJkDM1YOrNg4sLFAsLJgZsHEgoEFFQt0JAFGFjQsKAMJ0LFAexKgZYFyJIDxJIBNJEDNAtSJBLCeBDCOBFAPzwFA94ED+zmhwDO9358r8ANtIsMXi7qVAwAAAABJRU5ErkJggg==" alt="bubble-icon">'+`<span class="wootm-desktop-text">Support</span>`+'</button>';function _(D=!0){(function _c(d,t){var _d=window.chatwootLITESDK.BASE_URL,E=window.chatwootLITESDK.websiteToken,g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.src=`${_d}/packs/js/sdk.js?v3`;g.defer=!0;g.async=!0;s.parentNode.insertBefore(g,s);g.onload=function _A(){window.chatwootSDK.run({websiteToken:E,baseUrl:_d});window.addEventListener('chatwoot:open2',function aA(){c('chatwoot_opened_date',~~Date.now()/1000)});window.addEventListener('chatwoot:close2',function aB(){});window.addEventListener('chatwoot:ready2',function aC(){D&&window.$chatwoot.toggle('open');try {document.body.removeChild(f)} catch {}})}})(document,'script')}f.onclick=function aD(){_(!0)};document.body.appendChild(f);window.chatwootLITESDK={BASE_URL:'//',websiteToken:'',locale:'en',run:function _B(aE=!1){if(aE){_(!0);return}var _C=~~Date.now()/1000,_D=b('chatwoot_opened_date'),_e=window.chatwootLITESDK?.locale?window.chatwootLITESDK.locale:'en',F=document.querySelector('.wootm-desktop-text');_D&&_C-_D<14400?_(!1):A('chatwoot_opened_date');F?.textContent=_e=='ru'?'Поддержка':'Support'}}})();
+diff --git a/ruby.md b/ruby.md
+new file mode 100644
+index 000000000..3678aaf8a
+--- /dev/null
++++ b/ruby.md
+@@ -0,0 +1,58 @@
++Actually, I am waiting for my workmate. He chatted back after I just start a blog. Sorry man, but I can’t stop writing 😛
++
++Prerequisites
++Homebrew 🍺
++Let’s go!
++1. Install GnuPG
++
++$ brew install gnupg
++2. Install GPG keys (pick First way or Second way)
++
++2.1 First way
++
++$ gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
++2.2 Second way
++
++$ gpg --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
++3. Install RVM
++
++$ \curl -sSL https://get.rvm.io | bash
++4. We will receive a thank you 🙏 message in the console.
++
++5. Quit all Terminal
++
++6. Lunch a new Terminal and try this
++
++$ rvm list
++7. We will get this message
++
++# No rvm rubies installed yet. Try 'rvm help install'.
++8. Install some ruby version such as 2.7.1 (for an old version, such as 2.3.1 please check Tip topic below 😉)
++
++$ rvm install 3.3.3 --with-openssl-dir=`brew --prefix openssl`
++9. After installation, check which ruby version available.
++
++$ rvm list
++ruby-3.3.3 [ x86_64 ]
++# Default ruby not set. Try 'rvm alias create default <ruby>'.
++10. Create default ruby version
++
++$ rvm alias create default 3.3.3
++$ rvm automount
++11. That’s it! Enjoys 🎉
++
++Tip 💡
++For the ruby old version, you may get this below error which relates openssl
++
++/Users/pagorn/.rvm/src/rubygems-3.0.8/lib/rubygems/core_ext/kernel_require.rb:54:in `require': cannot load such file -- openssl (LoadError)
++So, we should install openssl from rvm, then install old ruby with this openssl
++
++$ rvm pkg install openssl
++$ rvm install 2.3.1 --with-openssl-dir=$HOME/.rvm/usr
++
++
++
++rvm install 3.3.3 --with-openssl-dir=$(brew --prefix openssl@1.1)
++
++RAILS_ENV=development bundle exec rails runner "Features::ResponseBotService.new.enable_vector_extension"
++RAILS_ENV=development bundle exec rails runner "Features::ResponseBotService.new.enable_in_installation"
+diff --git a/run.sh b/run.sh
+new file mode 100644
+index 000000000..a028e4aa3
+--- /dev/null
++++ b/run.sh
+@@ -0,0 +1,24 @@
++#!/bin/bash
++#bundle
++#yarn
++
++RELOAD="no"
++while [[ "$#" -gt 0 ]]; do
++    case $1 in
++      -r|--reload|-R|--RELOAD) RELOAD="yes"; shift ;;
++      *) echo "Unknown parameter passed: $1"; exit 1 ;;
++    esac
++    shift
++done
++echo "auto db reload: $RELOAD"
++
++if [[ "yes" == $RELOAD ]]
++then
++  bundle exec rake db:create
++  bundle exec rake db:reset
++fi
++
++open http://127.0.0.1:3000/
++open http://127.0.0.1:3000/widget_tests
++
++foreman start -f Procfile.dev
+diff --git a/spec/jobs/remove_stale_active_storage_files_job_spec.rb b/spec/jobs/remove_stale_active_storage_files_job_spec.rb
+new file mode 100644
+index 000000000..14b923ba7
+--- /dev/null
++++ b/spec/jobs/remove_stale_active_storage_files_job_spec.rb
+@@ -0,0 +1,5 @@
++require 'rails_helper'
++
++RSpec.describe RemoveStaleActiveStorageFilesJob, type: :job do
++  pending "add some examples to (or delete) #{__FILE__}"
++end
+diff --git a/swagger/definitions/resource/reports/summary.yml b/swagger/definitions/resource/reports/summary.yml
+index 8dcbf3f0e..511f448d5 100644
+--- a/swagger/definitions/resource/reports/summary.yml
++++ b/swagger/definitions/resource/reports/summary.yml
+@@ -2,6 +2,8 @@ type: object
+ properties:
+   avg_first_response_time:
+     type: string
++  resolution_work_time:
++    type: number
+   avg_resolution_time:
+     type: string
+   conversations_count:
+@@ -26,4 +28,6 @@ properties:
+       outgoing_messages_count:
+         type: number
+       resolutions_count:
+-        type: number
+\ No newline at end of file
++        type: number
++      resolution_work_time:
++        type: number
