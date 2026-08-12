@@ -30,6 +30,7 @@
 
 #### Hub / plan
 - `lib/chatwoot_hub.rb`: hub `https://hub.2.chatwoot.on-mail.ru` (override `CHATWOOT_HUB_URL`)
+- `enterprise/lib/enterprise/chatwoot_hub.rb`: same default (EE prepend must not force upstream hub)
 - installation id по умолчанию `onlinesim`
 - plan/qty из InstallationConfig без enterprise-gate; defaults `premium` / `99999999`
 

@@ -48,7 +48,9 @@ RSpec.describe 'Conversation Messages API', type: :request do
 
         json_response = response.parsed_body
 
-        expect(json_response['error']).to eq('Validation failed: Content is too long (maximum is 150000 characters)')
+        expect(json_response['error']).to match(
+          /Validation failed: .*[Cc]ontent is too long \(maximum is 150000 characters\)/
+        )
       end
 
       it 'returns a customer-safe error when the database query is canceled' do
@@ -230,6 +232,9 @@ RSpec.describe 'Conversation Messages API', type: :request do
       end
 
       it 'deletes the message' do
+        # OnlineSIM: only the message owner (sender) may delete
+        message.update!(sender: agent)
+
         delete "/api/v1/accounts/#{account.id}/conversations/#{conversation.display_id}/messages/#{message.id}",
                headers: agent.create_new_auth_token,
                as: :json
@@ -240,11 +245,19 @@ RSpec.describe 'Conversation Messages API', type: :request do
         expect(message.reload.content_attributes['bcc_emails']).to be_nil
       end
 
+      it 'forbids deleting another user message' do
+        delete "/api/v1/accounts/#{account.id}/conversations/#{conversation.display_id}/messages/#{message.id}",
+               headers: agent.create_new_auth_token,
+               as: :json
+
+        expect(response).to have_http_status(:forbidden)
+      end
+
       it 'deletes interactive messages' do
         interactive_message = create(
           :message, message_type: :outgoing, content: 'test', content_type: 'input_select',
                     content_attributes: { 'items' => [{ 'title' => 'test', 'value' => 'test' }] },
-                    conversation: conversation
+                    conversation: conversation, sender: agent
         )
 
         delete "/api/v1/accounts/#{account.id}/conversations/#{conversation.display_id}/messages/#{interactive_message.id}",

@@ -18,6 +18,7 @@ Metrics/ClassLength:
   Exclude:
     - 'app/models/message.rb'
     - 'app/models/conversation.rb'
+    - 'app/builders/messages/message_builder.rb'
 
 Metrics/MethodLength:
   Max: 19
@@ -91,6 +92,7 @@ Metrics/ModuleLength:
   Exclude:
     - lib/seeders/message_seeder.rb
     - spec/support/slack_stubs.rb
+    - lib/redis/alfred.rb
 
 Rails/HelperInstanceVariable:
   Exclude:

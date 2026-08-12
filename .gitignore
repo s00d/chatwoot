@@ -84,6 +84,8 @@ yalc.lock
 /yarn-error.log
 yarn-debug.log*
 .yarn-integrity
+.yarn/
+composer.lock
 
 # Vite Ruby
 /public/vite*

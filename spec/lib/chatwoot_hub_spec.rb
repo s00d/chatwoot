@@ -3,8 +3,16 @@ require 'rails_helper'
 describe ChatwootHub do
   describe '.base_url' do
     it 'uses the static hub url' do
-      expect(described_class::DEFAULT_BASE_URL).to eq('https://hub.2.chatwoot.com')
-      expect(described_class.base_url).to eq('https://hub.2.chatwoot.com')
+      expect(described_class::DEFAULT_BASE_URL).to eq('https://hub.2.chatwoot.on-mail.ru')
+      with_modified_env CHATWOOT_HUB_URL: nil do
+        expect(described_class.base_url).to eq('https://hub.2.chatwoot.on-mail.ru')
+      end
+    end
+
+    it 'allows overriding hub url via CHATWOOT_HUB_URL' do
+      with_modified_env CHATWOOT_HUB_URL: 'https://hub.example.test' do
+        expect(described_class.base_url).to eq('https://hub.example.test')
+      end
     end
   end
 
