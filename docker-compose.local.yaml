@@ -35,7 +35,7 @@ services:
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
     ports: !override
-      - '127.0.0.1:5433:5432'
+      - '127.0.0.1:55433:5432'
 
   redis:
     ports: !override
