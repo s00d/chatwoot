@@ -99,6 +99,12 @@ cleanup_old_files:
   class: 'CleanupOldFilesJob'
   queue: scheduled_jobs
 
+# OnlineSIM: purge contact avatars older than CONTACT_AVATAR_MAX_AGE_DAYS (default 90) and orphan avatar files
+cleanup_old_contact_avatars:
+  cron: '30 4 * * *'
+  class: 'CleanupOldContactAvatarsJob'
+  queue: scheduled_jobs
+
 # Optional aggressive blob wipe — keep disabled by default
 # remove_stale_active_storage_files_job:
 #   cron: '0 0 * * *'
