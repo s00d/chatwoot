@@ -176,7 +176,7 @@ docker compose -f docker-compose.onlinesim.yaml build     # наш 4.19.1
 docker pull chatwoot/chatwoot:v4.1.0                      # официальный 4.1.0, только для миграций 3.11 → 4.1
 ```
 
-- Первая сборка долгая: `grpc` и `google-protobuf` компилируются из исходников. На 2 CPU / 5 ГБ — около 30 мин (`bundle install` ~17 мин), на 8 CPU в разы быстрее. Пока идёт компиляция, в логе долго нет новых строк — это нормально. Дальше слой с гемами в кэше, и пересборка без изменений `Gemfile.lock` занимает минуты.
+- Образ на Debian slim: гемы с нативными расширениями (`grpc`, `nokogiri`, `google-protobuf`) ставятся готовыми, сборка ~5–10 мин, образ ~1,8 ГБ. Повторная сборка без изменений `Gemfile.lock` — пара минут (слой с гемами в кэше).
 - Чтобы не собирать на сервере вовсе: образ собирает GitHub Actions и пушит в registry, на сервере только `pull` ([01](01-docker-from-scratch.md), раздел 8, вариант B).
 - Сообщение при сборке `Failed to configure AI Agents SDK: connection ... 5432 ... refused` — не ошибка: при `assets:precompile` базы нет, upstream просто пишет это в лог.
 - Docker Hub ограничивает анонимные скачивания (`429 Too Many Requests`) — `docker login` и повторить.

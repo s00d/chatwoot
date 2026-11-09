@@ -22,6 +22,8 @@ x-base: &base
       RAILS_ENV: production
       RAILS_SERVE_STATIC_FILES: 'true'
       BUNDLE_WITHOUT: 'development:test'
+      # commit hash shown in Super Admin; e.g. GIT_SHA=$(git rev-parse HEAD) docker compose ... build
+      GIT_SHA: ${GIT_SHA:-docker-build}
   env_file: .env
   volumes:
     - storage_data:/app/storage

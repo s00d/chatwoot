@@ -15,3 +15,11 @@ vendor/bundle
 .DS_Store
 *.swp
 *~
+
+# Not needed in the image. .git alone is ~2 GB and stays in a layer even after `rm -rf .git`;
+# .git_sha falls back to "docker-build" without it (docker/Dockerfile).
+.git
+.pnpm-store
+.yarn
+coverage
+public/vite-dev

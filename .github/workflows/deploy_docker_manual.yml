@@ -88,6 +88,7 @@ jobs:
             RAILS_ENV=production
             RAILS_SERVE_STATIC_FILES=true
             BUNDLE_WITHOUT=development:test
+            GIT_SHA=${{ github.sha }}
           # GHA layer cache — stable scope across runs (faster rebuilds)
           cache-from: type=gha,scope=onlinesim-docker
           cache-to: type=gha,mode=max,scope=onlinesim-docker

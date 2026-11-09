@@ -1,162 +1,71 @@
 # syntax=docker/dockerfile:1.4
-# pre-build stage
-FROM node:24.22.1-alpine as node
-FROM ruby:3.4.4-alpine3.21 AS pre-builder
+# Debian slim (glibc): grpc, google-protobuf, nokogiri and ffi install as prebuilt gems
+# instead of being compiled from source as on Alpine/musl.
+FROM node:24.22.1-bookworm-slim AS node
 
-ARG NODE_VERSION="24.22.1"
-ARG PNPM_VERSION="10.2.0"
-ENV NODE_VERSION=${NODE_VERSION}
-ENV PNPM_VERSION=${PNPM_VERSION}
-
-# ARG default to production settings
-# For development docker-compose file overrides ARGS
-ARG BUNDLE_WITHOUT="development:test"
-ENV BUNDLE_WITHOUT ${BUNDLE_WITHOUT}
-ENV BUNDLER_VERSION=2.5.16
-
-ARG RAILS_SERVE_STATIC_FILES=true
-ENV RAILS_SERVE_STATIC_FILES ${RAILS_SERVE_STATIC_FILES}
+# Runtime shared by the build stage and the final image
+FROM ruby:3.4.4-slim-bookworm AS base
 
 ARG RAILS_ENV=production
-ENV RAILS_ENV ${RAILS_ENV}
+ARG BUNDLE_WITHOUT=development:test
+ARG RAILS_SERVE_STATIC_FILES=true
+ENV RAILS_ENV=${RAILS_ENV} \
+    BUNDLE_WITHOUT=${BUNDLE_WITHOUT} \
+    BUNDLE_PATH=/gems \
+    RAILS_SERVE_STATIC_FILES=${RAILS_SERVE_STATIC_FILES} \
+    EXECJS_RUNTIME=Disabled \
+    COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
+    # Restrict libvips to its trusted image loaders when generating variants
+    VIPS_BLOCK_UNTRUSTED=1
 
-ARG NODE_OPTIONS="--max-old-space-size=4096 --openssl-legacy-provider"
-ENV NODE_OPTIONS ${NODE_OPTIONS}
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 postgresql-client libvips42 imagemagick tzdata git curl \
+  && rm -rf /var/lib/apt/lists/* \
+  && gem install bundler -v 2.5.16
 
-ENV BUNDLE_PATH="/gems"
-
-RUN apk update && apk add --no-cache \
-  openssl \
-  tar \
-  build-base \
-  tzdata \
-  postgresql-dev \
-  postgresql-client \
-  git \
-  curl \
-  xz \
-  && mkdir -p /var/app \
-  && gem install bundler -v "$BUNDLER_VERSION"
-
-COPY --from=node /usr/local/bin/node /usr/local/bin/
+COPY --from=node /usr/local/bin/node /usr/local/bin/node
 COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
-RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
-  && ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
-
-RUN npm install -g pnpm@${PNPM_VERSION}
-
-RUN echo 'export PNPM_HOME="/root/.local/share/pnpm"' >> /root/.shrc \
-  && echo 'export PATH="$PNPM_HOME:$PATH"' >> /root/.shrc \
-  && export PNPM_HOME="/root/.local/share/pnpm" \
-  && export PATH="$PNPM_HOME:$PATH" \
-  && pnpm --version
-
-# Persist the environment variables in Docker
-ENV PNPM_HOME="/root/.local/share/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
+# pnpm version comes from "packageManager" in package.json
+RUN ln -s ../lib/node_modules/corepack/dist/corepack.js /usr/local/bin/corepack && corepack enable
 
 WORKDIR /app
+
+# Build stage: compilers, gems, node packages, assets
+FROM base AS build
+
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential libpq-dev libyaml-dev \
+  && rm -rf /var/lib/apt/lists/*
 
 COPY Gemfile Gemfile.lock ./
-
-# natively compile grpc and protobuf to support alpine musl (dialogflow-docker workflow)
-# https://github.com/googleapis/google-cloud-ruby/issues/13306
-# adding xz as nokogiri was failing to build libxml
-# https://github.com/chatwoot/chatwoot/issues/4045
-RUN apk update && apk add --no-cache build-base musl ruby-full ruby-dev gcc make musl-dev openssl openssl-dev g++ linux-headers xz vips
-RUN bundle config set --local force_ruby_platform true
-
-# Do not install development or test gems in production
-RUN if [ "$RAILS_ENV" = "production" ]; then \
-  bundle config set without 'development test'; bundle install -j 4 -r 3; \
-  else bundle install -j 4 -r 3; \
-  fi
+RUN bundle install -j 4 -r 3 && rm -rf /gems/ruby/*/cache
 
 COPY package.json pnpm-lock.yaml ./
-# Husky prepare runs before COPY . — no .git yet; skip git hooks in image builds
 RUN --mount=type=cache,id=chatwoot-pnpm,target=/root/.local/share/pnpm/store \
-  HUSKY=0 pnpm i
+  HUSKY=0 pnpm install
 
-COPY . /app
+COPY . .
 
-# creating a log directory so that image wont fail when RAILS_LOG_TO_STDOUT is false
-# https://github.com/chatwoot/chatwoot/issues/701
-RUN mkdir -p /app/log
-
-# generate production assets if production environment
-# Includes: Vite app bundles, packs/js/sdk.js (via build.rake), lite_sdk.min.js
-RUN if [ "$RAILS_ENV" = "production" ]; then \
-  SECRET_KEY_BASE=precompile_placeholder RAILS_LOG_TO_STDOUT=enabled bundle exec rake assets:precompile \
-  && test -f /app/public/packs/js/sdk.js \
-  && test -f /app/public/lite_sdk.js \
-  && test -f /app/public/lite_sdk.min.js \
-  && rm -rf spec node_modules tmp/cache; \
+# Vite app bundles, packs/js/sdk.js and lite_sdk.min.js (lib/tasks/build.rake)
+RUN mkdir -p log \
+  && if [ "$RAILS_ENV" = "production" ]; then \
+    SECRET_KEY_BASE=precompile_placeholder NODE_OPTIONS="--max-old-space-size=4096" bundle exec rake assets:precompile \
+    && test -f public/packs/js/sdk.js && test -f public/lite_sdk.min.js \
+    && rm -rf node_modules spec tmp/cache; \
   fi
 
-# Generate .git_sha file with current commit hash (optional when .git omitted from context)
-RUN git rev-parse HEAD > /app/.git_sha 2>/dev/null || echo "docker-build" > /app/.git_sha
+ARG GIT_SHA=docker-build
+RUN echo "$GIT_SHA" > .git_sha
 
-# Remove unnecessary files
-RUN rm -rf /gems/ruby/3.4.0/cache/*.gem \
-  && find /gems/ruby/3.4.0/gems/ \( -name "*.c" -o -name "*.o" \) -delete \
-  && rm -rf .git \
-  && rm .gitignore
+# Final image
+FROM base
 
-# final build stage
-FROM ruby:3.4.4-alpine3.21
-
-ARG NODE_VERSION="24.22.1"
-ARG PNPM_VERSION="10.2.0"
-ENV NODE_VERSION=${NODE_VERSION}
-ENV PNPM_VERSION=${PNPM_VERSION}
-
-ARG BUNDLE_WITHOUT="development:test"
-ENV BUNDLE_WITHOUT ${BUNDLE_WITHOUT}
-ENV BUNDLER_VERSION=2.5.16
-
-ARG EXECJS_RUNTIME="Disabled"
-ENV EXECJS_RUNTIME ${EXECJS_RUNTIME}
-
-ARG RAILS_SERVE_STATIC_FILES=true
-ENV RAILS_SERVE_STATIC_FILES ${RAILS_SERVE_STATIC_FILES}
-
-ARG BUNDLE_FORCE_RUBY_PLATFORM=1
-ENV BUNDLE_FORCE_RUBY_PLATFORM ${BUNDLE_FORCE_RUBY_PLATFORM}
-
-ARG RAILS_ENV=production
-ENV RAILS_ENV ${RAILS_ENV}
-ENV BUNDLE_PATH="/gems"
-
-RUN apk update && apk add --no-cache \
-  build-base \
-  openssl \
-  tzdata \
-  postgresql-client \
-  imagemagick \
-  git \
-  vips \
-  && gem install bundler -v "$BUNDLER_VERSION"
-
-# Restrict libvips to its trusted image loaders when generating variants
-ENV VIPS_BLOCK_UNTRUSTED=1
-
-COPY --from=node /usr/local/bin/node /usr/local/bin/
-COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
-
+# development: the rails entrypoint runs bundle install, which needs a compiler
 RUN if [ "$RAILS_ENV" != "production" ]; then \
-  apk add --no-cache curl \
-  && ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
-  && ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx \
-  && npm install -g pnpm@${PNPM_VERSION} \
-  && pnpm --version; \
+    apt-get update && apt-get install -y --no-install-recommends build-essential libpq-dev libyaml-dev \
+    && rm -rf /var/lib/apt/lists/*; \
   fi
 
-COPY --from=pre-builder /gems/ /gems/
-COPY --from=pre-builder /app /app
-
-# Copy .git_sha file from pre-builder stage
-COPY --from=pre-builder /app/.git_sha /app/.git_sha
-
-WORKDIR /app
+COPY --from=build /gems /gems
+COPY --from=build /app /app
 
 EXPOSE 3000
