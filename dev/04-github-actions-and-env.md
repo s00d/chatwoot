@@ -120,7 +120,7 @@ docker compose --env-file .env.docker -f docker-compose.yaml -f docker-compose.l
 | `REDIS_DB` | `5` | Номер Redis DB (также укажите в `REDIS_URL`) |
 | `HELPCENTER_URL` | — | Если HC на отдельном домене |
 
-Installation configs (premium, file size) задаются через `config/installation_config.yml` / Super Admin после старта; см. [CUSTOM_VS_V4.16.2.md](CUSTOM_VS_V4.16.2.md).
+Installation configs (premium, file size) задаются через `config/installation_config.yml` / Super Admin после старта; см. [UPGRADE_V3.11_TO_V4.19.1.md](UPGRADE_V3.11_TO_V4.19.1.md).
 
 ### MFA / encryption (если используете)
 
