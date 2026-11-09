@@ -122,6 +122,15 @@ server {
   listen 80;
   server_name chat-staging.example.com;
 
+  # Compress JS/CSS/JSON/SVG from the app: nginx gzips only text/html by default, and the
+  # dashboard bundle is several MB uncompressed. gzip_proxied is needed for proxied responses.
+  gzip on;
+  gzip_proxied any;
+  gzip_vary on;
+  gzip_comp_level 5;
+  gzip_min_length 1024;
+  gzip_types text/css application/javascript text/javascript application/json image/svg+xml text/plain;
+
   location / {
     proxy_pass http://chatwoot;
     proxy_http_version 1.1;
