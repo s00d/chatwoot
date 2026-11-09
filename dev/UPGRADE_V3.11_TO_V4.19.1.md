@@ -24,7 +24,6 @@
 
 | Было в 3.11 | Стало в 4.19.1 |
 |-------------|----------------|
-| Пустой `Branding.vue` | Feature `disable_branding` (+ seed включает на demo-аккаунте) |
 | Хардкод 10 MB в `attachment.rb` | `MAXIMUM_FILE_UPLOAD_SIZE=10` в `config/installation_config.yml` + FE default 10 |
 
 ### REWRITE / REAPPLY
@@ -60,6 +59,7 @@
 - Cookie SameSite None; pubsub_token на setUser + ActionCable `refreshConnection`
 - `public/lite_sdk.js` (+ min) — lazy load полного `/packs/js/sdk.js`
 - Header `CHAT_HEADER`, offline copy, blockquote в bubble
+- `shared/components/Branding.vue` пустой, как в 3.11: в виджете и CSAT-опросе нет «Powered by», только отступ (флаг `disable_branding` дополнительно выключает брендинг на портале и в письмах)
 
 #### Dashboard / contacts (components-next)
 - Новые чаты сверху (`unshift`)
@@ -82,7 +82,6 @@
 
 ## DROP относительно 3.11
 
-- Хак пустого Branding.vue
 - Хардкод размера файла в модели
 - Webpacker-only asset preserve rake (заменён Vite-ориентированным `build.sh`)
 
