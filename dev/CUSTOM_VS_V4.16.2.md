@@ -120,161 +120,20 @@
 ## Переезд прода на новый сервер (3.11 → v4.19.1, Docker)
 
 Старый сервер: Linux VM **без Docker** (код в `/home/chatwoot/chatwoot`, systemd `chatwoot.target`, локальные PostgreSQL и Redis). С него берём только дамп БД, файлы и `.env`, сам он не меняется.  
-Новый сервер: **всё в Docker** (`docker-compose.onlinesim.yaml`, каталог `/opt/chatwoot`), сразу на последней версии. На хост ставятся только Docker и Nginx с certbot.
+Новый сервер: **всё в Docker** (`docker-compose.onlinesim.yaml`, каталог `/opt/chatwoot`). На хост ставятся только Docker и Nginx с certbot.
 
-Идея: данные и сервер — две независимые части.
+Порядок:
 
-- **Часть A — конвертация дампа.** Дамп 3.11 прогоняем через миграции во **временных** контейнерах (3.11 → 4.1.0 → 4.19.1) и снимаем с результата **готовый дамп 4.19.1**. Делается на любой машине с Docker (ноутбук или новый сервер), временные контейнеры потом удаляются.
-- **Часть B — новый сервер.** Ставим чистый 4.19.1 и заливаем в него готовый дамп. Никаких промежуточных версий на сервере.
-- **Часть C — боевой переезд.** Останавливаем старый, повторяем A на свежем дампе, заливаем в B, переключаем DNS.
+1. **Подготовка** — новый сервер полностью готов заранее: код, `.env`, образы, Postgres/Redis, Nginx. Старый работает, простоя нет.
+2. **Переезд** — останавливаем старый, снимаем дамп и сразу на новом: заливаем → миграции 3.11 → 4.1.0 → 4.19.1 → запуск. Простой — минуты.
 
-Сначала делаем A и B на дампе без остановки старого (репетиция), проверяем, потом C.
-
----
-
-### Часть A. Конвертация дампа 3.11 → 4.19.1
-
-#### A1. Снять дамп и файлы со старого сервера
-
-На **старом** сервере (имя БД — `POSTGRES_DATABASE` в его `.env`, обычно `chatwoot_production`):
-
-```bash
-sudo -u postgres pg_dump -Fc -d chatwoot_production -f /tmp/chatwoot-3.11.dump
-sudo tar -czf /tmp/chatwoot-storage.tgz -C /home/chatwoot/chatwoot storage
-sudo tar -czf /tmp/chatwoot-avatars.tgz -C /home/chatwoot/chatwoot avatars
-sudo cp /home/chatwoot/chatwoot/.env /tmp/chatwoot-old.env
-sudo chmod 644 /tmp/chatwoot-3.11.dump /tmp/chatwoot-*.tgz /tmp/chatwoot-old.env
-```
-
-`storage/` — вложения, `avatars/` — аватары (отдельный сервис OnlineSIM). Если `avatars/` нет — пропустить.  
-Забрать на машину, где будет конвертация (и потом на новый сервер):
-
-```bash
-mkdir -p ~/cw-move && cd ~/cw-move
-scp OLD:/tmp/chatwoot-3.11.dump OLD:/tmp/chatwoot-storage.tgz OLD:/tmp/chatwoot-avatars.tgz OLD:/tmp/chatwoot-old.env .
-```
-
-`chatwoot-old.env` содержит секреты — после переезда удалить.
-
-#### A2. Образ последней версии
-
-На машине конвертации нужен наш образ 4.19.1:
-
-```bash
-git clone git@github.com:s00d/chatwoot.git ~/cw-src && cd ~/cw-src
-git checkout upgrade/v4.19.1-onlinesim
-docker compose -f docker-compose.onlinesim.yaml build     # даёт образ chatwoot-onlinesim:local
-cd ~/cw-move
-```
-
-(или взять готовый образ из GitHub Actions, см. [04](04-github-actions-and-env.md), и подставить его имя вместо `chatwoot-onlinesim:local` ниже).
-
-#### A3. Файл окружения для конвертации
-
-Миграции должны идти с **теми же** секретами, что на проде. Создать `~/cw-move/convert.env`, перенеся значения из `chatwoot-old.env` (без кавычек, без пробелов вокруг `=`):
-
-```bash
-RAILS_ENV=production
-INSTALLATION_ENV=docker
-SECRET_KEY_BASE=значение_со_старого
-# если были на старом:
-# ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY=...
-# ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY=...
-# ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=...
-POSTGRES_HOST=cw-convert-pg
-POSTGRES_USERNAME=postgres
-POSTGRES_PASSWORD=convert
-POSTGRES_DATABASE=chatwoot
-REDIS_URL=redis://cw-convert-redis:6379
-FRONTEND_URL=http://localhost:3000
-```
-
-#### A4. Временные Postgres и Redis, расширения
-
-Chatwoot 4.x нужны расширения PostgreSQL:
-
-| Расширение | Зачем |
-|------------|-------|
-| `pg_stat_statements` | статистика запросов |
-| `pg_trgm` | поиск по тексту (триграммы) |
-| `pgcrypto` | `gen_random_uuid()` |
-| `vector` | **pgvector**, Captain / AI-поиск (появилось в 4.x, на старом сервере его нет) |
-| `plpgsql` | стандартное, есть всегда |
-
-Образ `pgvector/pgvector:pg16` содержит их все, нужно только включить в БД:
-
-```bash
-docker network create cw-convert
-docker run -d --name cw-convert-pg --network cw-convert \
-  -e POSTGRES_PASSWORD=convert -e POSTGRES_DB=chatwoot pgvector/pgvector:pg16
-docker run -d --name cw-convert-redis --network cw-convert redis:alpine
-
-until docker exec cw-convert-pg pg_isready -U postgres; do sleep 2; done
-docker exec cw-convert-pg psql -U postgres -d chatwoot -c "CREATE EXTENSION IF NOT EXISTS pg_stat_statements; CREATE EXTENSION IF NOT EXISTS pg_trgm; CREATE EXTENSION IF NOT EXISTS pgcrypto; CREATE EXTENSION IF NOT EXISTS vector;"
-docker exec cw-convert-pg psql -U postgres -d chatwoot -c "\dx"
-```
-
-В `\dx` должны быть все пять.
-
-#### A5. Залить дамп 3.11
-
-```bash
-docker exec -i cw-convert-pg pg_restore -U postgres -d chatwoot --no-owner --no-acl < chatwoot-3.11.dump
-docker exec cw-convert-pg psql -U postgres -d chatwoot -c "select count(*) from accounts; select max(version) from schema_migrations;"
-```
-
-`--no-owner --no-acl` — на старом владелец пользователь `chatwoot`, тут его нет. Сообщения `extension ... already exists` безобидны.
-Лишние старые таблицы из 3.11 (`events`, `subscriptions`) не мешают.
-
-#### A6. Миграции 3.11 → 4.1.0 (официальный образ)
-
-Без промежуточной 4.1.0 миграции 4.2+ падают на feature flags:
-
-```bash
-docker run --rm --network cw-convert --env-file convert.env \
-  chatwoot/chatwoot:v4.1.0 bundle exec rails db:chatwoot_prepare
-```
-
-Должно закончиться без ошибок. Если упало — дальше не идти, лог целиком.
-
-#### A7. Миграции 4.1.0 → 4.19.1 (наш образ)
-
-```bash
-docker run --rm --network cw-convert --env-file convert.env \
-  chatwoot-onlinesim:local bundle exec rails db:chatwoot_prepare
-```
-
-Здесь же выполнится миграция OnlineSIM `20261109000000_onlinesim_force_premium_plan_and_disable_branding`: план `premium`, id `onlinesim`, брендинг выключен на всех аккаунтах.
-
-Проверка:
-
-```bash
-docker run --rm --network cw-convert --env-file convert.env chatwoot-onlinesim:local bundle exec rails runner '
-  puts [Account.count, User.count, Conversation.count, Message.count].inspect
-  puts InstallationConfig.where(name: %w[INSTALLATION_PRICING_PLAN INSTALLATION_IDENTIFIER]).map { |c| [c.name, c.value] }.inspect
-  puts Account.all.map { |a| a.feature_enabled?("disable_branding") }.uniq.inspect
-'
-```
-
-Ожидается: числа как на старом, `premium` / `onlinesim`, `[true]`.
-
-#### A8. Снять готовый дамп 4.19.1 и убрать временное
-
-```bash
-docker exec cw-convert-pg pg_dump -U postgres -Fc -d chatwoot > chatwoot-4.19.1.dump
-ls -lh chatwoot-4.19.1.dump
-
-docker rm -f cw-convert-pg cw-convert-redis
-docker network rm cw-convert
-```
-
-Итог части A: `chatwoot-4.19.1.dump` + `chatwoot-storage.tgz` + `chatwoot-avatars.tgz`.
+Перед боевым переездом прогоните часть 2 один раз как репетицию на дампе, снятом без остановки старого.
 
 ---
 
-### Часть B. Новый сервер сразу на 4.19.1
+### Часть 1. Подготовка нового сервера (заранее, без простоя)
 
-#### B1. Docker и код
+#### 1.1. Docker и код
 
 Установить Docker по [01-docker-from-scratch.md](01-docker-from-scratch.md), раздел 1. Затем:
 
@@ -285,7 +144,7 @@ git clone git@github.com:s00d/chatwoot.git .
 git checkout upgrade/v4.19.1-onlinesim
 ```
 
-#### B2. `.env`
+#### 1.2. `.env`
 
 ```bash
 cp dev/.env.production.example .env
@@ -294,102 +153,159 @@ nano .env
 
 | Переменная | Значение |
 |------------|----------|
-| `SECRET_KEY_BASE` | **строго со старого** (тот же, что в `convert.env`), иначе все разлогинятся и сломаются подписанные ссылки |
+| `SECRET_KEY_BASE` | **строго со старого** `/home/chatwoot/chatwoot/.env`, иначе все разлогинятся и сломаются подписанные ссылки |
 | `ACTIVE_RECORD_ENCRYPTION_*` | со старого, если были |
 | `SMTP_*`, `MAILER_SENDER_EMAIL`, `MAILER_INBOUND_EMAIL_DOMAIN`, `RAILS_INBOUND_EMAIL_*` | со старого |
 | ключи интеграций (`FB_*`, `SLACK_*`, `GOOGLE_*`, `AZURE_*`, `OPENAI_*` и т.п.) | со старого |
-| `FRONTEND_URL` | на репетиции — временный домен; при боевом — основной |
+| `FRONTEND_URL` | боевой домен (на репетиции можно временный) |
 | `HELPCENTER_URL` | если доки открываются по отдельному домену — его |
 | `FORCE_SSL` | `true` (без него cookie сессии не получат `SameSite=None`, виджет в iframe отвалится) |
 | `POSTGRES_HOST` / `POSTGRES_USERNAME` / `POSTGRES_DATABASE` | `postgres` / `postgres` / `chatwoot` |
 | `POSTGRES_PASSWORD`, `REDIS_PASSWORD` | новые сильные пароли |
 | `REDIS_URL` | `redis://:ПАРОЛЬ@redis:6379/5` |
 | `ACTIVE_STORAGE_SERVICE` | `local` |
+| `CHATWOOT_BIND` / `POSTGRES_BIND` / `REDIS_BIND` | только если порты `3000` / `5432` / `6379` на хосте заняты, например `127.0.0.1:3100` |
 
-#### B3. Собрать образ
+> Значения без кавычек и без пробелов вокруг `=`: этот же файл читает `docker run --env-file` (шаг 2.4), он кавычки не снимает.
+
+#### 1.3. Образы
 
 ```bash
-docker compose -f docker-compose.onlinesim.yaml build
+docker compose -f docker-compose.onlinesim.yaml build     # наш 4.19.1
+docker pull chatwoot/chatwoot:v4.1.0                      # официальный 4.1.0, только для миграций 3.11 → 4.1
 ```
 
-(или тот же образ, что в A2, через registry — см. [01](01-docker-from-scratch.md), раздел 8, вариант B).
+- Первая сборка долгая: `grpc` и `google-protobuf` компилируются из исходников. На 2 CPU / 5 ГБ — около 30 мин (`bundle install` ~17 мин), на 8 CPU в разы быстрее. Пока идёт компиляция, в логе долго нет новых строк — это нормально. Дальше слой с гемами в кэше, и пересборка без изменений `Gemfile.lock` занимает минуты.
+- Чтобы не собирать на сервере вовсе: образ собирает GitHub Actions и пушит в registry, на сервере только `pull` ([01](01-docker-from-scratch.md), раздел 8, вариант B).
+- Сообщение при сборке `Failed to configure AI Agents SDK: connection ... 5432 ... refused` — не ошибка: при `assets:precompile` базы нет, upstream просто пишет это в лог.
+- Docker Hub ограничивает анонимные скачивания (`429 Too Many Requests`) — `docker login` и повторить.
 
-#### B4. Postgres + Redis, БД с расширениями
+Проверка образа (все файлы `public/` на месте, SDK собран и минифицирован):
+
+```bash
+docker compose -f docker-compose.onlinesim.yaml run --rm --entrypoint sh rails -c \
+  'ls public/packs/js/sdk.js public/lite_sdk.js public/lite_sdk.min.js && wc -c public/lite_sdk.js public/lite_sdk.min.js'
+```
+
+`lite_sdk.min.js` должен быть меньше `lite_sdk.js`.
+
+#### 1.4. Postgres + Redis
 
 ```bash
 docker compose -f docker-compose.onlinesim.yaml up -d postgres redis
-until docker compose -f docker-compose.onlinesim.yaml exec postgres pg_isready -U postgres; do sleep 2; done
-docker compose -f docker-compose.onlinesim.yaml exec postgres psql -U postgres -c "CREATE DATABASE chatwoot;"
-docker compose -f docker-compose.onlinesim.yaml exec postgres psql -U postgres -d chatwoot -c "CREATE EXTENSION IF NOT EXISTS pg_stat_statements; CREATE EXTENSION IF NOT EXISTS pg_trgm; CREATE EXTENSION IF NOT EXISTS pgcrypto; CREATE EXTENSION IF NOT EXISTS vector;"
 ```
 
-#### B5. Залить готовый дамп
+Ничего руками создавать не нужно. При первом старте пустого volume контейнер Postgres сам:
+
+- создаёт базу `chatwoot` (`POSTGRES_DB` в compose);
+- выполняет [`docker/postgres/initdb/01-extensions.sql`](../docker/postgres/initdb/01-extensions.sql) — расширения `pg_stat_statements`, `pg_trgm`, `pgcrypto`, `vector`.
+
+Поэтому неважно, были ли эти расширения на старом сервере: дамп с ними (pg_dump пишет `CREATE EXTENSION IF NOT EXISTS`) и без них заливается одинаково. `vector` (pgvector, Captain / AI) есть только в образе `pgvector/pgvector:pg16` — образ Postgres не менять.
+
+#### 1.5. Nginx + SSL
+
+[01-docker-from-scratch.md](01-docker-from-scratch.md), раздел 7 (`proxy_pass` на порт из `CHATWOOT_BIND`, блок `/cable` для WebSocket). Сертификат можно выпустить заранее на временный домен; на боевой — после переключения DNS (шаг 2.7).
+
+---
+
+### Часть 2. Переезд (простой — минуты)
+
+#### 2.1. Остановить старый и снять данные
+
+На **старом** сервере (имя БД — `POSTGRES_DATABASE` в его `.env`, обычно `chatwoot_production`):
 
 ```bash
-scp ~/cw-move/chatwoot-4.19.1.dump ~/cw-move/chatwoot-storage.tgz ~/cw-move/chatwoot-avatars.tgz NEW:/opt/chatwoot/   # с машины конвертации
+sudo systemctl stop chatwoot.target          # на репетиции НЕ останавливать
+sudo -u postgres pg_dump -Fc -d chatwoot_production -f /tmp/chatwoot-3.11.dump
+sudo tar -czf /tmp/chatwoot-storage.tgz -C /home/chatwoot/chatwoot storage
+sudo tar -czf /tmp/chatwoot-avatars.tgz -C /home/chatwoot/chatwoot avatars   # если есть
+sudo chmod 644 /tmp/chatwoot-3.11.dump /tmp/chatwoot-*.tgz
+```
+
+#### 2.2. Перенести на новый
+
+```bash
+scp OLD:/tmp/chatwoot-3.11.dump OLD:/tmp/chatwoot-storage.tgz OLD:/tmp/chatwoot-avatars.tgz /opt/chatwoot/
+```
+
+#### 2.3. Залить дамп 3.11
+
+После репетиции база уже не пустая — пересоздать volume Postgres (init-скрипт из 1.4 снова создаст базу и расширения):
+
+```bash
 cd /opt/chatwoot
+docker compose -f docker-compose.onlinesim.yaml stop rails sidekiq
+docker compose -f docker-compose.onlinesim.yaml rm -sf postgres
+docker volume rm chatwoot_postgres_data          # имя: docker volume ls | grep postgres_data
+docker compose -f docker-compose.onlinesim.yaml up -d postgres
+```
+
+Залить:
+
+```bash
 docker compose -f docker-compose.onlinesim.yaml exec -T postgres \
-  pg_restore -U postgres -d chatwoot --no-owner --no-acl < chatwoot-4.19.1.dump
+  pg_restore -U postgres -d chatwoot --no-owner --no-acl < chatwoot-3.11.dump
+```
+
+`--no-owner --no-acl` — на старом владелец пользователь `chatwoot`, в контейнере его нет.
+
+#### 2.4. Миграции 3.11 → 4.1.0 (официальный образ)
+
+Без промежуточной 4.1.0 миграции 4.2+ падают на feature flags:
+
+```bash
+docker network ls | grep chatwoot          # сеть compose, обычно chatwoot_default
+docker run --rm --network chatwoot_default --env-file .env \
+  chatwoot/chatwoot:v4.1.0 bundle exec rails db:chatwoot_prepare
+```
+
+#### 2.5. Миграции 4.1.0 → 4.19.1 (наш образ)
+
+```bash
 docker compose -f docker-compose.onlinesim.yaml run --rm rails bundle exec rails db:chatwoot_prepare
 ```
 
-`db:chatwoot_prepare` тут ничего не мигрирует (дамп уже 4.19.1), только сверяет конфиги. Если он что-то мигрирует — значит A сделан на другой версии кода.
+Здесь же выполнится миграция OnlineSIM `20261109000000_onlinesim_force_premium_plan_and_disable_branding`: план `premium`, id `onlinesim`, брендинг выключен на всех аккаунтах.
 
-#### B6. Файлы: вложения и аватары
-
-```bash
-docker compose -f docker-compose.onlinesim.yaml up -d rails
-docker compose -f docker-compose.onlinesim.yaml cp chatwoot-storage.tgz rails:/tmp/
-docker compose -f docker-compose.onlinesim.yaml cp chatwoot-avatars.tgz rails:/tmp/
-docker compose -f docker-compose.onlinesim.yaml exec rails sh -c \
-  'cd /app && tar -xzf /tmp/chatwoot-storage.tgz && tar -xzf /tmp/chatwoot-avatars.tgz && rm /tmp/chatwoot-*.tgz && ls storage | head && ls avatars | head'
-```
-
-Файлы ложатся в volumes `storage_data` (`/app/storage`) и `avatars_data` (`/app/avatars`).
-
-#### B7. Запуск и Nginx
+#### 2.6. Файлы и запуск
 
 ```bash
 docker compose -f docker-compose.onlinesim.yaml up -d
-docker compose -f docker-compose.onlinesim.yaml ps
-docker compose -f docker-compose.onlinesim.yaml logs -f rails sidekiq
+docker compose -f docker-compose.onlinesim.yaml cp chatwoot-storage.tgz rails:/tmp/
+docker compose -f docker-compose.onlinesim.yaml cp chatwoot-avatars.tgz rails:/tmp/
+docker compose -f docker-compose.onlinesim.yaml exec rails sh -c \
+  'cd /app && tar -xzf /tmp/chatwoot-storage.tgz && tar -xzf /tmp/chatwoot-avatars.tgz && rm /tmp/chatwoot-*.tgz'
+docker compose -f docker-compose.onlinesim.yaml exec rails bundle exec rails runner '
+  puts [Account.count, User.count, Conversation.count, Message.count].inspect
+  puts InstallationConfig.where(name: %w[INSTALLATION_PRICING_PLAN INSTALLATION_IDENTIFIER]).map { |c| [c.name, c.value] }.inspect
+  puts Account.all.map { |a| a.feature_enabled?("disable_branding") }.uniq.inspect
+'
 ```
 
-Nginx + Let’s Encrypt на домен из `FRONTEND_URL` — [01-docker-from-scratch.md](01-docker-from-scratch.md), раздел 7 (там же блок `/cable` для WebSocket).
+Ожидается: числа как на старом, `premium` / `onlinesim`, `[true]`.
 
-#### B8. Проверка
+Быстрая проверка по HTTP (порт — из `CHATWOOT_BIND`):
+
+```bash
+curl -s http://127.0.0.1:3000/api          # {"version":"4.19.1",...,"queue_services":"ok","data_services":"ok"}
+curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:3000/packs/js/sdk.js
+docker compose -f docker-compose.onlinesim.yaml logs --no-color rails sidekiq | grep -iE "error|exception|fatal"
+```
+
+#### 2.7. DNS и проверка
+
+A-запись домена → IP нового сервера, затем `sudo certbot --nginx -d ДОМЕН`.
 
 - [ ] вход агентом, список диалогов, история сообщений
 - [ ] картинки / вложения / аватары открываются (старые и новые)
 - [ ] виджет на сайте (`on-nuxt-3`): открывается, сообщения туда-обратно в реальном времени
 - [ ] Lite SDK → полный sdk, `mountSelector`, `setUserForce`
-- [ ] правка/удаление только своих сообщений
-- [ ] автоназначение при ответе
-- [ ] Help Center / документация открывается, нет «Powered by»
-- [ ] Super Admin → план `Premium`
+- [ ] правка/удаление только своих сообщений, автоназначение при ответе
+- [ ] Help Center / документация, нет «Powered by»; Super Admin → план `Premium`
 - [ ] письма уходят (SMTP), входящая почта если есть
-- [ ] Sidekiq: в логах нет ошибок, Cron-задачи на месте
+- [ ] Sidekiq: в логах нет ошибок
 
 ---
-
-### Часть C. Боевой переезд
-
-1. Предупредить пользователей о простое (обычно 20–60 мин, зависит от размера БД).
-2. На **старом** остановить приложение, чтобы данные больше не менялись:
-   ```bash
-   sudo systemctl stop chatwoot.target
-   ```
-3. Повторить **часть A целиком** на свежем дампе (A1, A3–A8; образ из A2 уже есть).
-4. На **новом**: в `.env` боевой `FRONTEND_URL`, затем пересоздать БД и залить новый дамп:
-   ```bash
-   cd /opt/chatwoot
-   docker compose -f docker-compose.onlinesim.yaml down
-   docker compose -f docker-compose.onlinesim.yaml up -d postgres redis
-   docker compose -f docker-compose.onlinesim.yaml exec postgres psql -U postgres -c "DROP DATABASE chatwoot;"
-   ```
-   и шаги **B4 (без сборки), B5, B6, B7**.
-5. DNS: A-запись домена на IP нового сервера, SSL на новом (`sudo certbot --nginx -d ДОМЕН`).
-6. Проверка — B8.
 
 ### После переезда
 
@@ -399,7 +315,7 @@ Nginx + Let’s Encrypt на домен из `FRONTEND_URL` — [01-docker-from-
 | OAuth (Google, Microsoft, Facebook, Instagram и т.п.) | у провайдера добавить redirect URI с новым доменом, если домен поменялся |
 | Второй домен (`chatwoot.on-mailbox.com` и т.п.) | направить на новый сервер тоже; ссылки на файлы и картинки строятся от `FRONTEND_URL` |
 | Бэкапы | ежедневный `pg_dump` + копия volumes `storage_data`, `avatars_data` ([01](01-docker-from-scratch.md), раздел 9) |
-| Секреты | удалить `chatwoot-old.env`, `convert.env`, дампы с машины конвертации |
+| Дампы и архивы | удалить с обоих серверов (в них данные клиентов) |
 | Старый сервер | держать выключенным 1–2 недели, потом удалить |
 
 ### Откат

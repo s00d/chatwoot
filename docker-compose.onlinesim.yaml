@@ -60,6 +60,8 @@ services:
       - '${POSTGRES_BIND:-127.0.0.1:5432}:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      # creates pg_stat_statements, pg_trgm, pgcrypto, vector on first start of an empty volume
+      - ./docker/postgres/initdb:/docker-entrypoint-initdb.d:ro
     environment:
       - POSTGRES_DB=${POSTGRES_DATABASE:-chatwoot}
       - POSTGRES_USER=${POSTGRES_USERNAME:-postgres}
