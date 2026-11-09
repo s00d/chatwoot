@@ -40,7 +40,7 @@ docker compose version
 sudo mkdir -p /opt/chatwoot && sudo chown "$USER":"$USER" /opt/chatwoot
 cd /opt/chatwoot
 git clone git@github.com:s00d/chatwoot.git .
-git checkout upgrade/v4.16.2-onlinesim
+git checkout upgrade/v4.19.1-onlinesim
 ```
 
 (или `git pull` на уже существующем клоне)
