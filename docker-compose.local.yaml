@@ -18,6 +18,13 @@ services:
   rails:
     env_file: !override
       - .env.docker
+    # Assets come from the bundle the vite service keeps rebuilding (public/vite-dev).
+    # The Vite dev server serves ~4000 unbundled modules per page through the Rails proxy,
+    # which freezes the browser; Rails must not start its own build either.
+    environment:
+      - VITE_RUBY_AUTO_BUILD=false
+      # re-read the manifest on each request (config/initializers/vite_ruby_manifest_refresh.rb)
+      - VITE_RUBY_REFRESH_MANIFEST=true
     ports: !override
       - '127.0.0.1:3041:3000'
 
@@ -28,8 +35,18 @@ services:
   vite:
     env_file: !override
       - .env.docker
-    ports: !override
-      - '127.0.0.1:3037:3036'
+    # upstream docker/entrypoints/vite.sh runs `pnpm store prune` + `pnpm install --force`, re-downloading
+    # every package on each start; node_modules lives in a volume, so a plain install is enough
+    entrypoint: ['sh', '-c', 'pnpm install --frozen-lockfile && exec "$$@"', 'vite']
+    # One build, then the container exits and frees its memory: `vite build --watch` keeps the module graph
+    # (~2 GB) and gets OOM-killed on the first rebuild with Docker's default 5 GB. Rebuild after frontend edits:
+    #   docker compose --env-file .env.docker -f docker-compose.yaml -f docker-compose.local.yaml run --rm vite
+    command: ['bin/vite', 'build', '--force', '--mode', 'development']
+    restart: 'no'
+    environment:
+      # the frontend build needs ~3.5 GB of heap; Node's default (~2 GB) runs out of memory
+      - NODE_OPTIONS=--max-old-space-size=3584
+    ports: !override []
 
   postgres:
     environment:

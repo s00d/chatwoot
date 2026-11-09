@@ -8,18 +8,28 @@ Nginx на `:80`/`:443` **не трогаем**. Chatwoot поднимается
 cd /path/to/chatwoot
 cp dev/.env.docker.local.example .env.docker
 export DOCKER_BUILDKIT=1
+C="docker compose --env-file .env.docker -f docker-compose.yaml -f docker-compose.local.yaml"
 
-# первая сборка долгая (10–30+ мин)
-docker compose --env-file .env.docker \
-  -f docker-compose.yaml -f docker-compose.local.yaml build base
+# образы: base первым (rails и vite строятся FROM chatwoot:development), ~5 мин
+$C build base && $C build rails vite
 
-docker compose --env-file .env.docker \
-  -f docker-compose.yaml -f docker-compose.local.yaml run --rm rails \
-  bundle exec rails db:chatwoot_prepare
-
-docker compose --env-file .env.docker \
-  -f docker-compose.yaml -f docker-compose.local.yaml up -d
+$C run --rm rails bundle exec rails db:chatwoot_prepare
+$C up -d postgres redis mailhog rails sidekiq
 ```
+
+> `annotate` в development после миграций переписывает комментарии в моделях и `db/schema.rb` (код примонтирован). Если не нужно — `git checkout -- app/models db/schema.rb`.
+
+### Фронт: бандл, а не dev-сервер
+
+Контейнер `vite` собирает бандл (`public/vite-dev`) один раз и завершается; Rails отдаёт готовые файлы. Сборка ~1–2 мин.
+После правок в `app/javascript` пересобрать:
+
+```bash
+$C run --rm vite
+```
+
+Почему не dev-сервер / `--watch`: dev-сервер Vite отдаёт ~4000 несобранных модулей на страницу через прокси Rails — браузер зависает; `vite build --watch` держит граф модулей (~2 ГБ) и при пересборке падает по памяти при стандартных 5 ГБ у Docker Desktop.
+Rails не собирает фронт сам (`VITE_RUBY_AUTO_BUILD=false`) и перечитывает манифест на каждом запросе (`VITE_RUBY_REFRESH_MANIFEST`, [`config/initializers/vite_ruby_manifest_refresh.rb`](../config/initializers/vite_ruby_manifest_refresh.rb)), так что новая сборка видна сразу.
 
 Открыть: **http://127.0.0.1:3041**
 
@@ -40,7 +50,6 @@ Super Admin UI: http://127.0.0.1:3041/super_admin/sign_in (тот же `john@acm
 | Сервис | URL / порт |
 |--------|------------|
 | Dashboard | http://127.0.0.1:3041 |
-| Vite HMR | 127.0.0.1:3037 |
 | Mailhog UI | http://127.0.0.1:8025 |
 | Postgres (с хоста) | 127.0.0.1:55433 |
 | Redis (с хоста) | 127.0.0.1:6380 |
