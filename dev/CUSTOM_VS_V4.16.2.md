@@ -51,6 +51,7 @@
 - Mute assignee activity
 - `PATCH …/messages/:id/edit_content` + sender guard на destroy
 - MessageFinder `limit` param
+- Список диалогов (`index`, `filter`): `Conversations::ListPreloader` грузит последние сообщения и счётчики непрочитанного пакетно (123 → 29 SQL на страницу)
 - UI Edit в MessageContextMenu
 
 #### SDK / widget
@@ -249,6 +250,15 @@ docker compose -f docker-compose.onlinesim.yaml exec -T postgres \
 
 `--no-owner --no-acl` — на старом владелец пользователь `chatwoot`, в контейнере его нет.
 
+Проверка, что дамп целый: у каждого аккаунта должна быть своя последовательность номеров диалогов, иначе новые диалоги не создадутся (`relation "conv_dpid_seq_N" does not exist`):
+
+```bash
+docker compose -f docker-compose.onlinesim.yaml exec postgres psql -U postgres -d chatwoot -tAc \
+  "select a.id from accounts a where not exists (select 1 from pg_class where relname = 'conv_dpid_seq_' || a.id)"
+```
+
+Пустой вывод — всё в порядке.
+
 #### 2.4. Миграции 3.11 → 4.1.0 (официальный образ)
 
 Без промежуточной 4.1.0 миграции 4.2+ падают на feature flags:
@@ -306,6 +316,46 @@ A-запись домена → IP нового сервера, затем `sudo
 - [ ] Sidekiq: в логах нет ошибок
 
 ---
+
+### Ресурсы и производительность
+
+Замерено локально на 30 000 диалогов / 1,2 млн сообщений, Docker с 2 CPU / 5 ГБ.
+
+**Лимиты контейнеров.** В `docker-compose.onlinesim.yaml` лимитов CPU и памяти нет — cgroup-троттлинга нет. Так и оставить: лимит CPU на Rails/Sidekiq только режет пропускную способность. От разрастания памяти защищает `puma_worker_killer` (ниже).
+
+**Настройки в `.env`** (см. [`.env.production.example`](.env.production.example)):
+
+| Переменная | Значение | Зачем |
+|------------|----------|-------|
+| `WEB_CONCURRENCY` | число ядер | процессы Puma; при `0` веб использует максимум одно ядро (GVL) |
+| `RAILS_MAX_THREADS` | `5` | потоки на процесс |
+| `RUBY_YJIT_ENABLE` | `1` | JIT Ruby: ~1,5× пропускной способности, +~80 МБ на процесс |
+| `PUMA_WORKER_KILLER_RAM_MB` | ~700 × `WEB_CONCURRENCY` | при превышении суммарной памяти воркеров перезапускается самый большой |
+| `SIDEKIQ_CONCURRENCY` | `10` | потоки Sidekiq |
+
+Соединения Postgres: `WEB_CONCURRENCY × RAILS_MAX_THREADS + SIDEKIQ_CONCURRENCY` должно быть меньше `max_connections` (100).
+
+**Память:** Rails ~450 МБ на процесс (≈500 МБ с YJIT), Sidekiq ~600 МБ, Postgres 100–200 МБ + кэш, Redis десятки МБ. Для 4 ядер: 4 воркера ≈ 2 ГБ + Sidekiq 0,6 ГБ + Postgres → сервер от 4–6 ГБ RAM.
+
+**Замеры** (список диалогов, 10 параллельных запросов):
+
+| Конфигурация | rps | p50 |
+|--------------|-----|-----|
+| до оптимизации, 1 процесс | 4,5 | 2,3 с |
+| после оптимизации, 1 процесс | 11,9 | 0,9 с |
+| + YJIT | 17,9 | 0,55 с |
+| + 2 воркера | 35,2 | 0,27 с |
+
+Утечек памяти нет: 10 минут нагрузки (чтение + запись с задачами Sidekiq) — память всех контейнеров выходит на плато.
+
+`pg_stat_statements` подгружается (`shared_preload_libraries` в compose), статистика запросов:
+
+```bash
+docker compose -f docker-compose.onlinesim.yaml exec postgres psql -U postgres -d chatwoot -c \
+  "select calls, round(mean_exec_time::numeric,1) ms, left(query,100) from pg_stat_statements order by total_exec_time desc limit 10"
+```
+
+Rack::Attack ограничивает запросы с одного IP (`RACK_ATTACK_LIMIT`, 3000/мин). Для нагрузочных тестов с одной машины её IP добавляют в `RACK_ATTACK_ALLOWED_IPS`, на проде этого не делать.
 
 ### После переезда
 

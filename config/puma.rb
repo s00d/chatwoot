@@ -37,11 +37,19 @@ preload_app!
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart
 
-on_worker_boot do
+# Cluster mode only (WEB_CONCURRENCY > 0)
+before_worker_boot do
   ActionCable.server.restart
 end
 
+# OnlineSIM: restart the largest worker when all workers together exceed
+# PUMA_WORKER_KILLER_RAM_MB (cluster mode only).
 before_fork do
   require 'puma_worker_killer'
-  # PumaWorkerKiller.enable_rolling_restart(12 * 3600) # optional rolling restart
+  PumaWorkerKiller.config do |config|
+    config.ram = ENV.fetch('PUMA_WORKER_KILLER_RAM_MB', 2048).to_i
+    config.frequency = 60
+    config.percent_usage = 0.9
+  end
+  PumaWorkerKiller.start
 end
