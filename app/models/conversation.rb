@@ -208,14 +208,6 @@ class Conversation < ApplicationRecord
     unread_messages.where(account_id: account_id).incoming.last(10)
   end
 
-  # OnlineSIM: list endpoints fill these in bulk via Conversations::ListPreloader
-  attr_accessor :list_preload
-  attr_writer :unread_incoming_messages_count
-
-  def unread_incoming_messages_count
-    @unread_incoming_messages_count || unread_incoming_messages.count
-  end
-
   def cached_label_list_array
     (cached_label_list || '').split(',').map(&:strip)
   end

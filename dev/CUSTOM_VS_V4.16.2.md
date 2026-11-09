@@ -51,7 +51,6 @@
 - Mute assignee activity
 - `PATCH …/messages/:id/edit_content` + sender guard на destroy
 - MessageFinder `limit` param
-- Список диалогов (`index`, `filter`): `Conversations::ListPreloader` грузит последние сообщения и счётчики непрочитанного пакетно (123 → 29 SQL на страницу)
 - UI Edit в MessageContextMenu
 
 #### SDK / widget
