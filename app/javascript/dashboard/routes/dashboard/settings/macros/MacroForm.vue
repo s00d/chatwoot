@@ -118,7 +118,7 @@ export default {
 <template>
   <div class="flex flex-col w-full h-auto lg:flex-row lg:h-full">
     <div
-      class="flex-1 w-full h-full max-h-full ltr:pl-12 ltr:pr-6 rtl:pl-6 rtl:pr-12 py-4 overflow-y-auto lg:w-auto macro-gradient-radial dark:macro-dark-gradient-radial macro-gradient-radial-size"
+      class="flex-1 w-full h-full max-h-full ltr:pl-12 ltr:pr-6 rtl:pl-6 rtl:pr-12 py-4 overflow-y-auto lg:w-auto bg-[radial-gradient(#ebf0f5_1.2px,transparent_0)] dark:bg-[radial-gradient(#293f51_1.2px,transparent_0)] bg-[length:1rem_1rem]"
     >
       <div :inert="readOnly" :class="{ 'opacity-75': readOnly }">
         <MacroNodes
@@ -144,21 +144,3 @@ export default {
     </div>
   </div>
 </template>
-
-<style scoped>
-@tailwind components;
-
-@layer components {
-  .macro-gradient-radial {
-    background-image: radial-gradient(#ebf0f5 1.2px, transparent 0);
-  }
-
-  .macro-dark-gradient-radial {
-    background-image: radial-gradient(#293f51 1.2px, transparent 0);
-  }
-
-  .macro-gradient-radial-size {
-    background-size: 1rem 1rem;
-  }
-}
-</style>
