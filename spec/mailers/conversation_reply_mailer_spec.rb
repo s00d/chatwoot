@@ -79,6 +79,23 @@ RSpec.describe ConversationReplyMailer do
         expect(cc_mail.cc.first).to eq(cc_message.content_attributes[:cc_emails])
         expect(cc_mail.bcc.first).to eq(cc_message.content_attributes[:bcc_emails])
       end
+
+      it 'renders the greeting and sender labels' do
+        create(:message, message_type: 'outgoing', account: account, conversation: conversation, sender: agent)
+
+        body = mail.body.decoded
+        expect(body).to include("Hi #{conversation.contact.name},")
+        expect(body).to include('You have new messages on your conversation.')
+        expect(body).to include('<b>You</b>')
+        expect(body).to include("<b>#{agent.available_name}</b>")
+      end
+
+      it 'renders the csat survey prompt as a link' do
+        create(:message, message_type: 'template', content_type: 'input_csat', account: account, conversation: conversation, sender: agent)
+
+        body = mail.body.decoded
+        expect(body).to include(%(Click <a target="_blank" href="#{conversation.csat_survey_link}">here</a> to rate the conversation.))
+      end
     end
 
     context 'without assignee' do
@@ -342,6 +359,25 @@ RSpec.describe ConversationReplyMailer do
         expect(mail.message_id).to eq("conversation/#{conversation.uuid}/messages/#{message.id}@#{conversation.account.domain}")
       end
 
+      context 'when a newer outgoing message exists in the conversation' do
+        let!(:message) do
+          create(:message, conversation: conversation, account: account, message_type: 'outgoing', content: 'Looping in the vendor',
+                           content_attributes: { to_emails: ['customer@example.com'], cc_emails: ['vendor@example.com'],
+                                                 bcc_emails: ['audit@example.com'] })
+        end
+
+        it 'sends to the recipients of the message being delivered' do
+          # a private note added right after the reply carries empty recipient lists
+          create(:message, conversation: conversation, account: account, message_type: 'outgoing', private: true,
+                           content: 'Vendor has been looped in',
+                           content_attributes: { to_emails: [], cc_emails: [], bcc_emails: [] })
+
+          expect(mail.to).to eq(message.content_attributes[:to_emails])
+          expect(mail.cc).to eq(message.content_attributes[:cc_emails])
+          expect(mail.bcc).to eq(message.content_attributes[:bcc_emails])
+        end
+      end
+
       context 'when message is a CSAT survey' do
         let(:csat_message) do
           create(:message, conversation: conversation, account: account, message_type: 'template',
@@ -428,6 +464,74 @@ RSpec.describe ConversationReplyMailer do
           expect(mail.body.encoded).to match(%r{<a [^>]*>large_file\.pdf</a>})
           # Small file should not be rendered as a link in the body
           expect(mail.body.encoded).not_to match(%r{<a [^>]*>avatar\.png</a>})
+        end
+      end
+
+      context 'when the conversation has a subject' do
+        before do
+          conversation.update!(additional_attributes: { 'mail_subject': 'Mail Subject' })
+          create(:message, conversation: conversation, account: account, message_type: 'incoming',
+                           content_attributes: { email: { subject: 'Mail Subject' } })
+        end
+
+        it 'replies with the conversation subject when the message has no subject' do
+          expect(mail.subject).to eq 'Re: Mail Subject'
+        end
+
+        it 'uses the subject of the message as is when it has one' do
+          message.update!(content_attributes: { email: { subject: 'Refund approved' } })
+
+          expect(mail.subject).to eq 'Refund approved'
+        end
+      end
+
+      context 'when forwarding an email' do
+        let(:forwarded_message) do
+          create(:message, conversation: conversation, account: account, message_type: 'incoming',
+                           content_attributes: { email: { message_id: 'original@example.com' } })
+        end
+        let(:forward) do
+          create(:message, conversation: conversation, account: account, message_type: 'outgoing', content: 'Forwarding this',
+                           content_attributes: { forwarded_message_id: forwarded_message.id, to_emails: ['vendor@example.com'] })
+        end
+        let(:mail) { described_class.email_reply(forward).deliver_now }
+
+        before do
+          conversation.additional_attributes = { 'mail_subject': 'Mail Subject' }
+          conversation.save!
+        end
+
+        it 'sends to the forward recipients with a forward subject and no threading headers' do
+          expect(mail.to).to eq ['vendor@example.com']
+          expect(mail.subject).to eq 'Fwd: Mail Subject'
+          expect(mail.in_reply_to).to be_nil
+          expect(mail.references).to be_nil
+        end
+
+        it 'uses the subject of the forwarded message when it has one' do
+          forwarded_message.update!(content_attributes: { email: { message_id: 'original@example.com', subject: 'Changed subject' } })
+
+          expect(mail.subject).to eq 'Fwd: Changed subject'
+        end
+
+        it 'uses the subject of the forwarded message when the conversation has none' do
+          conversation.update!(additional_attributes: {})
+          forwarded_message.update!(content_attributes: { email: { message_id: 'original@example.com', subject: 'Later subject' } })
+
+          expect(mail.subject).to eq 'Fwd: Later subject'
+        end
+
+        it 'keeps replies from the forward recipient out of the conversation' do
+          expect(mail.message_id).to start_with("forward/#{forward.id}@")
+          expect(mail.message_id).not_to include(conversation.uuid)
+          expect(mail.reply_to).to eq [email_channel.email]
+        end
+
+        it 'leaves the forward out of the conversation transcript' do
+          forward
+          transcript = described_class.conversation_transcript(conversation, 'customer@example.com').deliver_now
+
+          expect(transcript.decoded).not_to include('Forwarding this')
         end
       end
 
@@ -647,6 +751,31 @@ RSpec.describe ConversationReplyMailer do
           mail = described_class.email_reply(message)
           expect(mail['from'].value).to eq "#{agent_2.available_name} from #{conversation.inbox.business_name} <#{smtp_channel.email}>"
         end
+
+        it 'uses the sender locale for the friendly name' do
+          message.sender.update!(ui_settings: { 'locale' => 'de' })
+
+          mail = described_class.email_reply(message)
+
+          expect(mail['from'].value).to eq "#{message.sender.available_name} von #{conversation.inbox.business_name} <#{smtp_channel.email}>"
+        end
+
+        it 'falls back to the account locale when the sender locale is not set' do
+          account.update!(locale: :de)
+
+          mail = described_class.email_reply(message)
+
+          expect(mail['from'].value).to eq "#{message.sender.available_name} von #{conversation.inbox.business_name} <#{smtp_channel.email}>"
+        end
+
+        it 'uses the account locale when the sender is not a user' do
+          account.update!(locale: :de)
+          message.update!(sender_id: nil)
+
+          mail = described_class.email_reply(message)
+
+          expect(mail['from'].value).to eq "#{conversation.assignee.available_name} von #{conversation.inbox.business_name} <#{smtp_channel.email}>"
+        end
       end
 
       context 'when friendly name disabled' do
@@ -672,6 +801,15 @@ RSpec.describe ConversationReplyMailer do
           mail = described_class.email_reply(message)
 
           expect(mail['from'].value).to eq "#{conversation.inbox.business_name} <#{smtp_channel.email}>"
+        end
+
+        it 'quotes a business_name containing a comma so the sender parses to a single address' do
+          conversation.inbox.update(business_name: 'Care Team, Billing')
+
+          mail = described_class.email_reply(message)
+
+          expect(mail['from'].value).to eq "\"Care Team, Billing\" <#{smtp_channel.email}>"
+          expect(mail.smtp_envelope_from).to eq smtp_channel.email
         end
       end
     end

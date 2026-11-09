@@ -170,8 +170,10 @@ export const actions = {
       const response = await InboxesAPI.get(true);
       commit(types.default.SET_INBOXES_UI_FLAG, { isFetching: false });
       commit(types.default.SET_INBOXES, response.data.payload);
+      return true;
     } catch (error) {
       commit(types.default.SET_INBOXES_UI_FLAG, { isFetching: false });
+      return false;
     }
   },
   createChannel: async ({ commit }, params) => {
@@ -224,7 +226,7 @@ export const actions = {
       return response.data;
     } catch (error) {
       commit(types.default.SET_INBOXES_UI_FLAG, { isCreating: false });
-      throw new Error(error);
+      throw error;
     }
   },
   createWhatsAppEmbeddedSignup: async ({ commit }, params) => {
@@ -259,6 +261,13 @@ export const actions = {
       commit(types.default.SET_INBOXES_UI_FLAG, { isUpdating: false });
       throwErrorMessage(error);
     }
+  },
+  updateCallBusinessHours: async ({ commit }, { id, enabled, message }) => {
+    const response = await InboxesAPI.setCallBusinessHours(id, {
+      enabled,
+      message,
+    });
+    commit(types.default.EDIT_INBOXES, response.data);
   },
   updateInboxIMAP: async ({ commit }, { id, ...inboxParams }) => {
     commit(types.default.SET_INBOXES_UI_FLAG, { isUpdatingIMAP: true });
@@ -338,6 +347,15 @@ export const actions = {
     } catch (error) {
       throwErrorMessage(error);
       return null;
+    }
+  },
+  rotateHmacToken: async ({ commit }, inboxId) => {
+    try {
+      const response = await InboxesAPI.rotateHmacToken(inboxId);
+      commit(types.default.EDIT_INBOXES, response.data);
+      return response.data;
+    } catch (error) {
+      return throwErrorMessage(error);
     }
   },
 };

@@ -17,6 +17,7 @@ class BaseActionCableConnector {
     this.consumer = createConsumer(websocketURL);
     this.app = app;
     this.presenceInterval = presenceInterval;
+    this.pubsubToken = pubsubToken;
     this.subscription = this.createSubscription(pubsubToken);
     this.events = {};
     this.reconnectTimer = null;
@@ -53,10 +54,13 @@ class BaseActionCableConnector {
   }
 
   // OnlineSIM: rebind ActionCable after setUser / contact merge
+  // The running presence loop reads this.subscription, so it is not restarted.
   refreshConnection(newPubsubToken) {
-    this.disconnect();
+    if (!newPubsubToken || newPubsubToken === this.pubsubToken) return;
+
+    this.subscription.unsubscribe();
+    this.pubsubToken = newPubsubToken;
     this.subscription = this.createSubscription(newPubsubToken);
-    this.triggerPresenceInterval();
   }
 
   checkConnection() {

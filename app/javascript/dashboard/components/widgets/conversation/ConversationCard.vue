@@ -20,6 +20,8 @@ const props = defineProps({
   inbox: { type: Object, default: () => ({}) },
   selected: { type: Boolean, default: false },
   isActiveChat: { type: Boolean, default: false },
+  // OnlineSIM: browser / OS line only where the caller asks for it
+  showBrowserInfo: { type: Boolean, default: false },
   showAssignee: { type: Boolean, default: false },
   showInboxName: { type: Boolean, default: false },
   hideThumbnail: { type: Boolean, default: false },
@@ -58,8 +60,8 @@ const showMetaSection = computed(() => {
   );
 });
 
-const isAgentBotAssignee = computed(
-  () => props.chat?.meta?.assignee_type === 'AgentBot'
+const isAIAssignee = computed(() =>
+  ['AgentBot', 'Captain::Assistant'].includes(props.chat?.meta?.assignee_type)
 );
 
 const hasSlaPolicyId = computed(
@@ -153,7 +155,6 @@ watch(
       <Avatar
         v-if="!hideThumbnail"
         :name="currentContact.name"
-        :src="currentContact.thumbnail"
         :size="32"
         :status="currentContact.availability_status"
         :class="!showInboxName ? 'mt-2' : 'mt-5'"
@@ -192,9 +193,7 @@ watch(
             class="text-n-slate-11 text-xs font-medium leading-3 py-0.5 px-0 inline-flex items-center gap-px truncate"
           >
             <Icon
-              :icon="
-                isAgentBotAssignee ? 'i-lucide-bot' : 'i-lucide-user-round'
-              "
+              :icon="isAIAssignee ? 'i-lucide-bot' : 'i-lucide-user-round'"
               class="size-3 text-n-slate-11 flex-shrink-0"
             />
             <span class="truncate">{{ assignee.name }}</span>
@@ -212,7 +211,7 @@ watch(
         {{ currentContact.name }}
       </h4>
       <p
-        v-if="browserInfo"
+        v-if="showBrowserInfo && browserInfo"
         class="text-n-slate-10 text-xs mx-2 mt-0.5 truncate"
       >
         {{ browserInfo }}

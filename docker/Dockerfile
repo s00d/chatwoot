@@ -1,9 +1,9 @@
 # syntax=docker/dockerfile:1.4
 # pre-build stage
-FROM node:24-alpine as node
+FROM node:24.22.1-alpine as node
 FROM ruby:3.4.4-alpine3.21 AS pre-builder
 
-ARG NODE_VERSION="24.13.0"
+ARG NODE_VERSION="24.22.1"
 ARG PNPM_VERSION="10.2.0"
 ENV NODE_VERSION=${NODE_VERSION}
 ENV PNPM_VERSION=${PNPM_VERSION}
@@ -67,8 +67,7 @@ RUN apk update && apk add --no-cache build-base musl ruby-full ruby-dev gcc make
 RUN bundle config set --local force_ruby_platform true
 
 # Do not install development or test gems in production
-RUN --mount=type=cache,id=chatwoot-gems,target=/gems,sharing=locked \
-  if [ "$RAILS_ENV" = "production" ]; then \
+RUN if [ "$RAILS_ENV" = "production" ]; then \
   bundle config set without 'development test'; bundle install -j 4 -r 3; \
   else bundle install -j 4 -r 3; \
   fi
@@ -106,7 +105,7 @@ RUN rm -rf /gems/ruby/3.4.0/cache/*.gem \
 # final build stage
 FROM ruby:3.4.4-alpine3.21
 
-ARG NODE_VERSION="24.13.0"
+ARG NODE_VERSION="24.22.1"
 ARG PNPM_VERSION="10.2.0"
 ENV NODE_VERSION=${NODE_VERSION}
 ENV PNPM_VERSION=${PNPM_VERSION}
@@ -137,6 +136,9 @@ RUN apk update && apk add --no-cache \
   git \
   vips \
   && gem install bundler -v "$BUNDLER_VERSION"
+
+# Restrict libvips to its trusted image loaders when generating variants
+ENV VIPS_BLOCK_UNTRUSTED=1
 
 COPY --from=node /usr/local/bin/node /usr/local/bin/
 COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules

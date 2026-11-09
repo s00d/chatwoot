@@ -49,17 +49,17 @@ describe('useFontSize', () => {
 
     // Check specific options
     expect(
-      fontSizeOptions.value.find(option => option.value === '16px')
+      fontSizeOptions.value.find(option => option.value === '14px')
     ).toEqual({
-      value: '16px',
+      value: '14px',
       label:
         'PROFILE_SETTINGS.FORM.INTERFACE_SECTION.FONT_SIZE.OPTIONS.DEFAULT',
     });
 
     expect(
-      fontSizeOptions.value.find(option => option.value === '14px')
+      fontSizeOptions.value.find(option => option.value === '13px')
     ).toEqual({
-      value: '14px',
+      value: '13px',
       label:
         'PROFILE_SETTINGS.FORM.INTERFACE_SECTION.FONT_SIZE.OPTIONS.SMALLER',
     });
@@ -148,10 +148,10 @@ describe('useFontSize', () => {
 
     // Check that translation is applied
     expect(
-      fontSizeOptions.value.find(option => option.value === '14px').label
+      fontSizeOptions.value.find(option => option.value === '13px').label
     ).toBe('Smaller');
     expect(
-      fontSizeOptions.value.find(option => option.value === '16px').label
+      fontSizeOptions.value.find(option => option.value === '14px').label
     ).toBe('Default');
 
     // Verify translation function was called with correct keys

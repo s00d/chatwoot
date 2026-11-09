@@ -42,12 +42,14 @@ const runSDK = ({ baseUrl, websiteToken }) => {
     });
   }
 
-  // if this is an astro app
-  document.addEventListener('astro:before-swap', event =>
-    restoreWidgetInDOM(event.newDocument.body)
-  );
-
   const chatwootSettings = window.chatwootSettings || {};
+
+  // OnlineSIM: Astro view-transition restore is opt-in
+  if (chatwootSettings.restoreWidgetBeforeSwap) {
+    document.addEventListener('astro:before-swap', event =>
+      restoreWidgetInDOM(event.newDocument.body)
+    );
+  }
   let locale = chatwootSettings.locale;
   let baseDomain = chatwootSettings.baseDomain;
   let mountSelector = chatwootSettings.mountSelector;

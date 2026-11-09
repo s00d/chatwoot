@@ -47,7 +47,7 @@ export default {
       default: false,
     },
   },
-  emits: ['open', 'close', 'replyTo'],
+  emits: ['open', 'close', 'replyTo', 'forwardEmail'],
   setup() {
     const { getPlainText } = useMessageFormatter();
 
@@ -108,11 +108,12 @@ export default {
     },
     async handleEdit() {
       this.handleClose();
+      const original = this.message.original_content ?? this.messageContent;
       const content = window.prompt(
         this.$t('CONVERSATION.CONTEXT_MENU.EDIT'),
-        this.messageContent
+        original
       );
-      if (content === null || content === this.messageContent) return;
+      if (content === null || content === original) return;
 
       try {
         await this.$store.dispatch('editMessage', {
@@ -121,7 +122,7 @@ export default {
           content,
         });
       } catch (error) {
-        useAlert(this.$t('CONVERSATION.FAIL_DELETE_MESSSAGE'));
+        useAlert(this.$t('CONVERSATION.FAIL_EDIT_MESSAGE'));
       }
     },
     showCannedResponseModal() {
@@ -156,6 +157,10 @@ export default {
     },
     handleReplyTo() {
       this.$emit('replyTo', this.message);
+      this.handleClose();
+    },
+    handleForwardEmail() {
+      this.$emit('forwardEmail');
       this.handleClose();
     },
     openDeleteModal() {
@@ -226,6 +231,15 @@ export default {
       @close="handleClose"
     >
       <div class="menu-container">
+        <MenuItem
+          v-if="enabledOptions['forwardEmail']"
+          :option="{
+            icon: 'arrow-forward',
+            label: $t('CONVERSATION.CONTEXT_MENU.FORWARD_EMAIL'),
+          }"
+          variant="icon"
+          @click.stop="handleForwardEmail"
+        />
         <MenuItem
           v-if="enabledOptions['replyTo']"
           :option="{

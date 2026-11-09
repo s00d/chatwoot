@@ -14,10 +14,8 @@ import {
 } from '../../constants/appEvents';
 
 // OnlineSIM: SameSite=None + Secure (embedded / cross-site dashboard sessions)
-Cookies.defaults = {
-  sameSite: 'None',
-  secure: true,
-};
+// js-cookie v3 ignores Cookies.defaults; attributes must come from withAttributes
+const AppCookies = Cookies.withAttributes({ sameSite: 'None', secure: true });
 
 export const getLoadingStatus = state => state.fetchAPIloadingStatus;
 export const setLoadingStatus = (state, status) => {
@@ -34,16 +32,16 @@ export const getHeaderExpiry = response =>
 
 export const setAuthCredentials = response => {
   const expiryDate = getHeaderExpiry(response);
-  Cookies.set('cw_d_session_info', JSON.stringify(response.headers), {
+  AppCookies.set('cw_d_session_info', JSON.stringify(response.headers), {
     expires: differenceInDays(expiryDate, new Date()),
   });
   setUser(response.data.data, expiryDate);
 };
 
 export const clearBrowserSessionCookies = () => {
-  Cookies.remove('cw_d_session_info');
-  Cookies.remove('auth_data');
-  Cookies.remove('user');
+  AppCookies.remove('cw_d_session_info');
+  AppCookies.remove('auth_data');
+  AppCookies.remove('user');
 };
 
 export const clearLocalStorageOnLogout = () => {

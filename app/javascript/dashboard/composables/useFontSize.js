@@ -14,7 +14,7 @@ import { useI18n } from 'vue-i18n';
  * @type {Object}
  */
 const FONT_SIZE_OPTIONS = {
-  SMALLER: '14px',
+  SMALLER: '13px',
   SMALL: '15px',
   DEFAULT: '14px',
   LARGE: '18px',

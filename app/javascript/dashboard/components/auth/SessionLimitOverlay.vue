@@ -32,7 +32,7 @@ const formatDate = dateStr => {
 
 const formatTime = dateStr => {
   if (!dateStr) return '';
-  return format(parseISO(dateStr), 'hh:mma');
+  return format(parseISO(dateStr), 'HH:mm');
 };
 
 const isUnknown = val => !val || val === 'Unknown' || val === 'Unknown Browser';

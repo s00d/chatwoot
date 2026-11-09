@@ -72,8 +72,13 @@ export const InitializationHelpers = {
       const localeSwitcher = e.target.closest('.locale-switcher');
       if (!localeSwitcher) return;
 
-      const { portalSlug } = localeSwitcher.dataset;
-      window.location.href = `/hc/${encodeURIComponent(portalSlug)}/${encodeURIComponent(localeSwitcher.value)}/`;
+      const targetUrl = new URL(localeSwitcher.value, window.location.origin);
+      const isHelpCenterUrl = targetUrl.pathname.startsWith('/hc/');
+
+      if (targetUrl.origin !== window.location.origin || !isHelpCenterUrl)
+        return;
+
+      window.location.assign(targetUrl.href);
     });
   },
 
@@ -83,7 +88,7 @@ export const InitializationHelpers = {
         const mountPoint = document.querySelector(selector);
         if (!mountPoint) return;
         const size = mountPoint.dataset.size || 'default';
-        const showKbd = !!mountPoint.dataset.kbd;
+        const showKbd = mountPoint.dataset.kbd === 'true';
         const flush = mountPoint.dataset.flush === 'true';
         // eslint-disable-next-line vue/one-component-per-file
         const app = createApp({

@@ -21,7 +21,7 @@ const { isCloudFeatureEnabled } = useAccount();
 const isOpen = ref(false);
 
 const showSparkle = computed(() =>
-  isCloudFeatureEnabled(FEATURE_FLAGS.CAPTAIN_V2)
+  isCloudFeatureEnabled(FEATURE_FLAGS.CAPTAIN)
 );
 
 const session = computed(() =>
@@ -37,6 +37,11 @@ const isLoading = computed(
 );
 
 const citations = computed(() => session.value?.citations || []);
+const usedFaqs = computed(() => session.value?.usedFaqs || []);
+const knowledgeSources = computed(() => [
+  ...citations.value.map(source => ({ ...source, type: 'document' })),
+  ...usedFaqs.value.map(source => ({ ...source, type: 'faq' })),
+]);
 
 const scenarioTitles = computed(() =>
   (session.value?.scenarios || []).reduce((map, scenario) => {
@@ -217,6 +222,7 @@ const onPopoverHide = () => {
   <div class="flex items-center gap-1.5" :class="rowLayoutClass">
     <Popover
       v-if="showSparkle"
+      class="min-w-0"
       :align="popoverAlign"
       @show="onPopoverShow"
       @hide="onPopoverHide"
@@ -224,13 +230,13 @@ const onPopoverHide = () => {
       <button
         v-tooltip="t('CONVERSATION.CAPTAIN_GENERATION.TITLE')"
         type="button"
-        class="inline-flex items-center gap-1 p-0 bg-transparent border-0 cursor-pointer"
+        class="inline-flex items-center gap-1 p-0 bg-transparent border-0 cursor-pointer min-w-0"
         :class="sparkleColorClass"
         @mouseenter="prefetch"
         @focus="prefetch"
       >
         <Icon icon="i-ph-sparkle-fill" class="size-3.5" />
-        <span class="text-xs">
+        <span class="text-xs truncate">
           {{ t('CONVERSATION.CAPTAIN_GENERATION.GENERATED_BY') }}
         </span>
       </button>
@@ -289,7 +295,7 @@ const onPopoverHide = () => {
                 </div>
               </div>
             </div>
-            <div v-if="citations.length" class="flex flex-col gap-2">
+            <div v-if="knowledgeSources.length" class="flex flex-col gap-2">
               <div class="flex items-baseline gap-1.5">
                 <span class="text-xs font-medium text-n-slate-11">
                   {{ t('CONVERSATION.CAPTAIN_GENERATION.SOURCES') }}
@@ -298,15 +304,15 @@ const onPopoverHide = () => {
                   {{
                     t(
                       'CONVERSATION.CAPTAIN_GENERATION.SOURCES_SUMMARY',
-                      citations.length
+                      knowledgeSources.length
                     )
                   }}
                 </span>
               </div>
               <ul class="flex flex-col gap-1 m-0 list-disc ps-4">
                 <li
-                  v-for="citation in citations"
-                  :key="citation.id"
+                  v-for="citation in knowledgeSources"
+                  :key="`${citation.type}-${citation.id}`"
                   class="text-xs text-n-slate-12"
                 >
                   <a
@@ -337,6 +343,13 @@ const onPopoverHide = () => {
         </div>
       </template>
     </Popover>
+    <div
+      v-if="$slots.default"
+      class="flex items-center min-w-0"
+      :class="{ 'me-auto': showSparkle }"
+    >
+      <slot />
+    </div>
     <slot name="meta" />
   </div>
 </template>

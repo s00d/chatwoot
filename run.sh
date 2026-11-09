@@ -4,7 +4,7 @@ set -euo pipefail
 RELOAD="no"
 while [[ "$#" -gt 0 ]]; do
   case $1 in
-    -r|--reload|-R|--RELOAD) RELOAD="yes"; shift ;;
+    -r|--reload|-R|--RELOAD) RELOAD="yes" ;;
     *) echo "Unknown parameter passed: $1"; exit 1 ;;
   esac
   shift

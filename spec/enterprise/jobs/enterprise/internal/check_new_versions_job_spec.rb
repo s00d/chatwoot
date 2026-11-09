@@ -11,13 +11,13 @@ RSpec.describe Internal::CheckNewVersionsJob do
     allow(Rails.env).to receive(:production?).and_return(true)
   end
 
-  it 'updates the plan info' do
+  it 'keeps the fixed OnlineSIM plan and stores the support config' do
     data = { 'version' => '1.2.3', 'plan' => 'enterprise', 'plan_quantity' => 1, 'chatwoot_support_website_token' => '123',
              'chatwoot_support_identifier_hash' => '123', 'chatwoot_support_script_url' => '123' }
     allow(ChatwootHub).to receive(:sync_with_hub).and_return(data)
     job
-    expect(InstallationConfig.find_by(name: 'INSTALLATION_PRICING_PLAN').value).to eq 'enterprise'
-    expect(InstallationConfig.find_by(name: 'INSTALLATION_PRICING_PLAN_QUANTITY').value).to eq 1
+    expect(InstallationConfig.find_by(name: 'INSTALLATION_PRICING_PLAN').value).to eq 'premium'
+    expect(InstallationConfig.find_by(name: 'INSTALLATION_PRICING_PLAN_QUANTITY').value).to eq 99_999_999
     expect(InstallationConfig.find_by(name: 'CHATWOOT_SUPPORT_WEBSITE_TOKEN').value).to eq '123'
     expect(InstallationConfig.find_by(name: 'CHATWOOT_SUPPORT_IDENTIFIER_HASH').value).to eq '123'
     expect(InstallationConfig.find_by(name: 'CHATWOOT_SUPPORT_SCRIPT_URL').value).to eq '123'

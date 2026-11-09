@@ -83,8 +83,8 @@ const formatSnoozeDate = (snoozeDate, currentDate, locale = 'en') => {
     return new Intl.DateTimeFormat(locale, opts).format(snoozeDate);
   } catch {
     return sameYear
-      ? format(snoozeDate, 'EEE, d MMM, h:mm a')
-      : format(snoozeDate, 'EEE, d MMM yyyy, h:mm a');
+      ? format(snoozeDate, 'EEE, d MMM, HH:mm')
+      : format(snoozeDate, 'EEE, d MMM yyyy, HH:mm');
   }
 };
 

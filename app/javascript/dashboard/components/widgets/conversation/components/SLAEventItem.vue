@@ -12,7 +12,7 @@ defineProps({
   },
 });
 const formatDate = timestamp =>
-  format(fromUnixTime(timestamp), 'MMM dd, yyyy, hh:mm a');
+  format(fromUnixTime(timestamp), 'MMM dd, yyyy, HH:mm');
 </script>
 
 <template>

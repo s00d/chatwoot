@@ -7,7 +7,7 @@ import { useMessageContext } from '../provider.js';
 const { content, createdAt } = useMessageContext();
 
 const readableTime = computed(() =>
-  messageTimestamp(createdAt.value, 'LLL d, h:mm a')
+  messageTimestamp(createdAt.value, 'LLL d, HH:mm')
 );
 </script>
 
@@ -17,6 +17,6 @@ const readableTime = computed(() =>
     class="px-3 py-1 !rounded-xl flex min-w-0 items-center gap-2"
     data-bubble-name="activity"
   >
-    <span v-dompurify-html="content" :title="content" />
+    <span :title="content">{{ content }}</span>
   </BaseBubble>
 </template>

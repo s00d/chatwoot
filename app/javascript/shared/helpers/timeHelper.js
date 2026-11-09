@@ -12,10 +12,10 @@ import {
 /**
  * Formats a Unix timestamp into a human-readable time format.
  * @param {number} time - Unix timestamp.
- * @param {string} [dateFormat='kk:mm'] - Desired format of the time (24h).
+ * @param {string} [dateFormat='HH:mm'] - Desired format of the time (24h).
  * @returns {string} Formatted time string.
  */
-export const messageStamp = (time, dateFormat = 'kk:mm') => {
+export const messageStamp = (time, dateFormat = 'HH:mm') => {
   const unixTime = fromUnixTime(time);
   return format(unixTime, dateFormat);
 };
@@ -31,7 +31,7 @@ export const messageTimestamp = (time, dateFormat = 'MMM d, yyyy') => {
   const now = new Date();
   const messageDate = format(messageTime, dateFormat);
   if (!isSameYear(messageTime, now)) {
-    return format(messageTime, 'LLL d y, kk:mm');
+    return format(messageTime, 'LLL d y, HH:mm');
   }
   return messageDate;
 };
@@ -46,7 +46,7 @@ export const messageTimestamp = (time, dateFormat = 'MMM d, yyyy') => {
  */
 export const relativeDayTimestamp = (time, yesterdayLabel) => {
   const date = fromUnixTime(time);
-  if (isToday(date)) return format(date, 'kk:mm');
+  if (isToday(date)) return format(date, 'HH:mm');
   if (isYesterday(date)) return yesterdayLabel;
   if (isThisYear(date)) return format(date, 'MMM d');
   return format(date, 'MMM d, yyyy');

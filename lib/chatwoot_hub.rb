@@ -27,11 +27,14 @@ class ChatwootHub
     "#{base_url}/billing"
   end
 
+  # OnlineSIM: fixed installation id and plan, as in the 3.11 fork. Reading them from
+  # InstallationConfig let an old 'community' row switch every premium feature off.
+  INSTALLATION_IDENTIFIER = 'onlinesim'.freeze
+  PRICING_PLAN = 'premium'.freeze
+  PRICING_PLAN_QUANTITY = 99_999_999
+
   def self.installation_identifier
-    identifier = InstallationConfig.find_by(name: 'INSTALLATION_IDENTIFIER')&.value
-    # Default OnlineSIM installation id (was hardcoded in the 3.11 fork)
-    identifier ||= InstallationConfig.create!(name: 'INSTALLATION_IDENTIFIER', value: 'onlinesim').value
-    identifier
+    INSTALLATION_IDENTIFIER
   end
 
   def self.billing_url
@@ -39,12 +42,11 @@ class ChatwootHub
   end
 
   def self.pricing_plan
-    # Self-hosted OnlineSIM unlocks premium via InstallationConfig (no enterprise? gate)
-    InstallationConfig.find_by(name: 'INSTALLATION_PRICING_PLAN')&.value || 'community'
+    PRICING_PLAN
   end
 
   def self.pricing_plan_quantity
-    InstallationConfig.find_by(name: 'INSTALLATION_PRICING_PLAN_QUANTITY')&.value || 0
+    PRICING_PLAN_QUANTITY
   end
 
   def self.support_config

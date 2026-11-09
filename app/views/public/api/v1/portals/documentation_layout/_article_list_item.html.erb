@@ -1,6 +1,6 @@
 <%# locals: (portal:, article:, show_category: false) %>
 <a href="<%= public_portal_article_path(portal.slug, article.slug) %>"
-   class="group flex items-center gap-3 py-2.5 px-3 rounded-md hover:bg-n-alpha-2 transition not-first:border-t not-first:border-solid not-first:border-n-weak">
+   class="group flex items-center gap-3 py-2.5 px-3 rounded-md hover:bg-n-alpha-2 transition [&:not(:first-child)]:border-t [&:not(:first-child)]:border-solid [&:not(:first-child)]:border-n-weak">
   <div class="flex-1 min-w-0">
     <% if show_category && article.category %>
       <span class="inline-flex items-center gap-1 text-[11px] font-medium text-n-slate-10 mb-0.5">
