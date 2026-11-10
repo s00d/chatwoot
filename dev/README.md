@@ -10,6 +10,7 @@
 | [04-github-actions-and-env.md](04-github-actions-and-env.md) | Ручной GitHub Action + полный список ENV |
 | [.env.production.example](.env.production.example) | Шаблон `.env` для продакшена |
 | [nginx-chatwoot.conf.example](nginx-chatwoot.conf.example) | Пример Nginx |
+| [../docker-compose.traefik.yaml](../docker-compose.traefik.yaml) | Traefik вместо Nginx: Let's Encrypt, HTTPS, gzip, WebSocket |
 | [05-docker-local-dev.md](05-docker-local-dev.md) | Локальный Docker на отдельных портах (nginx не трогаем) |
 | [UPGRADE_V3.11_TO_V4.19.1.md](UPGRADE_V3.11_TO_V4.19.1.md) | **Обновление прода 3.11 → v4.19.1**: пошаговый переезд в Docker, кастомы OnlineSIM, ресурсы и замеры |
 | [CUSTOM_VS_V3.11.1.md](CUSTOM_VS_V3.11.1.md) | Исторический отчёт кастомов на базе 3.11 |

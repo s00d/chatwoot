@@ -1,0 +1,55 @@
+# Traefik in front of Chatwoot: Let's Encrypt certificates, HTTP -> HTTPS, gzip, websockets (/cable).
+# Use instead of host nginx, as an overlay on docker-compose.onlinesim.yaml.
+#
+# .env:
+#   CHATWOOT_DOMAIN=chatwoot.example.com      # A record must point at this server, ports 80/443 open
+#   ACME_EMAIL=admin@example.com              # Let's Encrypt expiry notices
+#   FRONTEND_URL=https://chatwoot.example.com
+#   FORCE_SSL=true
+#
+# Start:
+#   docker compose -f docker-compose.onlinesim.yaml -f docker-compose.traefik.yaml up -d
+#
+# Several domains on one installation: replace the router rule below with
+#   Host(`chatwoot.example.com`) || Host(`chatwoot.example.org`)
+# Each host gets its own certificate.
+
+services:
+  traefik:
+    image: traefik:v3.7.15
+    restart: always
+    command:
+      - --providers.docker=true
+      # only containers with traefik.enable=true are exposed
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --certificatesresolvers.le.acme.email=${ACME_EMAIL:?set ACME_EMAIL in .env}
+      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
+      - --log.level=INFO
+      - --accesslog=true
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - letsencrypt:/letsencrypt
+
+  rails:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.chatwoot.rule=Host(`${CHATWOOT_DOMAIN:?set CHATWOOT_DOMAIN in .env}`)
+      - traefik.http.routers.chatwoot.entrypoints=websecure
+      - traefik.http.routers.chatwoot.tls.certresolver=le
+      - traefik.http.routers.chatwoot.middlewares=chatwoot-compress,chatwoot-hsts
+      - traefik.http.services.chatwoot.loadbalancer.server.port=3000
+      # JS/CSS/JSON from the app go out compressed (the dashboard bundle is several MB raw)
+      - traefik.http.middlewares.chatwoot-compress.compress=true
+      - traefik.http.middlewares.chatwoot-hsts.headers.stsSeconds=31536000
+      - traefik.http.middlewares.chatwoot-hsts.headers.stsIncludeSubdomains=true
+
+volumes:
+  letsencrypt:

@@ -120,7 +120,7 @@
 ## Переезд прода на новый сервер (3.11 → v4.19.1, Docker)
 
 Старый сервер: Linux VM **без Docker** (код в `/home/chatwoot/chatwoot`, systemd `chatwoot.target`, локальные PostgreSQL и Redis). С него берём только дамп БД, файлы и `.env`, сам он не меняется.  
-Новый сервер: **всё в Docker** (`docker-compose.onlinesim.yaml`, каталог `/opt/chatwoot`). На хост ставятся только Docker и Nginx с certbot.
+Новый сервер: **всё в Docker** (`docker-compose.onlinesim.yaml`, каталог `/opt/chatwoot`). На хост ставятся только Docker и Nginx с certbot — или ничего, кроме Docker, если HTTPS делает Traefik (шаг 1.5).
 
 Порядок:
 
@@ -202,9 +202,28 @@ docker compose -f docker-compose.onlinesim.yaml up -d postgres redis
 
 Поэтому неважно, были ли эти расширения на старом сервере: дамп с ними (pg_dump пишет `CREATE EXTENSION IF NOT EXISTS`) и без них заливается одинаково. `vector` (pgvector, Captain / AI) есть только в образе `pgvector/pgvector:pg16` — образ Postgres не менять.
 
-#### 1.5. Nginx + SSL
+#### 1.5. HTTPS: Traefik или Nginx
 
-[01-docker-from-scratch.md](01-docker-from-scratch.md), раздел 7 (`proxy_pass` на порт из `CHATWOOT_BIND`, блок `/cable` для WebSocket). Сертификат можно выпустить заранее на временный домен; на боевой — после переключения DNS (шаг 2.7).
+**Вариант A — Traefik в Docker (проще, без nginx и certbot на хосте).** Файл [`docker-compose.traefik.yaml`](../docker-compose.traefik.yaml): сам получает и продлевает сертификат Let's Encrypt, редиректит HTTP → HTTPS, сжимает ответы (gzip), пропускает WebSocket `/cable`. Порты 80/443 на хосте должны быть свободны (nginx не ставить).
+
+В `.env`:
+
+```bash
+CHATWOOT_DOMAIN=chatwoot.example.com
+ACME_EMAIL=admin@example.com
+FRONTEND_URL=https://chatwoot.example.com
+FORCE_SSL=true
+```
+
+Дальше во всех командах compose добавляется второй файл:
+
+```bash
+docker compose -f docker-compose.onlinesim.yaml -f docker-compose.traefik.yaml up -d
+```
+
+Сертификат выпускается при первом запросе к домену, поэтому A-запись должна уже указывать на сервер (на репетиции — временный домен). Несколько доменов — см. комментарий в начале файла.
+
+**Вариант B — Nginx на хосте.** [01-docker-from-scratch.md](01-docker-from-scratch.md), раздел 7 (`proxy_pass` на порт из `CHATWOOT_BIND`, блок `/cable` для WebSocket, gzip). Сертификат можно выпустить заранее на временный домен; на боевой — после переключения DNS (шаг 2.7).
 
 ---
 
@@ -303,7 +322,7 @@ docker compose -f docker-compose.onlinesim.yaml logs --no-color rails sidekiq | 
 
 #### 2.7. DNS и проверка
 
-A-запись домена → IP нового сервера, затем `sudo certbot --nginx -d ДОМЕН`.
+A-запись домена → IP нового сервера. С Traefik сертификат выпустится сам при первом запросе; с Nginx — `sudo certbot --nginx -d ДОМЕН`.
 
 - [ ] вход агентом, список диалогов, история сообщений
 - [ ] картинки / вложения / аватары открываются (старые и новые)
