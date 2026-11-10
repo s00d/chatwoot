@@ -204,30 +204,24 @@ docker compose -f docker-compose.onlinesim.yaml up -d postgres redis
 
 #### 1.5. HTTPS: Traefik или Nginx
 
-**Вариант A — Traefik в Docker (проще, без nginx и certbot на хосте).** Файл [`docker-compose.traefik.yaml`](../docker-compose.traefik.yaml): сам получает и продлевает сертификат Let's Encrypt, редиректит HTTP → HTTPS, сжимает ответы (gzip), пропускает WebSocket `/cable`. Порты 80/443 на хосте должны быть свободны (nginx не ставить).
+**Вариант A — Traefik в Docker (проще, без nginx и certbot на хосте).** Файл [`docker-compose.traefik.yaml`](../docker-compose.traefik.yaml): сам получает и продлевает сертификаты Let's Encrypt, редиректит HTTP → HTTPS, сжимает ответы (gzip), пропускает WebSocket `/cable`. Порты 80/443 на хосте должны быть свободны (nginx не ставить).
 
-В `.env`:
+В `.env` — домены через запятую (основной дашборд, второй домен, домен центра помощи):
 
 ```bash
-CHATWOOT_DOMAIN=chatwoot.example.com
+CHATWOOT_DOMAINS=chatwoot.on-mail.ru,chatwoot.on-mailbox.com,docs.on-mailbox.com
 ACME_EMAIL=admin@example.com
-FRONTEND_URL=https://chatwoot.example.com
+FRONTEND_URL=https://chatwoot.on-mailbox.com
 FORCE_SSL=true
 ```
+
+На каждый домен выпускается свой сертификат. Ссылки и файлы Chatwoot строит от `FRONTEND_URL` — в нём основной домен. Маршруты собираются из списка при старте Traefik ([`docker/traefik/entrypoint.sh`](../docker/traefik/entrypoint.sh)); сменили домены — пересоздать контейнер: `docker compose -f docker-compose.onlinesim.yaml -f docker-compose.traefik.yaml up -d traefik`.
 
 Дальше во всех командах compose добавляется второй файл:
 
 ```bash
 docker compose -f docker-compose.onlinesim.yaml -f docker-compose.traefik.yaml up -d
 ```
-
-Несколько доменов (второй домен дашборда, свой домен центра помощи) — вместо `CHATWOOT_DOMAIN` задать правило целиком, в одинарных кавычках:
-
-```bash
-CHATWOOT_HOST_RULE='Host(`chatwoot.on-mail.ru`) || Host(`chatwoot.on-mailbox.com`) || Host(`docs.on-mailbox.com`)'
-```
-
-Traefik выпустит сертификат на каждый домен из правила. Ссылки и файлы Chatwoot всё равно строит от `FRONTEND_URL` — указать в нём основной домен.
 
 Сертификат выпускается при первом запросе к домену, поэтому A-записи всех доменов должны уже указывать на сервер (на репетиции — временный домен).
 

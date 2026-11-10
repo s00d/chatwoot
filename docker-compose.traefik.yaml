@@ -1,16 +1,15 @@
 # Traefik in front of Chatwoot: Let's Encrypt certificates, HTTP -> HTTPS, gzip, websockets (/cable).
 # Use instead of host nginx, as an overlay on docker-compose.onlinesim.yaml.
 #
-# .env, one domain:
-#   CHATWOOT_DOMAIN=chatwoot.example.com      # A record must point at this server, ports 80/443 open
+# .env:
+#   CHATWOOT_DOMAINS=chatwoot.example.com,chatwoot.example.org,docs.example.com
 #   ACME_EMAIL=admin@example.com              # Let's Encrypt expiry notices
-#   FRONTEND_URL=https://chatwoot.example.com
+#   FRONTEND_URL=https://chatwoot.example.com # main domain: links and files are generated for it
 #   FORCE_SSL=true
 #
-# Several domains (extra dashboard domains, help center custom domains): set the full rule instead,
-# Traefik issues a certificate for every host in it. Keep the single quotes.
-#   CHATWOOT_HOST_RULE='Host(`chatwoot.example.com`) || Host(`chatwoot.example.org`) || Host(`docs.example.com`)'
-# Links and files are still generated for FRONTEND_URL, so point it at the main domain.
+# Every domain in CHATWOOT_DOMAINS gets its own certificate; their A records must point at this
+# server and ports 80/443 must be free. The routing is generated from the list at start
+# (docker/traefik/entrypoint.sh), so changing domains means editing .env and recreating traefik.
 #
 # Start:
 #   docker compose -f docker-compose.onlinesim.yaml -f docker-compose.traefik.yaml up -d
@@ -19,10 +18,11 @@ services:
   traefik:
     image: traefik:v3.7.15
     restart: always
+    depends_on:
+      - rails
+    entrypoint: ['/bin/sh', '/traefik-entrypoint.sh']
     command:
-      - --providers.docker=true
-      # only containers with traefik.enable=true are exposed
-      - --providers.docker.exposedbydefault=false
+      - --providers.file.filename=/etc/traefik/chatwoot.yml
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
       - --entrypoints.web.http.redirections.entrypoint.to=websecure
@@ -32,25 +32,14 @@ services:
       - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
       - --log.level=INFO
       - --accesslog=true
+    environment:
+      - CHATWOOT_DOMAINS=${CHATWOOT_DOMAINS:?set CHATWOOT_DOMAINS in .env}
     ports:
       - '80:80'
       - '443:443'
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./docker/traefik/entrypoint.sh:/traefik-entrypoint.sh:ro
       - letsencrypt:/letsencrypt
-
-  rails:
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.chatwoot.rule=${CHATWOOT_HOST_RULE:-Host(`${CHATWOOT_DOMAIN:?set CHATWOOT_DOMAIN or CHATWOOT_HOST_RULE in .env}`)}
-      - traefik.http.routers.chatwoot.entrypoints=websecure
-      - traefik.http.routers.chatwoot.tls.certresolver=le
-      - traefik.http.routers.chatwoot.middlewares=chatwoot-compress,chatwoot-hsts
-      - traefik.http.services.chatwoot.loadbalancer.server.port=3000
-      # JS/CSS/JSON from the app go out compressed (the dashboard bundle is several MB raw)
-      - traefik.http.middlewares.chatwoot-compress.compress=true
-      - traefik.http.middlewares.chatwoot-hsts.headers.stsSeconds=31536000
-      - traefik.http.middlewares.chatwoot-hsts.headers.stsIncludeSubdomains=true
 
 volumes:
   letsencrypt:
